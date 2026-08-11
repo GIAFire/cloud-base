@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <modules>
-        <module>yudao-module-infra-api</module>
-        <module>yudao-module-infra-server</module>
+        <module>module-infra-api</module>
+        <module>module-infra-server</module>
     </modules>
-    <artifactId>yudao-module-infra</artifactId>
+    <artifactId>module-infra</artifactId>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>

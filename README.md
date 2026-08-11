@@ -330,12 +330,12 @@
 
 | 项目                    | 说明                 |
 |-----------------------|--------------------|
-| `yudao-dependencies`  | Maven 依赖版本管理       |
+| `dependencies`  | Maven 依赖版本管理       |
 | `yudao-framework`     | Java 框架拓展          |
-| `yudao-server`        | 管理后台 + 用户 APP 的服务端 |
+| `server`        | 管理后台 + 用户 APP 的服务端 |
 | `module-system` | 系统功能的 Module 模块    |
 | `yudao-module-member` | 会员中心的 Module 模块    |
-| `yudao-module-infra`  | 基础设施的 Module 模块    |
+| `module-infra`  | 基础设施的 Module 模块    |
 | `yudao-module-bpm`    | 工作流程的 Module 模块    |
 | `yudao-module-pay`    | 支付系统的 Module 模块    |
 | `yudao-module-mall`   | 商城系统的 Module 模块    |

@@ -67,7 +67,7 @@ spring:
           lazy: true # 开启懒加载，保证启动速度
           url: jdbc:mysql://127.0.0.1:3306/ruoyi-vue-pro?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true
           username: root
-          password: Phians123
+          password: 123456
 
   # Redis 配置。Redisson 默认的配置足够使用，一般不需要进行调优
   data:

@@ -32,7 +32,7 @@
         </dependency>
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-module-infra-api</artifactId>
+            <artifactId>module-infra-api</artifactId>
             <version>${revision}</version>
         </dependency>
 

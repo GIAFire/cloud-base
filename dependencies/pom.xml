@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.iocoder.cloud</groupId>
-    <artifactId>yudao-dependencies</artifactId>
+    <artifactId>dependencies</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 

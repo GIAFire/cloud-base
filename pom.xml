@@ -8,14 +8,14 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
-        <module>yudao-dependencies</module>
+        <module>dependencies</module>
         <module>gateway</module>
         <module>yudao-framework</module>
         <!-- Server 主项目 -->
-        <module>yudao-server</module>
+        <module>server</module>
         <!--  各种 module 拓展 -->
         <module>module-system</module>
-        <module>yudao-module-infra</module>
+        <module>module-infra</module>
 <!--        <module>yudao-module-member</module>-->
 <!--        <module>yudao-module-bpm</module>-->
 <!--        <module>yudao-module-pay</module>-->
@@ -55,7 +55,7 @@
         <dependencies>
             <dependency>
                 <groupId>cn.iocoder.cloud</groupId>
-                <artifactId>yudao-dependencies</artifactId>
+                <artifactId>dependencies</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
