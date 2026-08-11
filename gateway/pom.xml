@@ -8,12 +8,11 @@
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>yudao-gateway</artifactId>
+    <artifactId>gateway</artifactId>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
     <description>API 服务网关，基于 Spring Cloud Gateway 实现</description>
-    <url>https://github.com/YunaiV/yudao-cloud</url>
 
     <dependencies>
         <!-- 业务组件 -->
