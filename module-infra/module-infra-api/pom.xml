@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-common</artifactId>
+            <artifactId>common</artifactId>
         </dependency>
 
         <!-- Web 相关 -->

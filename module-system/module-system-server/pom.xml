@@ -21,7 +21,7 @@
         <!-- Spring Cloud 基础 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-env</artifactId>
+            <artifactId>spring-boot-starter-env</artifactId>
         </dependency>
 
         <!-- 依赖服务 -->
@@ -39,38 +39,38 @@
         <!-- 业务组件 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-biz-data-permission</artifactId>
+            <artifactId>spring-boot-starter-biz-data-permission</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-biz-tenant</artifactId>
+            <artifactId>spring-boot-starter-biz-tenant</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-biz-ip</artifactId>
+            <artifactId>spring-boot-starter-biz-ip</artifactId>
         </dependency>
 
         <!-- Web 相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-security</artifactId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <!-- DB 相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-mybatis</artifactId>
+            <artifactId>spring-boot-starter-mybatis</artifactId>
         </dependency>
 
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-redis</artifactId>
+            <artifactId>spring-boot-starter-redis</artifactId>
         </dependency>
 
         <!-- RPC 远程调用相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-rpc</artifactId>
+            <artifactId>spring-boot-starter-rpc</artifactId>
         </dependency>
 
         <!-- Registry 注册中心相关 -->
@@ -88,25 +88,25 @@
         <!-- Job 定时任务相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-job</artifactId>
+            <artifactId>spring-boot-starter-job</artifactId>
         </dependency>
 
         <!-- 消息队列相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-mq</artifactId>
+            <artifactId>spring-boot-starter-mq</artifactId>
         </dependency>
 
         <!-- 服务保障相关 TODO 芋艿：暂时去掉 -->
 <!--        <dependency>-->
 <!--            <groupId>cn.iocoder.cloud</groupId>-->
-<!--            <artifactId>yudao-spring-boot-starter-protection</artifactId>-->
+<!--            <artifactId>spring-boot-starter-protection</artifactId>-->
 <!--        </dependency>-->
 
         <!-- 工具类相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-excel</artifactId>
+            <artifactId>spring-boot-starter-excel</artifactId>
         </dependency>
 
         <dependency>
@@ -117,7 +117,7 @@
         <!-- 监控相关 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-spring-boot-starter-monitor</artifactId>
+            <artifactId>spring-boot-starter-monitor</artifactId>
         </dependency>
 
         <!-- 三方云服务相关 -->
