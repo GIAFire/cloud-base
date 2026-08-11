@@ -18,7 +18,7 @@
         <!-- 业务组件 -->
         <dependency>
             <groupId>cn.iocoder.cloud</groupId>
-            <artifactId>yudao-module-system-api</artifactId>
+            <artifactId>module-system-api</artifactId>
             <version>${revision}</version>
             <exclusions>
                 <exclusion>

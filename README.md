@@ -333,7 +333,7 @@
 | `yudao-dependencies`  | Maven 依赖版本管理       |
 | `yudao-framework`     | Java 框架拓展          |
 | `yudao-server`        | 管理后台 + 用户 APP 的服务端 |
-| `yudao-module-system` | 系统功能的 Module 模块    |
+| `module-system` | 系统功能的 Module 模块    |
 | `yudao-module-member` | 会员中心的 Module 模块    |
 | `yudao-module-infra`  | 基础设施的 Module 模块    |
 | `yudao-module-bpm`    | 工作流程的 Module 模块    |
