@@ -14,9 +14,8 @@
         <!-- Server 主项目 -->
         <module>server</module>
         <!--  各种 module 拓展 -->
-        <module>module-system</module>
-        <module>module-infra</module>
-<!--        <module>module-member</module>-->
+        <module>modules</module>
+        <!--        <module>module-member</module>-->
 <!--        <module>module-bpm</module>-->
 <!--        <module>module-pay</module>-->
 <!--        <module>module-report</module>-->
