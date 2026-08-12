@@ -11,8 +11,6 @@
         <module>dependencies</module>
         <module>gateway</module>
         <module>framework</module>
-        <!-- Server 主项目 -->
-        <module>server</module>
         <!--  各种 module 拓展 -->
         <module>modules</module>
         <!--        <module>module-member</module>-->
