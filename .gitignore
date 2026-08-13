@@ -50,7 +50,7 @@ rebel.xml
 
 application-my.yaml
 
-/yudao-ui-app/unpackage/
+/ui-app/unpackage/
 .DS_Store
 **/.DS_Store
 /sql/

@@ -23,13 +23,13 @@ public class DefaultController {
     @RequestMapping("/admin-api/bpm/**")
     public CommonResult<Boolean> bpm404() {
         return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                "[工作流模块 yudao-module-bpm - 已禁用][参考 https://doc.iocoder.cn/bpm/ 开启]");
+                "[工作流模块 module-bpm - 已禁用][参考 https://doc.iocoder.cn/bpm/ 开启]");
     }
 
     @RequestMapping("/admin-api/mp/**")
     public CommonResult<Boolean> mp404() {
         return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                "[微信公众号 yudao-module-mp - 已禁用][参考 https://doc.iocoder.cn/mp/build/ 开启]");
+                "[微信公众号 module-mp - 已禁用][参考 https://doc.iocoder.cn/mp/build/ 开启]");
     }
 
     @RequestMapping(value = { "/admin-api/product/**", // 商品中心
@@ -37,19 +37,19 @@ public class DefaultController {
             "/admin-api/promotion/**" }) // 营销中心
     public CommonResult<Boolean> mall404() {
         return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                "[商城系统 yudao-module-mall - 已禁用][参考 https://doc.iocoder.cn/mall/build/ 开启]");
+                "[商城系统 module-mall - 已禁用][参考 https://doc.iocoder.cn/mall/build/ 开启]");
     }
 
     @RequestMapping("/admin-api/erp/**")
     public CommonResult<Boolean> erp404() {
         return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                "[ERP 模块 yudao-module-erp - 已禁用][参考 https://doc.iocoder.cn/erp/build/ 开启]");
+                "[ERP 模块 module-erp - 已禁用][参考 https://doc.iocoder.cn/erp/build/ 开启]");
     }
 
     @RequestMapping(value = { "/admin-api/wms/**"})
     public CommonResult<Boolean> wms404() {
         return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                "[WMS 仓库管理系统 yudao-module-wms - 已禁用][参考 https://doc.iocoder.cn/wms/build/ 开启]");
+                "[WMS 仓库管理系统 module-wms - 已禁用][参考 https://doc.iocoder.cn/wms/build/ 开启]");
     }
 
     @RequestMapping("/admin-api/crm/**")
