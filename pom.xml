@@ -13,19 +13,6 @@
         <module>framework</module>
         <!--  各种 module 拓展 -->
         <module>modules</module>
-        <!--        <module>module-member</module>-->
-<!--        <module>module-bpm</module>-->
-<!--        <module>module-pay</module>-->
-<!--        <module>module-report</module>-->
-<!--        <module>module-mp</module>-->
-<!--        <module>module-mall</module>-->
-<!--        <module>module-crm</module>-->
-<!--        <module>module-erp</module>-->
-<!--        <module>module-iot</module>-->
-<!--        <module>module-mes</module>-->
-<!--        <module>module-wms</module>-->
-<!--        <module>module-im</module>-->
-<!--        <module>module-ai</module>-->
     </modules>
 
     <name>${project.artifactId}</name>
