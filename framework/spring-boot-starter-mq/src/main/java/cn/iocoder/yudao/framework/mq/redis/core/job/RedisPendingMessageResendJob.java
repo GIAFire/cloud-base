@@ -25,8 +25,6 @@ public class RedisPendingMessageResendJob {
 
     public static final String DEFAULT_RESEND_LOCK_KEY = "redis:stream:pending-message-resend:lock";
 
-    public static final String IOT_RESEND_LOCK_KEY = "redis:stream:pending-message-resend:lock:iot";
-
     /**
      * 消息超时时间，默认 5 分钟
      *
