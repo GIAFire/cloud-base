@@ -24,7 +24,6 @@
         </el-card>
       </el-col>
       <!-- 下边：账户明细 -->
-      <!-- TODO 芋艿：【订单管理】【售后管理】【收藏记录】-->
       <el-card header="账户明细" shadow="never" style="width: 100%; margin-top: 20px">
         <template #header>
           <CardTitle title="账户明细" />
@@ -45,21 +44,6 @@
           <el-tab-pane label="收货地址" lazy>
             <UserAddressList :user-id="id" />
           </el-tab-pane>
-          <el-tab-pane label="订单管理" lazy>
-            <UserOrderList :user-id="id" />
-          </el-tab-pane>
-          <el-tab-pane label="售后管理" lazy>
-            <UserAfterSaleList :user-id="id" />
-          </el-tab-pane>
-          <el-tab-pane label="收藏记录" lazy>
-            <UserFavoriteList :user-id="id" />
-          </el-tab-pane>
-          <el-tab-pane label="优惠劵" lazy>
-            <UserCouponList :user-id="id" />
-          </el-tab-pane>
-          <el-tab-pane label="推广用户" lazy>
-            <UserBrokerageList :bind-user-id="id" />
-          </el-tab-pane>
         </el-tabs>
       </el-card>
     </el-row>
@@ -76,14 +60,9 @@ import UserForm from '@/views/member/user/UserForm.vue'
 import UserAccountInfo from './UserAccountInfo.vue'
 import UserAddressList from './UserAddressList.vue'
 import UserBasicInfo from './UserBasicInfo.vue'
-import UserBrokerageList from './UserBrokerageList.vue'
-import UserCouponList from './UserCouponList.vue'
 import UserExperienceRecordList from './UserExperienceRecordList.vue'
-import UserOrderList from './UserOrderList.vue'
 import UserPointList from './UserPointList.vue'
 import UserSignList from './UserSignList.vue'
-import UserFavoriteList from './UserFavoriteList.vue'
-import UserAfterSaleList from './UserAftersaleList.vue'
 import UserBalanceList from './UserBalanceList.vue'
 import { CardTitle } from '@/components/Card/index'
 import { ElMessage } from 'element-plus'

@@ -30,7 +30,7 @@
         <wd-cell title="审批状态">
           <dict-tag
             v-if="formData.approvalStatus != null"
-            :type="DICT_TYPE.BPM_PROCESS_INSTANCE_STATUS"
+            :type="DICT_TYPE.HRM_ATTENDANCE_APPROVAL_STATUS"
             :value="formData.approvalStatus"
           />
           <text v-else>-</text>
@@ -41,20 +41,11 @@
       </wd-cell-group>
     </view>
 
-    <!-- 底部操作：跳转 BPM 审批进度 -->
-    <view v-if="formData.processInstanceId" class="yd-detail-footer">
-      <view class="yd-detail-footer-actions">
-        <wd-button class="flex-1" type="primary" @click="handleViewProcess">
-          审批进度
-        </wd-button>
-      </view>
-    </view>
   </view>
 </template>
 
 <script lang="ts" setup>
 import type { AttendanceLeave } from '@/api/hrm/attendance/leave'
-import { useToast } from '@wot-ui/ui/components/wd-toast'
 import { onMounted, ref } from 'vue'
 import { getAttendanceLeave } from '@/api/hrm/attendance/leave'
 import { navigateBackPlus } from '@/utils'
@@ -72,7 +63,6 @@ definePage({
   },
 })
 
-const toast = useToast()
 const formData = ref<AttendanceLeave>({ // 详情数据
   type: '',
   day: 0,
@@ -89,18 +79,6 @@ async function getDetail() {
     return
   }
   formData.value = await getAttendanceLeave(Number(props.id))
-}
-
-/** 查看审批进度 */
-function handleViewProcess() {
-  const processInstanceId = formData.value.processInstanceId
-  if (!processInstanceId) {
-    toast.show('暂无审批流程')
-    return
-  }
-  uni.navigateTo({
-    url: `/pages-bpm/processInstance/detail/index?id=${processInstanceId}`,
-  })
 }
 
 /** 初始化 */

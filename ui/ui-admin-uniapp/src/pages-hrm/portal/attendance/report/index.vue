@@ -208,7 +208,7 @@
               <text v-else class="text-28rpx text-[#333]">-</text>
               <dict-tag
                 v-if="item.approvalStatus != null"
-                :type="DICT_TYPE.BPM_PROCESS_INSTANCE_STATUS"
+                :type="DICT_TYPE.HRM_ATTENDANCE_APPROVAL_STATUS"
                 :value="item.approvalStatus"
               />
             </view>
@@ -226,17 +226,7 @@
             </view>
             <view class="flex gap-16rpx">
               <wd-button
-                v-if="item.processInstanceId"
-                class="flex-1"
-                size="small"
-                type="primary"
-                variant="plain"
-                @click="handleViewProcess(item.processInstanceId)"
-              >
-                审批进度
-              </wd-button>
-              <wd-button
-                v-if="item.approvalStatus === BpmProcessInstanceStatus.RUNNING
+                v-if="item.approvalStatus === APPROVAL_STATUS_RUNNING
                   && hasAccessByCodes(['hrm:portal:attendance:leave'])"
                 class="flex-1"
                 size="small"
@@ -276,7 +266,7 @@ import { getHrmAttendanceDayState } from '@/pages-hrm/utils/attendance'
 import { formatHrmDays, formatHrmMoney, formatHrmYearMonth, getAttendanceYearMonth } from '@/pages-hrm/utils/format'
 import { checkHrmPortalAccess } from '@/pages-hrm/utils/portal'
 import { navigateBackPlus } from '@/utils'
-import { BpmProcessInstanceStatus, DICT_TYPE } from '@/utils/constants'
+import { DICT_TYPE } from '@/utils/constants'
 import { formatDate, formatDateTime } from '@/utils/date'
 
 definePage({
@@ -285,6 +275,8 @@ definePage({
     navigationStyle: 'custom',
   },
 })
+
+const APPROVAL_STATUS_RUNNING = 1
 
 const { hasAccessByCodes } = useAccess()
 const toast = useToast()
@@ -429,17 +421,6 @@ async function handleExport() {
   } finally {
     exportLoading.value = false
   }
-}
-
-/** 查看审批进度 */
-function handleViewProcess(processInstanceId?: string) {
-  if (!processInstanceId) {
-    toast.show('暂无审批流程')
-    return
-  }
-  uni.navigateTo({
-    url: `/pages-bpm/processInstance/detail/index?id=${processInstanceId}`,
-  })
 }
 
 /** 取消请假申请 */

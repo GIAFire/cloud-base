@@ -105,20 +105,11 @@ export default defineConfig(({ command, mode }) => {
           'src/pages-core', // 这个是相对必要的路由，尽量留着（登录页、注册页、404页等）
           'src/pages-system', // “系统管理”模块
           'src/pages-infra', // “基础设施”模块
-          'src/pages-bpm', // “工作流程”模块
-          'src/pages-crm', // “客户管理”模块
           'src/pages-statistics', // “统计中心”模块
-          'src/pages-iot', // “物联网”模块
           'src/pages-member', // “会员中心”模块
           'src/pages-pay', // “支付管理”模块
-          'src/pages-mp', // “公众号管理”模块
-          'src/pages-mall', // “商城管理”模块
-          'src/pages-mes', // “生产制造”模块
-          'src/pages-ai', // “人工智能”模块
           'src/pages-im', // “即时通讯”模块
-          'src/pages-erp', // “ERP 管理”模块
           'src/pages-hrm', // “人力资源管理”模块
-          'src/pages-wms', // “仓储管理”模块
         ],
         dts: 'src/types/uni-pages.d.ts',
       }),
@@ -136,7 +127,6 @@ export default defineConfig(({ command, mode }) => {
         excludePages: [
           '**/components/**/**.*',
           '**/sections/**/**.*',
-          'src/pages-crm/statistics/**',
         ],
       }),
       Uni(),

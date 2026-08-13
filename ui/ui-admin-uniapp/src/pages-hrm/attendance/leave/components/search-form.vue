@@ -50,7 +50,7 @@
       <yd-search-picker
         v-model="formData.approvalStatus"
         label="审批状态"
-        :dict-type="DICT_TYPE.BPM_PROCESS_INSTANCE_STATUS"
+        :dict-type="DICT_TYPE.HRM_ATTENDANCE_APPROVAL_STATUS"
         all-option
       />
       <view class="yd-search-form-actions">
@@ -104,7 +104,7 @@ const placeholder = computed(() => {
     }
   }
   if (formData.approvalStatus !== undefined) {
-    conditions.push(`审批:${getDictLabel(DICT_TYPE.BPM_PROCESS_INSTANCE_STATUS, formData.approvalStatus)}`)
+    conditions.push(`审批:${getDictLabel(DICT_TYPE.HRM_ATTENDANCE_APPROVAL_STATUS, formData.approvalStatus)}`)
   }
   return conditions.join(' | ')
 })

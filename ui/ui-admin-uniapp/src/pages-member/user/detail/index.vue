@@ -128,11 +128,6 @@
     <ExperienceList v-if="loadedTabs.has('experience')" v-show="activeTab === 'experience'" class="min-h-0 flex-1" :user-id="props.id" />
     <BalanceList v-if="loadedTabs.has('balance')" v-show="activeTab === 'balance'" class="min-h-0 flex-1" :wallet-id="walletData?.id" />
     <AddressList v-if="loadedTabs.has('address')" v-show="activeTab === 'address'" :user-id="props.id" />
-    <OrderList v-if="loadedTabs.has('order')" v-show="activeTab === 'order'" class="min-h-0 flex-1" :user-id="props.id" />
-    <AfterSaleList v-if="loadedTabs.has('after-sale')" v-show="activeTab === 'after-sale'" class="min-h-0 flex-1" :user-id="props.id" />
-    <FavoriteList v-if="loadedTabs.has('favorite')" v-show="activeTab === 'favorite'" class="min-h-0 flex-1" :user-id="props.id" />
-    <CouponList v-if="loadedTabs.has('coupon')" v-show="activeTab === 'coupon'" class="min-h-0 flex-1" :user-id="props.id" />
-    <BrokerageList v-if="loadedTabs.has('brokerage')" v-show="activeTab === 'brokerage'" class="min-h-0 flex-1" :bind-user-id="props.id" />
 
     <!-- 底部操作按钮 -->
     <view class="yd-detail-footer">
@@ -160,8 +155,6 @@
     <PointUpdateForm v-model="pointFormVisible" :user-id="props.id" @success="handleActionSuccess" />
     <!-- 修改余额弹窗 -->
     <BalanceUpdateForm v-model="balanceFormVisible" :user-id="props.id" @success="handleActionSuccess" />
-    <!-- 发送优惠券弹窗 -->
-    <CouponSendForm v-model="couponSendVisible" :user-id="props.id" @success="handleActionSuccess" />
   </view>
 </template>
 
@@ -178,16 +171,10 @@ import { navigateBackPlus } from '@/utils'
 import { DICT_TYPE } from '@/utils/constants'
 import { formatDate, formatDateTime } from '@/utils/date'
 import AddressList from './components/address-list.vue'
-import AfterSaleList from './components/after-sale-list.vue'
 import BalanceList from './components/balance-list.vue'
 import BalanceUpdateForm from './components/balance-update-form.vue'
-import BrokerageList from './components/brokerage-list.vue'
-import CouponList from './components/coupon-list.vue'
-import CouponSendForm from './components/coupon-send-form.vue'
 import ExperienceList from './components/experience-list.vue'
-import FavoriteList from './components/favorite-list.vue'
 import LevelUpdateForm from './components/level-update-form.vue'
-import OrderList from './components/order-list.vue'
 import PointList from './components/point-list.vue'
 import PointUpdateForm from './components/point-update-form.vue'
 import SignList from './components/sign-list.vue'
@@ -210,11 +197,6 @@ const tabs: { key: string, title: string }[] = [ // 详情分类
   { key: 'experience', title: '成长值' },
   { key: 'balance', title: '余额' },
   { key: 'address', title: '收货地址' },
-  { key: 'order', title: '订单管理' },
-  { key: 'after-sale', title: '售后管理' },
-  { key: 'favorite', title: '收藏记录' },
-  { key: 'coupon', title: '优惠券' },
-  { key: 'brokerage', title: '推广用户' },
 ]
 const { hasAccessByCodes } = useAccess()
 const toast = useToast()
@@ -226,7 +208,6 @@ const moreActionVisible = ref(false) // 更多操作菜单
 const levelFormVisible = ref(false) // 修改等级弹窗
 const pointFormVisible = ref(false) // 修改积分弹窗
 const balanceFormVisible = ref(false) // 修改余额弹窗
-const couponSendVisible = ref(false) // 发送优惠券弹窗
 const activeTab = computed(() => tabs[tabIndex.value]?.key || 'basic') // 当前详情分类
 const isPagingTab = computed(() => !['basic', 'address'].includes(activeTab.value)) // 分页详情分类使用固定高布局
 const moreActions = computed(() => { // 更多操作菜单项
@@ -239,9 +220,6 @@ const moreActions = computed(() => { // 更多操作菜单项
   }
   if (hasAccessByCodes(['pay:wallet:update-balance'])) {
     actions.push({ name: '修改余额', value: 'update-balance' })
-  }
-  if (hasAccessByCodes(['promotion:coupon:send'])) {
-    actions.push({ name: '发送优惠券', value: 'send-coupon' })
   }
   return actions
 })
@@ -294,8 +272,6 @@ function openMoreActionForm(value: string) {
     pointFormVisible.value = true
   } else if (value === 'update-balance') {
     balanceFormVisible.value = true
-  } else if (value === 'send-coupon') {
-    couponSendVisible.value = true
   }
 }
 

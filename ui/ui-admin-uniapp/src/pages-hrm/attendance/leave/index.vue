@@ -41,7 +41,7 @@
             </view>
             <dict-tag
               v-if="item.approvalStatus != null"
-              :type="DICT_TYPE.BPM_PROCESS_INSTANCE_STATUS"
+              :type="DICT_TYPE.HRM_ATTENDANCE_APPROVAL_STATUS"
               :value="item.approvalStatus"
             />
           </view>
