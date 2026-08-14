@@ -22,7 +22,7 @@ import java.util.Map;
 
 import static com.cloud.module.system.api.user.AdminUserApi.PREFIX;
 
-@FeignClient(name = ApiConstants.NAME) // TODO 芋艿：fallbackFactory =
+@FeignClient(name = ApiConstants.NAME) // TODO fallbackFactory =
 @Tag(name = "RPC 服务 - 管理员用户")
 @AutoTrans(namespace = PREFIX, fields = {"nickname"})
 public interface AdminUserApi extends AutoTransable<AdminUserRespDTO> {

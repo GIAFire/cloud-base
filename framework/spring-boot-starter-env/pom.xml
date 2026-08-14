@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>cn.iocoder.cloud</groupId>
+        <groupId>com.cloud</groupId>
         <artifactId>framework</artifactId>
         <version>${revision}</version>
     </parent>
@@ -17,14 +17,9 @@
         1. https://segmentfault.com/a/1190000018022987
     </description>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>common</artifactId>
         </dependency>
 

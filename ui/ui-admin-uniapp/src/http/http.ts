@@ -56,7 +56,7 @@ async function handleLoginExpired(tokenStore: ReturnType<typeof useTokenStore>) 
   await tokenStore.logout()
   // 跳转到登录页
   setTimeout(() => {
-    // 优化 by 芋艿：跳转登录页时，携带上次浏览的页面地址，登录成功后可以跳回去
+    // 优化 by 跳转登录页时，携带上次浏览的页面地址，登录成功后可以跳回去
     const lastPage = getLastPage()
     let queryString = ''
     if (lastPage) {
@@ -176,13 +176,13 @@ export function http<T>(options: CustomRequestOptions) {
           }
           // 处理业务逻辑错误
           if (code !== ResultEnum.Success0 && code !== ResultEnum.Success200) {
-            // add by 芋艿：后端返回的 msg 提示
+            // add by 后端返回的 msg 提示
             !options.hideErrorToast
             && uni.showToast({
               icon: 'none',
               title: responseData.msg || responseData.message || '请求错误',
             })
-            // add by 芋艿：reject 替代原本的 resolve，避免调用的地方以为请求成功
+            // add by reject 替代原本的 resolve，避免调用的地方以为请求成功
             return reject(responseData)
           }
           if (options.returnRawResponse) {

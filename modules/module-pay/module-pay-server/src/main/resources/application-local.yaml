@@ -21,7 +21,7 @@ spring:
   autoconfigure:
     # noinspection SpringBootApplicationYaml
     exclude:
-      - org.dromara.trans.config.TransServiceConfig # TODO 芋艿：easy-trans 兼容 Spring Boot 4 后移除（TransServiceConfig 引用了已移除的 RestTemplateBuilder）
+      - org.dromara.trans.config.TransServiceConfig # TODO easy-trans 兼容 Spring Boot 4 后移除（TransServiceConfig 引用了已移除的 RestTemplateBuilder）
   datasource:
     druid: # Druid 【监控】相关的全局配置
       web-stat-filter:
@@ -119,7 +119,7 @@ logging:
     # 配置自己写的 MyBatis Mapper 打印日志
     com.cloud.module.pay.dal.mysql: debug
     com.cloud.module.pay.dal.mysql.notify.PayNotifyTaskMapper: INFO # 配置 PayNotifyTaskMapper 的日志级别为 info
-    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 芋艿：先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
+    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
 
 --- #################### Cloud相关配置 ####################
 

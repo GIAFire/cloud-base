@@ -9,7 +9,7 @@ tenant-id: {{adminTenantId}}
 
 {
   "name": "Cloud",
-  "contactName": "芋艿",
+  "contactName": "ZR",
   "contactMobile": "15601691300",
   "status": 0,
   "domain": "https://www.iocoder.cn",

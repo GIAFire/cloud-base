@@ -3,7 +3,7 @@
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "ignoreDeprecations": "6.0",
     "strict": true,
     "jsx": "preserve",
@@ -26,7 +26,8 @@
     },
     "types": [
       // "@intlify/unplugin-vue-i18n/types",
-      "vite/client"
+      "vite/client",
+      "node"
       // "element-plus/global",
       // "@types/qrcode",
       // "vite-plugin-svg-icons/client"
@@ -36,6 +37,8 @@
   },
   "include": [
     "src",
+    "build/**/*.ts",
+    "vite.config.ts",
     "types/**/*.d.ts",
     "src/types/auto-imports.d.ts",
     "src/types/auto-components.d.ts"

@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>cn.iocoder.cloud</groupId>
+        <groupId>com.cloud</groupId>
         <artifactId>modules</artifactId>
         <version>${revision}</version>
     </parent>
@@ -22,33 +22,33 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>module-system-server</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>module-infra-server</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <!-- 会员中心。默认注释，保证编译速度 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>module-member-server</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <!-- 支付服务。默认注释，保证编译速度 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>module-pay-server</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <!-- IM 即时通讯模块 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>module-im-server</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -62,7 +62,7 @@
 
         <!-- 服务保障相关 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>spring-boot-starter-protection</artifactId>
         </dependency>
 
@@ -80,7 +80,7 @@
 
         <!-- RPC 远程调用相关 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>spring-boot-starter-rpc</artifactId>
             <!-- 目的：server 单体启动，禁用 openfeign -->
             <exclusions>

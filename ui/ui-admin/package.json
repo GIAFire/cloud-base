@@ -1,8 +1,8 @@
 {
-  "name": "ui-admin-vue3",
-  "version": "2026.07-snapshot",
+  "name": "admin-ui",
+  "version": "v1.0.0",
   "description": "基于vue3、vite4、element-plus、typesScript",
-  "author": "xingyu",
+  "author": "ZR",
   "private": false,
   "scripts": {
     "i": "pnpm install",

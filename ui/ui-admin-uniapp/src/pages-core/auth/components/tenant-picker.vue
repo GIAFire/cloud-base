@@ -37,7 +37,7 @@ const toast = useToast()
 const userStore = useUserStore()
 
 const tenantEnabled = computed(
-  () => import.meta.env.VITE_APP_TENANT_ENABLE === 'true',
+  () => import.meta.env.VITE_APP_TENANT_ENABLE,
 ) // 租户开关：通过环境变量控制
 const tenantList = ref<TenantVO[]>([]) // 租户列表数据
 const pickerVisible = ref<Record<string, boolean>>({})

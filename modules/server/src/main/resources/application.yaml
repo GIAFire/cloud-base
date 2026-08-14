@@ -155,7 +155,7 @@ com.cloud:
     base-package: com.cloud
   web:
     admin-ui:
-      url: http://localhost:48080 # Admin 管理后台 UI 的地址
+      url: http://localhost:8081 # Admin 管理后台 UI 的地址
   xss:
     enable: false
     exclude-urls: # 如下两个 url，仅仅是为了演示，去掉配置也没关系

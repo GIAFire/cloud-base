@@ -13,7 +13,7 @@ import static com.cloud.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_D
 @Data
 public class Demo03StudentNormalPageReqVO extends PageParam {
 
-    @Schema(description = "名字", example = "芋艿")
+    @Schema(description = "名字", example = "ZR后台管理系统")
     private String name;
 
     @Schema(description = "性别")

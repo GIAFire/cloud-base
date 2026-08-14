@@ -1,7 +1,10 @@
+import { createRequire } from 'node:module'
 import pluginVue from 'eslint-plugin-vue'
 import tseslint from 'typescript-eslint'
 import unocss from '@unocss/eslint-config/flat'
-import autoImportGlobals from './.eslintrc-auto-import.json' with { type: 'json' }
+
+const require = createRequire(import.meta.url)
+const autoImportGlobals = require('./.eslintrc-auto-import.json')
 
 export default tseslint.config(
   // Global ignores (replaces .eslintignore)
@@ -107,7 +110,7 @@ export default tseslint.config(
       'no-unused-vars': 'off',
       'space-before-function-paren': 'off',
 
-      // UnoCSS rules - 芋艿：禁用 unocss 顺序提示
+      // UnoCSS rules - 禁用 unocss 顺序提示
       '@unocss/order': 'off',
       '@unocss/order-attributify': 'off',
       'unocss/order': 'off',

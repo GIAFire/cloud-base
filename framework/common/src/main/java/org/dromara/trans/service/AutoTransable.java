@@ -15,20 +15,6 @@ import java.util.List;
  * @since  2020-05-19 10:26:15
  */
 public interface AutoTransable<V extends VO> {
-
-    /**
-     * 根据 ids 查询数据列表
-     *
-     * 改方法已过期啦，请使用 selectByIds
-     *
-     * @param ids 编号数组
-     * @return 数据列表
-     */
-    @Deprecated
-    default List<V> findByIds(List<? extends Object> ids){
-        return new ArrayList<>();
-    }
-
     /**
      * 根据 ids 查询
      *
@@ -36,7 +22,7 @@ public interface AutoTransable<V extends VO> {
      * @return 数据列表
      */
     default List<V> selectByIds(List<? extends Object> ids){
-        return this.findByIds(ids);
+        return new ArrayList<>();
     }
 
     /**

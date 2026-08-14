@@ -24,20 +24,12 @@ export const faqList: FaqCategory[] = [
     title: 'Cloud问题',
     childList: [
       {
-        title: 'Cloud开源吗？',
-        content: '开源，基于 MIT 协议，可免费商用。',
+        title: 'Cloud',
+        content: '123。',
       },
       {
-        title: 'Cloud可以商用吗？',
-        content: '可以，Cloud采用 MIT 开源协议，允许商业使用。',
-      },
-      {
-        title: 'Cloud官网地址多少？',
-        content: 'https://www.iocoder.cn',
-      },
-      {
-        title: 'Cloud文档地址多少？',
-        content: 'https://doc.iocoder.cn',
+        title: 'Cloud2',
+        content: '312',
       },
     ],
   },

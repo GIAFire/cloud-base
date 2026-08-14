@@ -235,52 +235,12 @@ let projects = reactive<Project[]>([])
 const getProject = async () => {
   const data = [
     {
-      name: 'ruoyi-vue-pro',
+      name: '测试卡片',
       icon: 'simple-icons:springboot',
-      message: 'github.com/YunaiV/ruoyi-vue-pro',
+      message: 'www.baidu.com',
       personal: 'Spring Boot 单体架构',
       time: new Date('2025-01-02'),
       color: '#6DB33F'
-    },
-    {
-      name: 'ui-admin-vue3',
-      icon: 'ep:element-plus',
-      message: 'github.com//ui-admin-vue3',
-      personal: 'Vue3 + element-plus 管理后台',
-      time: new Date('2025-02-03'),
-      color: '#409EFF'
-    },
-    {
-      name: 'ui-mall-uniapp',
-      icon: 'icon-park-outline:mall-bag',
-      message: 'github.com//ui-mall-uniapp',
-      personal: 'Vue3 + uniapp 商城手机端',
-      time: new Date('2025-03-04'),
-      color: '#ff4d4f'
-    },
-    {
-      name: 'cloud',
-      icon: 'material-symbols:cloud-outline',
-      message: 'github.com/YunaiV/cloud',
-      personal: 'Spring Cloud 微服务架构',
-      time: new Date('2025-04-05'),
-      color: '#1890ff'
-    },
-    {
-      name: 'ui-admin-vben',
-      icon: 'devicon:antdesign',
-      message: 'github.com//ui-admin-vben',
-      personal: 'Vue3 + vben5(antd) 管理后台',
-      time: new Date('2025-05-06'),
-      color: '#e18525'
-    },
-    {
-      name: 'ui-admin-uniapp',
-      icon: 'ant-design:mobile',
-      message: 'github.com//ui-admin-uniapp',
-      personal: 'Vue3 + uniapp 管理手机端',
-      time: new Date('2025-06-01'),
-      color: '#2979ff'
     }
   ]
   projects = Object.assign(projects, data)
@@ -290,30 +250,6 @@ const getProject = async () => {
 let notice = reactive<Notice[]>([])
 const getNotice = async () => {
   const data = [
-    {
-      title: '系统支持 JDK 8/17/21，Vue 2/3',
-      type: '技术兼容性',
-      keys: ['JDK', 'Vue'],
-      date: new Date()
-    },
-    {
-      title: '后端提供 Spring Boot 2.7/3.2 + Cloud 双架构',
-      type: '架构灵活性',
-      keys: ['Boot', 'Cloud'],
-      date: new Date()
-    },
-    {
-      title: '全部开源，个人与企业可 100% 直接使用，无需授权',
-      type: '开源免授权',
-      keys: ['无需授权'],
-      date: new Date()
-    },
-    {
-      title: '国内使用最广泛的快速开发平台，远超 10w+ 企业使用',
-      type: '广泛企业认可',
-      keys: ['最广泛', '10w+'],
-      date: new Date()
-    }
   ]
   notice = Object.assign(notice, data)
 }
@@ -330,33 +266,33 @@ const getShortcut = async () => {
       color: '#1fdaca'
     },
     {
-      name: '商城中心',
-      icon: 'ep:shop',
-      url: '/mall/home',
+      name: '系统管理',
+      icon: 'ep:tools',
+      url: '/system/user',
       color: '#ff6b6b'
     },
     {
-      name: 'AI 大模型',
-      icon: 'tabler:ai',
-      url: '/ai/chat',
+      name: '基础设施',
+      icon: 'ep:monitor',
+      url: '/infra/codegen',
       color: '#7c3aed'
     },
     {
-      name: 'ERP 系统',
-      icon: 'simple-icons:erpnext',
-      url: '/erp/home',
+      name: '支付管理',
+      icon: 'ep:money',
+      url: '/pay/app',
       color: '#3fb27f'
     },
     {
-      name: 'CRM 系统',
-      icon: 'simple-icons:civicrm',
-      url: '/crm/backlog',
+      name: '会员中心',
+      icon: 'ep:bicycle',
+      url: '/member/user',
       color: '#4daf1bc9'
     },
     {
-      name: 'IoT 物联网',
-      icon: 'fa-solid:hdd',
-      url: '/iot/home',
+      name: 'IM 即时通讯',
+      icon: 'ep:chat-dot-round',
+      url: '/im/statistics',
       color: '#1a73e8'
     }
   ]

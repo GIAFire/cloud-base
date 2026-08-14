@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.iocoder.cloud</groupId>
+        <groupId>com.cloud</groupId>
         <artifactId>cloud-base</artifactId>
-<!--        <version>2026.07-jdk25-SNAPSHOT</version>-->
+<!--        <version>v1.0.0</version>-->
         <version>${revision}</version>
     </parent>
 

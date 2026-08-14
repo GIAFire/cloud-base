@@ -3,3 +3,8 @@ allowBuilds:
   core-js-pure: true
   es5-ext: true
   esbuild: true
+
+packageExtensions:
+  '@unocss/eslint-plugin@66.6.8':
+    dependencies:
+      '@typescript-eslint/types': 8.58.1

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>cloud-base</artifactId>
-        <groupId>cn.iocoder.cloud</groupId>
+        <groupId>com.cloud</groupId>
         <version>${revision}</version>
     </parent>
     <packaging>pom</packaging>

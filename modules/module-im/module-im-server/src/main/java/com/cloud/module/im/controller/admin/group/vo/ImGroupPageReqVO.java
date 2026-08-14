@@ -14,7 +14,7 @@ import static com.cloud.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_D
 @ToString(callSuper = true)
 public class ImGroupPageReqVO extends PageParam {
 
-    @Schema(description = "群名称", example = "芋艿")
+    @Schema(description = "群名称", example = "ZR后台管理系统")
     private String name;
 
     @Schema(description = "群主用户编号", example = "31460")

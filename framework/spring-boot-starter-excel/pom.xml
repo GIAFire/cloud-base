@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>cn.iocoder.cloud</groupId>
+        <groupId>com.cloud</groupId>
         <artifactId>framework</artifactId>
         <version>${revision}</version>
     </parent>
@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>common</artifactId>
         </dependency>
 
@@ -28,7 +28,7 @@
 
         <!-- RPC 远程调用相关 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>spring-boot-starter-rpc</artifactId>
             <optional>true</optional>
         </dependency>
@@ -58,7 +58,7 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>spring-boot-starter-biz-ip</artifactId>
             <optional>true</optional> <!-- 设置为 optional，只有在 AreaConvert 的时候使用 -->
         </dependency>

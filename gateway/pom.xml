@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>cloud-base</artifactId>
-        <groupId>cn.iocoder.cloud</groupId>
+        <groupId>com.cloud</groupId>
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -17,7 +17,7 @@
     <dependencies>
         <!-- 业务组件 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>module-system-api</artifactId>
             <version>${revision}</version>
             <exclusions>
@@ -59,7 +59,7 @@
 
         <!-- 监控相关 -->
         <dependency>
-            <groupId>cn.iocoder.cloud</groupId>
+            <groupId>com.cloud</groupId>
             <artifactId>spring-boot-starter-monitor</artifactId>
         </dependency>
         <dependency>

@@ -13,7 +13,7 @@ Authorization: Bearer {{token}}
     "accessSecret": "kXM1l5ia1RvSX3QaOEcwI3RLz3Y2rmNszWonKZtP",
     "bucket": "ruoyi-vue-pro",
     "endpoint": "s3-cn-south-1.qiniucs.com",
-    "domain": "http://localhost:48080",
+    "domain": "http://localhost:8081",
     "region": "oss-cn-beijing"
   }
 }

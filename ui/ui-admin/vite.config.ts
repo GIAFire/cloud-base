@@ -65,8 +65,7 @@ export default ({command, mode}: ConfigEnv): UserConfig => {
                             return source
                         }
                         return `@use "${getRelativeScssUsePath(filename, variablesScssPath)}" as *;\n${source}`
-                    },
-                    api: 'modern-compiler'
+                    }
                 }
             }
         },

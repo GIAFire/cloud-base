@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.iocoder.cloud</groupId>
+    <groupId>com.cloud</groupId>
     <artifactId>dependencies</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
@@ -14,7 +14,7 @@
 
 
     <properties>
-        <revision>2026.07-jdk25-SNAPSHOT</revision>
+        <revision>v1.0.0</revision>
         <flatten-maven-plugin.version>1.7.2</flatten-maven-plugin.version>
         <!-- 统一依赖管理 -->
         <spring.boot.version>4.1.0</spring.boot.version>
@@ -46,9 +46,6 @@
         <skywalking.version>9.6.0</skywalking.version>
         <spring-boot-admin.version>4.1.1</spring-boot-admin.version>
         <opentelemetry.version>1.39.0</opentelemetry.version>
-        <!-- Test 测试相关 -->
-        <podam.version>8.0.2.RELEASE</podam.version>
-        <jedis-mock.version>1.1.15</jedis-mock.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <!-- 工具类相关 -->
         <anji-plus-captcha.version>1.4.0</anji-plus-captcha.version>
@@ -127,17 +124,17 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-biz-tenant</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-biz-data-permission</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-biz-ip</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -156,26 +153,26 @@
             </dependency>
 
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-env</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <!-- Web 相关 -->
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-websocket</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -204,7 +201,7 @@
 
             <!-- DB 相关 -->
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-mybatis</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -279,7 +276,7 @@
             </dependency>
 
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-redis</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -310,7 +307,7 @@
 
             <!-- RPC 远程调用相关 -->
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-rpc</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -326,14 +323,14 @@
                 <version>${xxl-job.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-job</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <!-- 消息队列相关 -->
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-mq</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -351,7 +348,7 @@
 
             <!-- 服务保障相关 -->
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-protection</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -370,7 +367,7 @@
 
             <!-- 监控相关 -->
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-monitor</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -440,27 +437,15 @@
                 </exclusions>
             </dependency>
 
-            <dependency>
-                <groupId>com.github.fppt</groupId> <!-- 单元测试，我们采用内嵌的 Redis 数据库 -->
-                <artifactId>jedis-mock</artifactId>
-                <version>${jedis-mock.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>uk.co.jemos.podam</groupId> <!-- 单元测试，随机生成 POJO 类 -->
-                <artifactId>podam</artifactId>
-                <version>${podam.version}</version>
-            </dependency>
-
             <!-- 工具类相关 -->
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>common</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.iocoder.cloud</groupId>
+                <groupId>com.cloud</groupId>
                 <artifactId>spring-boot-starter-excel</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -474,16 +459,6 @@
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId> <!-- use mapstruct-jdk8 for Java 8 or higher -->
-                <version>${mapstruct.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct-jdk8</artifactId>
-                <version>${mapstruct.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
 
@@ -597,12 +572,6 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
                 <version>${okhttp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>mockwebserver</artifactId>
-                <version>${okhttp.version}</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- 三方云服务相关 -->

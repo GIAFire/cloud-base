@@ -1,5 +1,5 @@
 {
-  "name": "Cloud Management System",
+  "name": "ZR后台管理系统",
   "appid": "__UNI__D1E5001",
   "description": "",
   "versionName": "1.0.0",
@@ -111,7 +111,7 @@
   },
   "quickapp": {},
   "mp-weixin": {
-    "appid": "wx63c280fe3248a3e7",
+    "appid": "wxd29599d36743ded1",
     "setting": {
       "urlCheck": false,
       "es6": true,
