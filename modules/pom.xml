@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.iocoder.cloud</groupId>
-        <artifactId>yudao</artifactId>
+        <artifactId>cloud-base</artifactId>
 <!--        <version>2026.07-jdk25-SNAPSHOT</version>-->
         <version>${revision}</version>
     </parent>

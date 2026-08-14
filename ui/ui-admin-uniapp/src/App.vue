@@ -22,7 +22,7 @@ onShow((options) => {
 
   // 直接进入时使用启动路径；从文件、地图等系统页面返回时保留当前页面
   // https://github.com/unibest-tech/unibest/issues/192
-  // https://gitee.com/yudaocode/yudao-ui-admin-uniapp/issues/IK1L9Q
+  //
   const currentRoute = currRoute()
   const path = options?.path || currentRoute.path
   if (!path) {

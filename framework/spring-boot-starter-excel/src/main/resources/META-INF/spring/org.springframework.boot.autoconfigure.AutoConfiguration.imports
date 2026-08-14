@@ -1,2 +1,2 @@
-cn.iocoder.yudao.framework.dict.config.YudaoDictRpcAutoConfiguration
-cn.iocoder.yudao.framework.dict.config.YudaoDictAutoConfiguration
+com.cloud.framework.dict.config.DictRpcAutoConfiguration
+com.cloud.framework.dict.config.DictAutoConfiguration

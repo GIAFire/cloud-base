@@ -1,2 +1,2 @@
 org.springframework.boot.EnvironmentPostProcessor=\
-  cn.iocoder.yudao.framework.tenant.core.mq.kafka.TenantKafkaEnvironmentPostProcessor
+  com.cloud.framework.tenant.core.mq.kafka.TenantKafkaEnvironmentPostProcessor

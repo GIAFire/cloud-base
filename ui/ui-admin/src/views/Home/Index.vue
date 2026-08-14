@@ -65,7 +65,7 @@
             <el-link
               type="primary"
               :underline="false"
-              href="https://github.com/yudaocode"
+              href=""
               target="_blank"
             >
               {{ t('action.more') }}
@@ -243,41 +243,41 @@ const getProject = async () => {
       color: '#6DB33F'
     },
     {
-      name: 'yudao-ui-admin-vue3',
+      name: 'ui-admin-vue3',
       icon: 'ep:element-plus',
-      message: 'github.com/yudaocode/yudao-ui-admin-vue3',
+      message: 'github.com//ui-admin-vue3',
       personal: 'Vue3 + element-plus 管理后台',
       time: new Date('2025-02-03'),
       color: '#409EFF'
     },
     {
-      name: 'yudao-ui-mall-uniapp',
+      name: 'ui-mall-uniapp',
       icon: 'icon-park-outline:mall-bag',
-      message: 'github.com/yudaocode/yudao-ui-mall-uniapp',
+      message: 'github.com//ui-mall-uniapp',
       personal: 'Vue3 + uniapp 商城手机端',
       time: new Date('2025-03-04'),
       color: '#ff4d4f'
     },
     {
-      name: 'yudao-cloud',
+      name: 'cloud',
       icon: 'material-symbols:cloud-outline',
-      message: 'github.com/YunaiV/yudao-cloud',
+      message: 'github.com/YunaiV/cloud',
       personal: 'Spring Cloud 微服务架构',
       time: new Date('2025-04-05'),
       color: '#1890ff'
     },
     {
-      name: 'yudao-ui-admin-vben',
+      name: 'ui-admin-vben',
       icon: 'devicon:antdesign',
-      message: 'github.com/yudaocode/yudao-ui-admin-vben',
+      message: 'github.com//ui-admin-vben',
       personal: 'Vue3 + vben5(antd) 管理后台',
       time: new Date('2025-05-06'),
       color: '#e18525'
     },
     {
-      name: 'yudao-ui-admin-uniapp',
+      name: 'ui-admin-uniapp',
       icon: 'ant-design:mobile',
-      message: 'github.com/yudaocode/yudao-ui-admin-uniapp',
+      message: 'github.com//ui-admin-uniapp',
       personal: 'Vue3 + uniapp 管理手机端',
       time: new Date('2025-06-01'),
       color: '#2979ff'

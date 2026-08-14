@@ -1,8 +1,8 @@
-cn.iocoder.yudao.framework.apilog.config.YudaoApiLogAutoConfiguration
-cn.iocoder.yudao.framework.jackson.config.YudaoJacksonAutoConfiguration
-cn.iocoder.yudao.framework.swagger.config.YudaoSwaggerAutoConfiguration
-cn.iocoder.yudao.framework.web.config.YudaoWebAutoConfiguration
-cn.iocoder.yudao.framework.apilog.config.YudaoApiLogRpcAutoConfiguration
-cn.iocoder.yudao.framework.xss.config.YudaoXssAutoConfiguration
-cn.iocoder.yudao.framework.banner.config.YudaoBannerAutoConfiguration
-cn.iocoder.yudao.framework.encrypt.config.YudaoApiEncryptAutoConfiguration
+com.cloud.framework.apilog.config.ApiLogAutoConfiguration
+com.cloud.framework.jackson.config.JacksonAutoConfiguration
+com.cloud.framework.swagger.config.SwaggerAutoConfiguration
+com.cloud.framework.web.config.WebAutoConfiguration
+com.cloud.framework.apilog.config.ApiLogRpcAutoConfiguration
+com.cloud.framework.xss.config.XssAutoConfiguration
+com.cloud.framework.banner.config.BannerAutoConfiguration
+com.cloud.framework.encrypt.config.ApiEncryptAutoConfiguration

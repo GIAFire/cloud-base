@@ -128,7 +128,7 @@
             <el-link href="https://www.iocoder.cn/Interview/good-collection/" target="_blank">
               ⚡面试手册
             </el-link>
-            <el-link href="http://static.yudao.iocoder.cn/mp/Aix9975.jpeg" target="_blank">
+            <el-link href="http://localhost:3000/mp/Aix9975.jpeg" target="_blank">
               🤝外包咨询
             </el-link>
           </div>
