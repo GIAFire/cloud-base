@@ -1,3 +1,3 @@
-cn.iocoder.yudao.framework.datapermission.config.YudaoDataPermissionAutoConfiguration
-cn.iocoder.yudao.framework.datapermission.config.YudaoDeptDataPermissionAutoConfiguration
-cn.iocoder.yudao.framework.datapermission.config.YudaoDataPermissionRpcAutoConfiguration
+com.cloud.framework.datapermission.config.DataPermissionAutoConfiguration
+com.cloud.framework.datapermission.config.DeptDataPermissionAutoConfiguration
+com.cloud.framework.datapermission.config.DataPermissionRpcAutoConfiguration

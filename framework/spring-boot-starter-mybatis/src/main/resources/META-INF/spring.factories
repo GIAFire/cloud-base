@@ -1,2 +1,2 @@
 org.springframework.boot.EnvironmentPostProcessor=\
-  cn.iocoder.yudao.framework.mybatis.config.IdTypeEnvironmentPostProcessor
+  com.cloud.framework.mybatis.config.IdTypeEnvironmentPostProcessor

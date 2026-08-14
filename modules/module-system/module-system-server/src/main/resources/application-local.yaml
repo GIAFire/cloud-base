@@ -133,8 +133,8 @@ spring:
 logging:
   level:
     # 配置自己写的 MyBatis Mapper 打印日志
-    cn.iocoder.yudao.module.system.dal.mysql: debug
-    cn.iocoder.yudao.module.system.dal.mysql.sms.SmsChannelMapper: INFO # 配置 SmsChannelMapper 的日志级别为 info
+    com.cloud.module.system.dal.mysql: debug
+    com.cloud.module.system.dal.mysql.sms.SmsChannelMapper: INFO # 配置 SmsChannelMapper 的日志级别为 info
     org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 芋艿：先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
 
 --- #################### 微信公众号、小程序相关配置 ####################
@@ -165,10 +165,10 @@ wx:
       key-prefix: wa # Redis Key 的前缀
       http-client-type: HttpComponents # 采用 HttpComponents（HttpClient 5）请求微信小程序平台
 
---- #################### 芋道相关配置 ####################
+--- #################### Cloud相关配置 ####################
 
-# 芋道配置项，设置当前项目所有自定义的配置
-yudao:
+# Cloud配置项，设置当前项目所有自定义的配置
+com.cloud:
   env: # 多环境的配置项
     tag: ${HOSTNAME}
   captcha:

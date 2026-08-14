@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.iocoder.cloud</groupId>
-    <artifactId>yudao</artifactId>
+    <artifactId>cloud-base</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
@@ -16,7 +16,7 @@
     </modules>
 
     <name>${project.artifactId}</name>
-    <description>芋道项目基础脚手架</description>
+    <description>Cloud项目基础脚手架</description>
 
 
     <properties>

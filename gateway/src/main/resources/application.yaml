@@ -7,7 +7,7 @@ spring:
 
   http:
     codecs:
-      max-in-memory-size: 10MB # 调整缓冲区大小https://gitee.com/zhijiantianya/yudao-cloud/pulls/176
+      max-in-memory-size: 10MB # 调整缓冲区大小https://gitee.com/zhijiantianya/cloud/pulls/176
 
   main:
     allow-circular-references: true # 允许循环依赖，因为项目是三层架构，无法避免这个情况。
@@ -124,8 +124,8 @@ knife4j:
         service-name: im-server
         url: /admin-api/im/v3/api-docs
 
---- #################### 芋道相关配置 ####################
+--- #################### Cloud相关配置 ####################
 
-yudao:
+com.cloud:
   info:
     version: 1.0.0

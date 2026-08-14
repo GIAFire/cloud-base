@@ -1,2 +1,2 @@
-cn.iocoder.yudao.framework.tenant.config.YudaoTenantRpcAutoConfiguration
-cn.iocoder.yudao.framework.tenant.config.YudaoTenantAutoConfiguration
+com.cloud.framework.tenant.config.TenantRpcAutoConfiguration
+com.cloud.framework.tenant.config.TenantAutoConfiguration
