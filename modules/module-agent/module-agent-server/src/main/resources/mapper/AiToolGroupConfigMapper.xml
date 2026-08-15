@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.module.agent.mapper.AiToolGroupConfigMapper">
+
+    <resultMap id="AiToolGroupConfigResult" type="com.cloud.module.agent.entity.AiToolGroupConfigEntity">
+        <id property="id" column="id"/>
+        <result property="groupName" column="group_name"/>
+        <result property="description" column="description"/>
+        <result property="enabled" column="enabled"/>
+        <result property="activeByDefault" column="active_by_default"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <sql id="GroupColumns">
+        id,
+        group_name,
+        description,
+        enabled,
+        active_by_default,
+        creator,
+        updater,
+        create_time,
+        update_time,
+        deleted,
+        tenant_id
+    </sql>
+
+    <select id="selectGroups" resultMap="AiToolGroupConfigResult">
+        SELECT
+        <include refid="GroupColumns"/>
+        FROM ai_tool_group_config
+        WHERE deleted = 0
+        ORDER BY updated_at DESC, id DESC
+    </select>
+
+    <select id="selectGroupById" resultMap="AiToolGroupConfigResult">
+        SELECT
+        <include refid="GroupColumns"/>
+        FROM ai_tool_group_config
+        WHERE id = #{id}
+          AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <insert id="insertGroup" parameterType="com.cloud.module.agent.entity.AiToolGroupConfigEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ai_tool_group_config (
+            group_name,
+            description,
+            enabled,
+            active_by_default,
+            creator,
+            updater,
+            create_time,
+            update_time,
+            deleted,
+            tenant_id
+        ) VALUES (
+            #{groupName},
+            #{description},
+            #{enabled},
+            #{activeByDefault},
+            #{creator},
+            #{updater},
+            #{createTime},
+            #{updateTime},
+            #{deleted},
+            #{tenantId}
+        )
+    </insert>
+
+    <update id="updateGroupById" parameterType="com.cloud.module.agent.entity.AiToolGroupConfigEntity">
+        UPDATE ai_tool_group_config
+        <set>
+            <if test="groupName != null">group_name = #{groupName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="activeByDefault != null">active_by_default = #{activeByDefault},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="updater != null">updater = #{updater},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

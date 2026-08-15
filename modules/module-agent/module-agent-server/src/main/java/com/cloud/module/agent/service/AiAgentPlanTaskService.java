@@ -1,0 +1,21 @@
+package com.cloud.module.agent.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cloud.module.agent.entity.AiAgentPlanTaskEntity;
+
+/**
+ * <p>
+ * Agent计划任务表：保存todo_write生成的结构化任务清单和执行状态 服务类
+ * </p>
+ *
+ * @author zhiRan
+ * @since 2026-07-08
+ */
+public interface AiAgentPlanTaskService extends IService<AiAgentPlanTaskEntity> {
+
+    /**
+     * 按计划 ID 物理删除任务快照。
+     * 用于 todo_write 的全量任务列表同步，避免逻辑删除数据继续占用唯一索引。
+     */
+    int physicalDeleteByPlanId(Long planId);
+}

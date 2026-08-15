@@ -59,7 +59,7 @@ spring:
       primary: master
       datasource:
         master:
-          url: jdbc:mysql://${FE_IP}:3306/test_qms_base?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true # MySQL Connector/J 8.X 连接的示例
+          url: jdbc:mysql://${FE_IP}:3306/test_qms?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true # MySQL Connector/J 8.X 连接的示例
           username: root
           password: ${FE185PWD}
         slave: # 模拟从库，可根据自己需要修改 # 模拟从库，可根据自己需要修改
@@ -194,3 +194,43 @@ justauth:
     type: REDIS
     prefix: 'social_auth_state:' # 缓存前缀，目前只对 Redis 缓存生效，默认 JUSTAUTH::STATE::
     timeout: 24h # 超时时长，目前只对 Redis 缓存生效，默认 3 分钟
+
+rag:
+  store:
+    type: elasticsearch  # milvus | elasticsearch | pgvector | qdrant
+    collection-prefix: zhiran_rag
+    elasticsearch:
+      url: http://127.0.0.1:9200
+      username:
+      password:
+      disable-ssl-verification: false
+    milvus:
+      host: http://localhost:19530
+      database: default
+      username: root
+      password:
+      token:
+      connect-timeout: 10s
+    pgvector:
+      jdbc-url:
+      username:
+      password:
+      schema: public
+      connection-timeout: 30s
+    qdrant:
+      location:
+      api-key:
+      check-compatibility: true
+
+knowledge:
+  source:
+    # 多实例部署时必须配置为所有实例可读写的共享挂载目录。
+    root: ./knowledge-uploads
+    max-file-size: 50MB
+  processing:
+    enabled: true
+    lease-duration: 30m
+    concurrency: 2
+    queue-capacity: 20
+    recovery-batch-size: 4
+    embedding-batch-size: 20
