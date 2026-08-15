@@ -33,9 +33,3 @@ spring:
           service-host-type: IP # 注册实例时，优先使用 IP [IP, HOST_NAME, CANONICAL_HOST_NAME]
         username: admin
         password: admin
-
-# 日志文件配置
-logging:
-  level:
-    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
-

@@ -19,7 +19,6 @@
         本质上来说，它就是个空壳（容器）！
     </description>
 
-
     <dependencies>
         <dependency>
             <groupId>com.cloud</groupId>
@@ -32,27 +31,29 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- 会员中心。默认注释，保证编译速度 -->
         <dependency>
             <groupId>com.cloud</groupId>
             <artifactId>module-member-server</artifactId>
             <version>${revision}</version>
         </dependency>
 
-        <!-- 支付服务。默认注释，保证编译速度 -->
         <dependency>
             <groupId>com.cloud</groupId>
             <artifactId>module-pay-server</artifactId>
             <version>${revision}</version>
         </dependency>
 
-        <!-- IM 即时通讯模块 -->
         <dependency>
             <groupId>com.cloud</groupId>
             <artifactId>module-im-server</artifactId>
             <version>${revision}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.cloud</groupId>
+            <artifactId>module-agent-server</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- spring boot 配置所需依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
