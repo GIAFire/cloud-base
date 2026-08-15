@@ -199,7 +199,7 @@ public class SocialClientServiceImpl implements SocialClientService {
      */
     @VisibleForTesting
     AuthRequest buildAuthRequest(Integer socialType, Integer userType) {
-        // 1. 先查找默认的配置项，从 application-*.yaml 中读取
+        // 1. 先查找默认的配置项，从 application-*.yml 中读取
         AuthRequest request = authRequestFactory.get(SocialTypeEnum.valueOfType(socialType).getSource());
         Assert.notNull(request, String.format("社交平台(%d) 不存在", socialType));
         // 2. 查询 DB 的配置项，如果存在则进行覆盖
@@ -248,7 +248,7 @@ public class SocialClientServiceImpl implements SocialClientService {
         if (client != null && Objects.equals(client.getStatus(), CommonStatusEnum.ENABLE.getStatus())) {
             return wxMpServiceCache.getUnchecked(client.getClientId() + ":" + client.getClientSecret());
         }
-        // 第二步，不存在 DB 配置项，则使用 application-*.yaml 对应的 WxMpService 对象
+        // 第二步，不存在 DB 配置项，则使用 application-*.yml 对应的 WxMpService 对象
         return wxMpService;
     }
 
@@ -435,7 +435,7 @@ public class SocialClientServiceImpl implements SocialClientService {
         if (client != null && Objects.equals(client.getStatus(), CommonStatusEnum.ENABLE.getStatus())) {
             return wxMaServiceCache.getUnchecked(client.getClientId() + ":" + client.getClientSecret());
         }
-        // 第二步，不存在 DB 配置项，则使用 application-*.yaml 对应的 WxMaService 对象
+        // 第二步，不存在 DB 配置项，则使用 application-*.yml 对应的 WxMaService 对象
         return wxMaService;
     }
 

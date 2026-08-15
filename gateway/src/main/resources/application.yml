@@ -14,8 +14,8 @@ spring:
 
   config:
     import:
-      - optional:classpath:application-${spring.profiles.active}.yaml # 加载【本地】配置
-      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml # 加载【Nacos】的配置
+      - optional:classpath:application-${spring.profiles.active}.yml # 加载【本地】配置
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yml # 加载【Nacos】的配置
 
   cloud:
     # Spring Cloud Gateway 配置项，对应 GatewayProperties 类

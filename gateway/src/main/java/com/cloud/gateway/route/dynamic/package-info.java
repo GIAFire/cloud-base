@@ -3,7 +3,7 @@
  *
  * 参见  博客的「6. 基于配置中心 Nacos 实现动态路由」小节
  *
- * 使用方式：在 Nacos 修改 DataId 为 gateway-server.yaml 的配置，修改 spring.cloud.gateway.routes 配置项
+ * 使用方式：在 Nacos 修改 DataId 为 gateway-server.yml 的配置，修改 spring.cloud.gateway.routes 配置项
  *
  * @author Cloud
  */
