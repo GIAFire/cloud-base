@@ -60,9 +60,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     // 1.1 基于 token 构建登录用户
                     loginUser = buildLoginUserByToken(token, userType);
                     // 1.2 模拟 Login 功能，方便日常开发调试
-                    if (loginUser == null) {
-                        loginUser = mockLoginUser(request, token, userType);
-                    }
+//                    if (loginUser == null) {
+//                        loginUser = mockLoginUser(request, token, userType);
+//                    }
                 } catch (Throwable ex) {
                     CommonResult<?> result = globalExceptionHandler.allExceptionHandler(request, ex);
                     ServletUtils.writeJSON(response, result);
@@ -97,6 +97,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             return new LoginUser().setId(accessToken.getUserId()).setUserType(accessToken.getUserType())
                     .setInfo(accessToken.getUserInfo()) // 额外的用户信息
                     .setTenantId(accessToken.getTenantId()).setScopes(accessToken.getScopes())
+                    .setRoleIds(accessToken.getRoleIds())
                     .setExpiresTime(accessToken.getExpiresTime());
         } catch (ServiceException serviceException) {
             // 校验 Token 不通过时，考虑到一些接口是无需登录的，所以直接返回 null 即可

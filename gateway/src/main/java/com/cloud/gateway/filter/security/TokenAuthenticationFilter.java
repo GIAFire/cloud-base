@@ -157,6 +157,7 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
         return new LoginUser().setId(tokenInfo.getUserId()).setUserType(tokenInfo.getUserType())
                 .setInfo(tokenInfo.getUserInfo()) // 额外的用户信息
                 .setTenantId(tokenInfo.getTenantId()).setScopes(tokenInfo.getScopes())
+                .setRoleIds(tokenInfo.getRoleIds())
                 .setExpiresTime(tokenInfo.getExpiresTime());
     }
 

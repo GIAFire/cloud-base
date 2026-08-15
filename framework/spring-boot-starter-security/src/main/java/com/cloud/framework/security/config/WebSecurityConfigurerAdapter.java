@@ -126,7 +126,7 @@ public class WebSecurityConfigurerAdapter {
         Multimap<HttpMethod, String> permitAllUrls = getPermitAllUrlsFromAnnotations();
         // 设置每个请求的权限
         httpSecurity
-                // ①：全局共享规则
+                // 1：全局共享规则
                 .authorizeHttpRequests(c -> c
                     // 1.1 静态资源，可匿名访问
                     .requestMatchers(HttpMethod.GET, "/*.html", "/*.css", "/*.js").permitAll()
@@ -140,9 +140,9 @@ public class WebSecurityConfigurerAdapter {
                     // 1.3 基于 com.cloud.security.permit-all-urls 无需认证
                     .requestMatchers(securityProperties.getPermitAllUrls().toArray(new String[0])).permitAll()
                 )
-                // ②：每个项目的自定义规则
+                // 2：每个项目的自定义规则
                 .authorizeHttpRequests(c -> authorizeRequestsCustomizers.forEach(customizer -> customizer.customize(c)))
-                // ③：兜底规则，必须认证
+                // 3：兜底规则，必须认证
                 .authorizeHttpRequests(c -> c
                         .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll() // WebFlux 异步请求，无需认证，目的：SSE 场景
                         .anyRequest().authenticated());

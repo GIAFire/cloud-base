@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Schema(description = "RPC 服务 - OAuth2 访问令牌的校验 Response DTO")
 @Data
@@ -26,6 +27,9 @@ public class OAuth2AccessTokenCheckRespDTO implements Serializable {
 
     @Schema(description = "授权范围的数组", example = "user_info")
     private List<String> scopes;
+
+    @Schema(description = "角色编号的数组", example = "1,2")
+    private Set<Long> roleIds;
 
     @Schema(description = "过期时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime expiresTime;

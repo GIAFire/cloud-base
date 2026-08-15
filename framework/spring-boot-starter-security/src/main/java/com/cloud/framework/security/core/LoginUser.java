@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 登录用户信息
@@ -43,6 +44,10 @@ public class LoginUser {
      * 授权范围
      */
     private List<String> scopes;
+    /**
+     * 角色编号
+     */
+    private Set<Long> roleIds;
     /**
      * 过期时间
      */

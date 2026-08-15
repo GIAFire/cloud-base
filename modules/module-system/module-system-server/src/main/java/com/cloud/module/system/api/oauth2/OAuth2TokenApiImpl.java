@@ -9,9 +9,13 @@ import com.cloud.framework.common.biz.system.oauth2.dto.OAuth2AccessTokenCreateR
 import com.cloud.framework.common.biz.system.oauth2.dto.OAuth2AccessTokenRespDTO;
 import com.cloud.module.system.dal.dataobject.oauth2.OAuth2AccessTokenDO;
 import com.cloud.module.system.service.oauth2.OAuth2TokenService;
+import com.cloud.module.system.service.permission.PermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
@@ -21,6 +25,8 @@ public class OAuth2TokenApiImpl implements OAuth2TokenCommonApi {
 
     @Resource
     private OAuth2TokenService oauth2TokenService;
+    @Resource
+    private PermissionService permissionService;
 
     @Override
     public CommonResult<OAuth2AccessTokenRespDTO> createAccessToken(OAuth2AccessTokenCreateReqDTO reqDTO) {
@@ -33,7 +39,9 @@ public class OAuth2TokenApiImpl implements OAuth2TokenCommonApi {
     @TenantIgnore // 访问令牌校验时，无需传递租户编号；主要解决上传文件的场景，前端不会传递 tenant-id
     public CommonResult<OAuth2AccessTokenCheckRespDTO> checkAccessToken(String accessToken) {
         OAuth2AccessTokenDO accessTokenDO = oauth2TokenService.checkAccessToken(accessToken);
-        return success(BeanUtils.toBean(accessTokenDO, OAuth2AccessTokenCheckRespDTO.class));
+        OAuth2AccessTokenCheckRespDTO respDTO = BeanUtils.toBean(accessTokenDO, OAuth2AccessTokenCheckRespDTO.class);
+        respDTO.setRoleIds(new HashSet<>(permissionService.getUserRoleIdListByUserIdFromCache(accessTokenDO.getUserId())));
+        return success(respDTO);
     }
 
     @Override
