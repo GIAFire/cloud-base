@@ -25,7 +25,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-06-27
  */
 @RestController
-@RequestMapping("/toolGroupConfig")
+@RequestMapping("/agent/toolGroupConfig")
 @AllArgsConstructor
 public class AiToolGroupConfigController {
 

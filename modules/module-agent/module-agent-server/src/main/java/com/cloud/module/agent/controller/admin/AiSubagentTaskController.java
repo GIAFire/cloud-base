@@ -26,7 +26,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-07-11
  */
 @RestController
-@RequestMapping("/subagentTask")
+@RequestMapping("/agent/subagentTask")
 @AllArgsConstructor
 public class AiSubagentTaskController {
     private final AiSubagentTaskService aiSubagentTaskService;

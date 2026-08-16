@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/knowledgeDocuments")
+@RequestMapping("/agent/knowledgeDocuments")
 @RequiredArgsConstructor
 public class AiKnowledgeChunkController {
 

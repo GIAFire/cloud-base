@@ -23,7 +23,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-07-11
  */
 @RestController
-@RequestMapping("/knowledgeAgentBinding")
+@RequestMapping("/agent/knowledgeAgentBinding")
 @AllArgsConstructor
 public class AiKnowledgeAgentBindingController {
     private final AiKnowledgeAgentBindingService aiKnowledgeAgentBindingService;

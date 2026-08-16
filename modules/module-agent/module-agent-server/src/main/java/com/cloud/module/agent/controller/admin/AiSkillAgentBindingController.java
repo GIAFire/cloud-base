@@ -18,7 +18,7 @@ import java.util.List;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/skillAgentBinding")
+@RequestMapping("/agent/skillAgentBinding")
 @RequiredArgsConstructor
 public class AiSkillAgentBindingController {
 

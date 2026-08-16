@@ -23,7 +23,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-06-28
  */
 @RestController
-@RequestMapping("/sysPermission")
+@RequestMapping("/agent/sysPermission")
 @AllArgsConstructor
 public class SysPermissionController {
     private final SysPermissionService sysPermissionService;

@@ -29,7 +29,7 @@ import reactor.core.publisher.Flux;
 @Slf4j
 @AllArgsConstructor
 @RestController
-@RequestMapping("/agent/chat")
+@RequestMapping("/agent/agent/chat")
 public class AgentChatController {
 
     private final AiAgentService agentService;

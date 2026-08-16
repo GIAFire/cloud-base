@@ -14,7 +14,7 @@ import java.util.List;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/skillInfo")
+@RequestMapping("/agent/skillInfo")
 @RequiredArgsConstructor
 public class AiSkillInfoController {
 

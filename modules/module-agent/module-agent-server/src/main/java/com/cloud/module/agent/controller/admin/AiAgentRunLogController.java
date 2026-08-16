@@ -22,7 +22,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-06-20
  */
 @RestController
-@RequestMapping("/agentRun")
+@RequestMapping("/agent/agentRun")
 @AllArgsConstructor
 public class AiAgentRunLogController {
     private final AiAgentRunLogService aiAgentRunLogService;

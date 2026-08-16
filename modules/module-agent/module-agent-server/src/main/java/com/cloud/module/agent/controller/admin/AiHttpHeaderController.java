@@ -29,7 +29,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  */
 @AllArgsConstructor
 @RestController
-@RequestMapping("/httpHeader")
+@RequestMapping("/agent/httpHeader")
 public class AiHttpHeaderController {
 
     private final AiHttpHeaderService httpHeaderService;

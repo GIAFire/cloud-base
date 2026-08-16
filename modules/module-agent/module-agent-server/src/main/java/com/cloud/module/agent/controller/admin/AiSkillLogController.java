@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/skillLog")
+@RequestMapping("/agent/skillLog")
 @RequiredArgsConstructor
 public class AiSkillLogController {
 

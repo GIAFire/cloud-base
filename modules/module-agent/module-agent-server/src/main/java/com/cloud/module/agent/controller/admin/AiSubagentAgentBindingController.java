@@ -23,7 +23,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-07-11
  */
 @RestController
-@RequestMapping("/subagentAgentBinding")
+@RequestMapping("/agent/subagentAgentBinding")
 @AllArgsConstructor
 public class AiSubagentAgentBindingController {
     private final AiSubagentAgentBindingService aiSubagentAgentBindingService;

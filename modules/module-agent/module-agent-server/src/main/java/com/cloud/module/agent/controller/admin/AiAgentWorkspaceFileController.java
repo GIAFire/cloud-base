@@ -23,7 +23,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-07-05
  */
 @RestController
-@RequestMapping("/workspaceFile")
+@RequestMapping("/agent/workspaceFile")
 @AllArgsConstructor
 public class AiAgentWorkspaceFileController {
     private final AiAgentWorkspaceFileService aiAgentWorkspaceFileService;

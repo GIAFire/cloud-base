@@ -25,7 +25,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-06-20
  */
 @RestController
-@RequestMapping("/agentMessage")
+@RequestMapping("/agent/agentMessage")
 @AllArgsConstructor
 public class AiAgentMessageController {
     private final AiAgentMessageService aiAgentMessageService;

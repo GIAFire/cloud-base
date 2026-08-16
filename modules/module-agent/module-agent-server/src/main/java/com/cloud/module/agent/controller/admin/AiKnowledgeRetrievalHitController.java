@@ -23,7 +23,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-07-06
  */
 @RestController
-@RequestMapping("/knowledgeRetrievalHit")
+@RequestMapping("/agent/knowledgeRetrievalHit")
 @AllArgsConstructor
 public class AiKnowledgeRetrievalHitController {
     private final AiKnowledgeRetrievalHitService aiKnowledgeRetrievalHitService;

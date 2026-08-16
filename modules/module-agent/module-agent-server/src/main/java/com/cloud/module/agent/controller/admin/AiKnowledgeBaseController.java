@@ -13,7 +13,7 @@ import java.util.List;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/knowledgeBases")
+@RequestMapping("/agent/knowledgeBases")
 @RequiredArgsConstructor
 public class AiKnowledgeBaseController {
 

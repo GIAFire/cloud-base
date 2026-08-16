@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/overview")
+@RequestMapping("/agent/overview")
 @RequiredArgsConstructor
 public class RunOverviewController {
 

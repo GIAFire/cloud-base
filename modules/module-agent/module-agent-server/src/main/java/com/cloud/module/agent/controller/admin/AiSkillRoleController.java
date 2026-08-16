@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2026-07-20
  */
 @RestController
-@RequestMapping("/ai-skill-role-entity")
+@RequestMapping("/agent/ai-skill-role-entity")
 public class AiSkillRoleController {
 
 }

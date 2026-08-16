@@ -23,7 +23,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-07-08
  */
 @RestController
-@RequestMapping("/agentPlanOpLog")
+@RequestMapping("/agent/agentPlanOpLog")
 @AllArgsConstructor
 public class AiAgentPlanOpLogController {
     private final AiAgentPlanOpLogService aiAgentPlanOpLogService;

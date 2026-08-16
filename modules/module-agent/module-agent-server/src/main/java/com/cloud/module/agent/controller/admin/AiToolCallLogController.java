@@ -28,7 +28,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-06-28
  */
 @RestController
-@RequestMapping("/toolCallLog")
+@RequestMapping("/agent/toolCallLog")
 @AllArgsConstructor
 public class AiToolCallLogController {
     private final AiToolCallLogService aiToolCallLogService;

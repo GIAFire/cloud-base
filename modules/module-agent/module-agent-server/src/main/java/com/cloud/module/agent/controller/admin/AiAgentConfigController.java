@@ -23,7 +23,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-06-20
  */
 @RestController
-@RequestMapping("/agentConfig")
+@RequestMapping("/agent/agentConfig")
 @AllArgsConstructor
 public class AiAgentConfigController {
     private final AiAgentConfigService aiAgentConfigService;

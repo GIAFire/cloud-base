@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/sysPrompt")
+@RequestMapping("/agent/sysPrompt")
 @RequiredArgsConstructor
 public class AiAgentSysPromptController {
 

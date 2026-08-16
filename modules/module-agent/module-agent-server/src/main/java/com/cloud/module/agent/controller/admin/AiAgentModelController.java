@@ -14,7 +14,7 @@ import java.util.List;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/modelConfig")
+@RequestMapping("/agent/modelConfig")
 @RequiredArgsConstructor
 public class AiAgentModelController {
 

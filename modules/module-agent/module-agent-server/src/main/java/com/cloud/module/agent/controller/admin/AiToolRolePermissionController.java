@@ -27,7 +27,7 @@ import static com.cloud.framework.common.pojo.CommonResult.success;
  * @since 2026-06-28
  */
 @RestController
-@RequestMapping("/toolRolePermission")
+@RequestMapping("/agent/toolRolePermission")
 @AllArgsConstructor
 public class AiToolRolePermissionController {
     private final AiToolRolePermissionService aiToolRolePermissionService;

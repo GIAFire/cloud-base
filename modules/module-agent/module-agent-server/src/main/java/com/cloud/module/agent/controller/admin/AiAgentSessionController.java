@@ -27,7 +27,7 @@ import java.util.List;
  * @since 2026-06-20
  */
 @RestController
-@RequestMapping("/agentSession")
+@RequestMapping("/agent/agentSession")
 @AllArgsConstructor
 public class AiAgentSessionController {
     private final AiAgentSessionService aiAgentSessionService;

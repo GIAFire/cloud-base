@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2026-07-12
  */
 @RestController
-@RequestMapping("/ai-agent-tool-entity")
+@RequestMapping("/agent/ai-agent-tool-entity")
 public class AiAgentToolController {
 
 }

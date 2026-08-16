@@ -13,7 +13,7 @@ import java.util.List;
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
 @RestController
-@RequestMapping("/skillResource")
+@RequestMapping("/agent/skillResource")
 @RequiredArgsConstructor
 public class AiSkillResourceController {
 
