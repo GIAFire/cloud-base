@@ -35,7 +35,7 @@
         <include refid="GroupColumns"/>
         FROM ai_tool_group_config
         WHERE deleted = 0
-        ORDER BY updated_at DESC, id DESC
+        ORDER BY update_time DESC, id DESC
     </select>
 
     <select id="selectGroupById" resultMap="AiToolGroupConfigResult">

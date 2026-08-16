@@ -133,6 +133,11 @@ spring:
 logging:
   file:
     name: ${user.home}/logs/${spring.application.name}.log # 日志文件名，全路径
+# mybatis 配置文件，对应 MybatisProperties 配置类
+  level:
+    # 配置自己写的 MyBatis Mapper 打印日志
+    com.cloud.module.agent.mapper: debug
+    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
 
 --- #################### 微信公众号、小程序相关配置 ####################
 wx:
@@ -160,7 +165,7 @@ wx:
 
 # Cloud配置项，设置当前项目所有自定义的配置
 com.cloud:
-  demo: true # 开启演示模式
+  demo: false # 开启演示模式
 
 justauth:
   enabled: true

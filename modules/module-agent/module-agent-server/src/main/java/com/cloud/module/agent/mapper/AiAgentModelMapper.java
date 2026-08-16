@@ -32,7 +32,7 @@ public interface AiAgentModelMapper extends BaseMapper<AiAgentModelEntity> {
     @org.apache.ibatis.annotations.Update("""
             UPDATE ai_agent_config
             SET model_id = NULL,
-                updated_at = CURRENT_TIMESTAMP,
+                update_time = CURRENT_TIMESTAMP,
                 version = version + 1
             WHERE tenant_id = #{tenantId}
               AND deleted = 0

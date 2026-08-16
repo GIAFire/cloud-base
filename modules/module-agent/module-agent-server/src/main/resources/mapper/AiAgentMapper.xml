@@ -9,11 +9,6 @@
             agent.agent_name AS agentName,
             agent.description AS agentDescription,
             agent.agent_type AS agentType,
-            tenant.id AS tenantId,
-            tenant.tenant_name AS tenantName,
-            tenant.status AS tenantStatus,
-            tenant.nacos_namespace_id AS tenantNacosNamespaceId,
-            tenant.remark AS tenantRemark,
             ac.id AS agentConfigId,
             ac.sys_prompt_id AS sysPromptId,
             ac.model_id AS modelId,
@@ -54,8 +49,6 @@
             ON ac.agent_id = agent.id
             AND ac.tenant_id = #{tenantId}
             AND ac.deleted = 0
-        LEFT JOIN sys_tenant tenant
-            ON tenant.id = agent.tenant_id
         LEFT JOIN ai_agent_model model
             ON model.id = ac.model_id
             AND model.tenant_id = #{tenantId}

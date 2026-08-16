@@ -10,13 +10,12 @@ public final class AgentWorkspaceResolver {
     private AgentWorkspaceResolver() {
     }
 
-    public static Path resolve(Long tenantId, Long userId, Long agentId) {
-        if (tenantId == null || userId == null || agentId == null) {
+    public static Path resolve(Long userId, Long agentId) {
+        if (userId == null || agentId == null) {
             throw new IllegalArgumentException(
                     "tenantId、userId 和 agentId 不能为空");
         }
         return root()
-                .resolve("tenants").resolve(String.valueOf(tenantId))
                 .resolve("users").resolve(String.valueOf(userId))
                 .resolve("agents").resolve(String.valueOf(agentId))
                 .toAbsolutePath()

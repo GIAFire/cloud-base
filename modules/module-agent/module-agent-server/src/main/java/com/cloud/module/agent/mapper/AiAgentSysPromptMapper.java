@@ -67,8 +67,8 @@ public interface AiAgentSysPromptMapper extends BaseMapper<AiAgentSysPromptEntit
                   AND agent.deleted = 0
             WHERE prompt.tenant_id = #{tenantId}
               AND prompt.deleted = 0
-            GROUP BY prompt.id, prompt.prompt_name, prompt.updated_at
-            ORDER BY bindingCount DESC, prompt.updated_at DESC, prompt.id DESC
+            GROUP BY prompt.id, prompt.prompt_name, prompt.update_time
+            ORDER BY bindingCount DESC, prompt.update_time DESC, prompt.id DESC
             LIMIT #{limit}
             """)
     List<SysPromptBindingCountRow> selectTopBindings(

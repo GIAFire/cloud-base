@@ -215,11 +215,11 @@ public interface RunOverviewMapper {
                 agent.agent_code,
                 agent.agent_name,
                 agent.description,
-                agent.updated_at,
+                agent.update_time,
                 model.id,
                 model.config_name,
                 model.model_name
-            ORDER BY runCount30Days DESC, agent.updated_at DESC, agent.id DESC
+            ORDER BY runCount30Days DESC, agent.update_time DESC, agent.id DESC
             LIMIT #{limit}
             """)
     List<RunOverviewQuickAgentRow> selectQuickAgents(

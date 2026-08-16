@@ -82,7 +82,7 @@
         timeout_ms = VALUES(timeout_ms),
         max_retries = VALUES(max_retries),
         default_group_code = VALUES(default_group_code),
-        updated_at = IF(NOT (signature_hash &lt;=&gt; VALUES(signature_hash)), NOW(), update_time),
+        update_time = IF(NOT (signature_hash &lt;=&gt; VALUES(signature_hash)), NOW(), update_time),
         signature_hash = VALUES(signature_hash)
     </insert>
 </mapper>

@@ -953,7 +953,6 @@ public class AiAgentPlanRuntimeServiceImpl implements AiAgentPlanRuntimeService 
                 .orElse(DEFAULT_PLAN_DIR) + "/" + DEFAULT_PLAN_FILE;
 
         Path workspaceRoot = AgentWorkspaceResolver.resolve(
-                config.getTenantId(),
                 userId,
                 config.getAgentId()
         );
@@ -982,7 +981,6 @@ public class AiAgentPlanRuntimeServiceImpl implements AiAgentPlanRuntimeService 
             return "";
         }
         Path workspaceRoot = AgentWorkspaceResolver.resolve(
-                config.getTenantId(),
                 userId,
                 config.getAgentId()
         );

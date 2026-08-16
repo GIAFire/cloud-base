@@ -331,7 +331,7 @@ export default {
     api: {
       operationFailed: '操作失败',
       errorTip: '错误提示',
-      errorMessage: '操作失败,系统异常!',
+      errorMessage: '操作失败,网络异常!',
       timeoutMessage: '登录超时,请重新登录!',
       apiTimeoutMessage: '接口请求超时,请刷新页面重试!',
       apiRequestFailed: '请求出错，请稍候重试',

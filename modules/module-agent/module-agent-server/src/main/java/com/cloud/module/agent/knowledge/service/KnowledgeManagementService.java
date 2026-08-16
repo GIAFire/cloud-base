@@ -153,7 +153,7 @@ public class KnowledgeManagementService {
         if (status != null) {
             query.eq("status", status);
         }
-        query.orderByDesc("updated_at").orderByDesc("created_at");
+        query.orderByDesc("update_time").orderByDesc("create_time");
         return knowledgeBaseService
                 .page(new Page<>(positive(current), pageSize(size)), query)
                 .convert(this::toKnowledgeBaseResponse);
@@ -377,7 +377,7 @@ public class KnowledgeManagementService {
         if (StringUtils.hasText(parseStatus)) {
             query.eq("parse_status", parseStatus.trim().toUpperCase(Locale.ROOT));
         }
-        query.orderByDesc("updated_at").orderByDesc("created_at");
+        query.orderByDesc("update_time").orderByDesc("create_time");
         return documentService
                 .page(new Page<>(positive(current), pageSize(size)), query)
                 .convert(this::toDocumentResponse);

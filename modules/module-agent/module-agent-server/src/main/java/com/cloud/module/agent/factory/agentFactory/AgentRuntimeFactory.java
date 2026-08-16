@@ -100,7 +100,6 @@ public class AgentRuntimeFactory {
             AgentSkillRepository mysqlSkillRepository = mysqlSkillFactory.mysqlSkillFactory(config,loginUser);
             AgentStateStore stateStore = stateStoreFactory.buildStateStore(config);
             Path workspacePath = AgentWorkspaceResolver.resolve(
-                    config.getTenantId(),
                     loginUser.getId(),
                     config.getAgentId()
             );

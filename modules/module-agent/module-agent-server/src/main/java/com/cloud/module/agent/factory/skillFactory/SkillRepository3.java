@@ -198,7 +198,7 @@ public class SkillRepository3 implements AgentSkillRepository {
                         + " name VARCHAR(255) NOT NULL UNIQUE, description TEXT NOT NULL,"
                         + " skill_content LONGTEXT NOT NULL, source VARCHAR(255) NOT NULL,"
                         + " metadata_json LONGTEXT NULL,"
-                        + " created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP"
+                        + " create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, update_time TIMESTAMP"
                         + " DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) DEFAULT"
                         + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 
@@ -207,8 +207,8 @@ public class SkillRepository3 implements AgentSkillRepository {
                 "CREATE TABLE IF NOT EXISTS "
                         + getFullTableName(resourcesTableName)
                         + " (id BIGINT NOT NULL, resource_path VARCHAR(500) NOT NULL,"
-                        + " resource_content LONGTEXT NOT NULL, created_at TIMESTAMP DEFAULT"
-                        + " CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON"
+                        + " resource_content LONGTEXT NOT NULL, create_time TIMESTAMP DEFAULT"
+                        + " CURRENT_TIMESTAMP, update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON"
                         + " UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id, resource_path),"
                         + " FOREIGN KEY (id) REFERENCES "
                         + getFullTableName(skillsTableName)
