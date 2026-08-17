@@ -307,6 +307,50 @@ const remainingRouter: AppRouteRecordRaw[] = [
         ]
       }
     ]
+  },
+  // AI Agent 对话页面路由
+  {
+    path: '/ai-agent',
+    component: Layout,
+    name: 'AiAgentChat',
+    meta: { hidden: true },
+    children: [
+      {
+        path: 'agent/chat/:agentId',
+        component: () => import('@/views/ai/agent/chat.vue'),
+        name: 'AiAgentChatPage',
+        meta: {
+          title: '智能体对话',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: 'ep:chat-dot-round',
+          activeMenu: '/ai-agent/agent'
+        }
+      }
+    ]
+  },
+  // AI Agent 知识库文档页面路由
+  {
+    path: '/ai-agent',
+    component: Layout,
+    name: 'AiKnowledgeDocuments',
+    meta: { hidden: true },
+    children: [
+      {
+        path: 'knowledge/:knowledgeBaseId/documents',
+        component: () => import('@/views/ai/knowledge/documents.vue'),
+        name: 'AiKnowledgeDocumentsPage',
+        meta: {
+          title: '知识库文档',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: 'ep:document',
+          activeMenu: '/ai-agent/knowledge'
+        }
+      }
+    ]
   }
 ]
 
