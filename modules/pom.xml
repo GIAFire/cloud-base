@@ -17,6 +17,7 @@
         <module>module-system</module>
         <module>module-im</module>
         <module>module-pay</module>
+        <module>module-mall</module>
         <module>module-member</module>
         <module>server</module>
         <module>module-agent</module>

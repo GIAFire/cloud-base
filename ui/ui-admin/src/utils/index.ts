@@ -452,3 +452,16 @@ export const escapeHtml = (text: string): string => {
   }
   return text.replace(/[&<>"']/g, (char) => map[char])
 }
+
+/**
+ * 百分比计算，四舍五入保留两位小数
+ *
+ * 如果 total 为 0，则返回 0
+ *
+ * @param value 当前值
+ * @param total 总值
+ */
+export const erpCalculatePercentage = (value: number, total: number) => {
+  if (total === 0) return 0
+  return ((value / total) * 100).toFixed(2)
+}

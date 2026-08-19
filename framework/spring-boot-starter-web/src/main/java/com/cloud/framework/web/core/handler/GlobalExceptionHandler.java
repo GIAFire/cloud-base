@@ -395,6 +395,12 @@ public class GlobalExceptionHandler {
         if (!message.contains("doesn't exist")) {
             return null;
         }
+        // 商城系统
+        if (StrUtil.containsAny(message, "product_", "promotion_", "trade_")) {
+            log.error("[商城系统 module-mall - 表结构未导入][参考 https://cloud.iocoder.cn/mall/build/ 开启]");
+            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
+                    "[商城系统 module-mall - 表结构未导入][参考 https://cloud.iocoder.cn/mall/build/ 开启]");
+        }
         // IM 即时通讯
         if (message.contains("im_")) {
             log.error("[IM 即时通讯 module-im - 表结构未导入][参考 https://cloud.iocoder.cn/im/build/ 开启]");

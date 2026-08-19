@@ -103,7 +103,53 @@ spring:
               predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
                 - Path=/app-api/agent/**
               filters:
-                - RewritePath=/app-api/agent/v3/api-docs, /v3/api-docs
+                  - RewritePath=/app-api/agent/v3/api-docs, /v3/api-docs
+            ## product-server 服务
+            - id: product-admin-api # 路由的编号
+              uri: grayLb://product-server
+              predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+                - Path=/admin-api/product/**
+              filters:
+                  - RewritePath=/admin-api/product/v3/api-docs, /v3/api-docs
+            - id: product-app-api # 路由的编号
+              uri: grayLb://product-server
+              predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+                - Path=/app-api/product/**
+              filters:
+                  - RewritePath=/app-api/product/v3/api-docs, /v3/api-docs
+            ## promotion-server 服务
+            - id: promotion-admin-api # 路由的编号
+              uri: grayLb://promotion-server
+              predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+                - Path=/admin-api/promotion/**
+              filters:
+                  - RewritePath=/admin-api/promotion/v3/api-docs, /v3/api-docs
+            - id: promotion-app-api # 路由的编号
+              uri: grayLb://promotion-server
+              predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+                - Path=/app-api/promotion/**
+              filters:
+                  - RewritePath=/app-api/promotion/v3/api-docs, /v3/api-docs
+            ## trade-server 服务
+            - id: trade-admin-api # 路由的编号
+              uri: grayLb://trade-server
+              predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+                - Path=/admin-api/trade/**
+              filters:
+                  - RewritePath=/admin-api/trade/v3/api-docs, /v3/api-docs
+            - id: trade-app-api # 路由的编号
+              uri: grayLb://trade-server
+              predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+                - Path=/app-api/trade/**
+              filters:
+                  - RewritePath=/app-api/trade/v3/api-docs, /v3/api-docs
+            ## statistics-server 服务
+            - id: statistics-admin-api # 路由的编号
+              uri: grayLb://statistics-server
+              predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+                - Path=/admin-api/statistics/**
+              filters:
+                  - RewritePath=/admin-api/statistics/v3/api-docs, /v3/api-docs
           x-forwarded:
             prefix-enabled: false # 避免 Swagger 重复带上额外的 /admin-api/system 前缀
           default-filters:
@@ -136,6 +182,18 @@ knife4j:
       - name: im-server
         service-name: im-server
         url: /admin-api/im/v3/api-docs
+      - name: product-server
+        service-name: product-server
+        url: /admin-api/product/v3/api-docs
+      - name: promotion-server
+        service-name: promotion-server
+        url: /admin-api/promotion/v3/api-docs
+      - name: trade-server
+        service-name: trade-server
+        url: /admin-api/trade/v3/api-docs
+      - name: statistics-server
+        service-name: statistics-server
+        url: /admin-api/statistics/v3/api-docs
 
 --- #################### Cloud相关配置 ####################
 

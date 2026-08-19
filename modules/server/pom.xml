@@ -54,6 +54,31 @@
             <artifactId>module-agent-server</artifactId>
             <version>${revision}</version>
         </dependency>
+
+        <!-- 商城模块-->
+        <dependency>
+            <groupId>com.cloud</groupId>
+            <artifactId>module-product-server</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cloud</groupId>
+            <artifactId>module-promotion-server</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cloud</groupId>
+            <artifactId>module-statistics-server</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cloud</groupId>
+            <artifactId>module-trade-server</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- spring boot 配置所需依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

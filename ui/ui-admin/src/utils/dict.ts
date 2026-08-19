@@ -159,6 +159,37 @@ export enum DICT_TYPE {
   MEMBER_POINT_BIZ_TYPE = 'member_point_biz_type', // 积分的业务类型
   MEMBER_EXPERIENCE_BIZ_TYPE = 'member_experience_biz_type', // 会员经验业务类型
 
+  // ========== MALL - 商品模块 ==========
+  PRODUCT_SPU_STATUS = 'product_spu_status', //商品状态
+
+  // ========== MALL - 交易模块 ==========
+  EXPRESS_CHARGE_MODE = 'trade_delivery_express_charge_mode', //快递的计费方式
+  TRADE_AFTER_SALE_STATUS = 'trade_after_sale_status', // 售后 - 状态
+  TRADE_AFTER_SALE_WAY = 'trade_after_sale_way', // 售后 - 方式
+  TRADE_AFTER_SALE_TYPE = 'trade_after_sale_type', // 售后 - 类型
+  TRADE_ORDER_TYPE = 'trade_order_type', // 订单 - 类型
+  TRADE_ORDER_STATUS = 'trade_order_status', // 订单 - 状态
+  TRADE_ORDER_ITEM_AFTER_SALE_STATUS = 'trade_order_item_after_sale_status', // 订单项 - 售后状态
+  TRADE_DELIVERY_TYPE = 'trade_delivery_type', // 配送方式
+  BROKERAGE_ENABLED_CONDITION = 'brokerage_enabled_condition', // 分佣模式
+  BROKERAGE_BIND_MODE = 'brokerage_bind_mode', // 分销关系绑定模式
+  BROKERAGE_BANK_NAME = 'brokerage_bank_name', // 佣金提现银行
+  BROKERAGE_WITHDRAW_TYPE = 'brokerage_withdraw_type', // 佣金提现类型
+  BROKERAGE_RECORD_BIZ_TYPE = 'brokerage_record_biz_type', // 佣金业务类型
+  BROKERAGE_RECORD_STATUS = 'brokerage_record_status', // 佣金状态
+  BROKERAGE_WITHDRAW_STATUS = 'brokerage_withdraw_status', // 佣金提现状态
+
+  // ========== MALL - 营销模块 ==========
+  PROMOTION_DISCOUNT_TYPE = 'promotion_discount_type', // 优惠类型
+  PROMOTION_PRODUCT_SCOPE = 'promotion_product_scope', // 营销的商品范围
+  PROMOTION_COUPON_TEMPLATE_VALIDITY_TYPE = 'promotion_coupon_template_validity_type', // 优惠劵模板的有限期类型
+  PROMOTION_COUPON_STATUS = 'promotion_coupon_status', // 优惠劵的状态
+  PROMOTION_COUPON_TAKE_TYPE = 'promotion_coupon_take_type', // 优惠劵的领取方式
+  PROMOTION_CONDITION_TYPE = 'promotion_condition_type', // 营销的条件类型枚举
+  PROMOTION_BARGAIN_RECORD_STATUS = 'promotion_bargain_record_status', // 砍价记录的状态
+  PROMOTION_COMBINATION_RECORD_STATUS = 'promotion_combination_record_status', // 拼团记录的状态
+  PROMOTION_BANNER_POSITION = 'promotion_banner_position', // banner 定位
+
   // ========== IM - 即时通讯模块  ==========
   IM_CONTENT_TYPE = 'im_content_type', // IM 内容类型
   IM_MESSAGE_STATUS = 'im_message_status', // IM 消息状态：0=正常 / 2=已撤回（私聊 / 群聊共用）
