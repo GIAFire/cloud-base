@@ -1,0 +1,46 @@
+{
+  "name": "AI Friend",
+  "appid": "__UNI__A1F2E3D",
+  "description": "AI Friend 移动端基础项目",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "app-plus": {
+    "usingComponents": true,
+    "nvueCompiler": "uni-app",
+    "compilerVersion": 3,
+    "safearea": {
+      "bottom": {
+        "offset": "none"
+      }
+    },
+    "distribute": {
+      "android": {
+        "permissions": [
+          "<uses-permission android:name=\"android.permission.INTERNET\"/>"
+        ],
+        "minSdkVersion": 21
+      },
+      "orientation": ["portrait-primary"]
+    }
+  },
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": false,
+      "minified": true,
+      "postcss": true
+    },
+    "usingComponents": {}
+  },
+  "h5": {
+    "title": "AI Friend",
+    "router": {
+      "mode": "hash",
+      "base": "/"
+    }
+  },
+  "vueVersion": "3",
+  "locale": "zh-Hans",
+  "fallbackLocale": "zh-Hans"
+}
