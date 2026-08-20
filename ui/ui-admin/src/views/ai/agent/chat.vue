@@ -11,7 +11,6 @@ import {
   pageAgentMessages,
   pageAgentSessions
 } from '@/api/agent/chat'
-import { ContentWrap } from '@/components/ContentWrap'
 
 defineOptions({ name: 'AiAgentChat' })
 
@@ -1721,7 +1720,7 @@ const sendMessage = async () => {
       {
         agentId: agentId.value,
         sessionId: activeSessionId.value,
-        message: content
+        content: content
       },
       {
         onEvent: (streamEvent: any) => {
@@ -1881,7 +1880,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <ContentWrap class="agent-chat-page" :class="{ 'is-plan-drawer-open': planDrawerOpen }">
+  <div class="agent-chat-page" :class="{ 'is-plan-drawer-open': planDrawerOpen }">
     <!-- 左侧会话面板 -->
     <aside class="chat-session-panel">
       <el-button
@@ -2200,21 +2199,21 @@ onBeforeUnmount(() => {
         <span>{{ activePlanMessage?.lastPlanEvent?.occurredAt || (activePlanMessage ? '正在等待任务列表' : 'Agent 生成计划后会在这里更新') }}</span>
       </div>
     </aside>
-  </ContentWrap>
+  </div>
 </template>
 
 <style scoped>
 .agent-chat-page {
   display: grid;
   position: relative;
-  height: calc(100vh - 96px);
+  height: calc(100vh - 120px);
   min-height: 560px;
   grid-template-columns: 280px minmax(0, 1fr) 0;
-  padding: 5px;
-  margin-top: 16px;
-  gap: 5px;
+  padding: 16px;
+  gap: 16px;
   overflow: hidden;
   transition: grid-template-columns 180ms ease;
+  background: #f5f7fa;
 }
 
 .agent-chat-page.is-plan-drawer-open {

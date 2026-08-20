@@ -64,7 +64,7 @@ export interface StreamOptions {
 export interface ChatReqVO {
   sessionId: number
   agentId: number
-  message: string
+  content: string
   files?: string[]
   metadata?: Record<string, any>
 }
