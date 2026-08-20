@@ -33,7 +33,7 @@ import {
   updateSkill,
   updateSkillPackageFile
 } from '@/api/agent/skill'
-import { listSimpleRole } from '@/api/system/role'
+import { getSimpleRoleList } from '@/api/system/role'
 
 defineOptions({ name: 'AiSkill' })
 
@@ -348,7 +348,7 @@ async function loadDashboard() {
 
 async function loadRoles() {
   if (roles.value.length) return
-  const data = await listSimpleRole()
+  const data = await getSimpleRoleList()
   roles.value = Array.isArray(data) ? data.filter((role: any) => Number(role.status ?? 1) === 1) : []
 }
 
