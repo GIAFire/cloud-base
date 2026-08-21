@@ -19,6 +19,7 @@
     "@dcloudio/uni-components": "3.0.0-4070620250821001",
     "@dcloudio/uni-h5": "3.0.0-4070620250821001",
     "@dcloudio/uni-mp-weixin": "3.0.0-4070620250821001",
+    "luch-request": "^3.0.8",
     "pinia": "2.0.36",
     "vue": "^3.4.21"
   },

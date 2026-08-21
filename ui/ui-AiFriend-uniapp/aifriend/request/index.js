@@ -1,3 +1,4 @@
+import Request from 'luch-request';
 import { requestConfig } from '@/aifriend/config';
 import { getTerminal } from '@/aifriend/helper/const';
 import {
@@ -21,36 +22,6 @@ const defaultCustom = {
 let loadingCount = 0;
 let refreshPromise = null;
 
-function startLoading(text) {
-  loadingCount += 1;
-  if (loadingCount === 1) {
-    uni.showLoading({ title: text, mask: true });
-  }
-}
-
-function stopLoading() {
-  loadingCount = Math.max(loadingCount - 1, 0);
-  if (loadingCount === 0) {
-    uni.hideLoading();
-  }
-}
-
-function createError(message, detail) {
-  const error = new Error(message);
-  error.detail = detail;
-  return error;
-}
-
-function appendParams(url, params = {}) {
-  const query = Object.entries(params)
-    .filter(([, value]) => value !== undefined && value !== null)
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
-
-  if (!query) return url;
-  return `${url}${url.includes('?') ? '&' : '?'}${query}`;
-}
-
 function joinUrl(baseUrl, path) {
   if (/^https?:\/\//i.test(path)) return path;
   return `${baseUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
@@ -60,28 +31,43 @@ function getRequestBaseUrl() {
   return joinUrl(requestConfig.baseUrl, requestConfig.apiPath);
 }
 
-function send(options, custom, token = getAccessToken()) {
-  return new Promise((resolve, reject) => {
-    uni.request({
-      url: appendParams(joinUrl(getRequestBaseUrl(), options.url), options.params),
-      method: options.method || 'GET',
-      data: options.data,
-      timeout: options.timeout || requestConfig.timeout,
-      header: {
-        Accept: '*/*',
-        'Content-Type': 'application/json;charset=UTF-8',
-        terminal: getTerminal(),
-        'tenant-id': uni.getStorageSync('tenant-id') || requestConfig.tenantId,
-        ...(custom.isToken && token ? { Authorization: token } : {}),
-        ...options.header,
-      },
-      success: resolve,
-      fail: (detail) => {
-        const message = detail.errMsg?.includes('timeout') ? '请求超时' : '无法连接到后端服务';
-        reject(createError(message, detail));
-      },
+function startLoading(config) {
+  if (!config.custom.showLoading || config.__loadingStarted) return;
+
+  config.__loadingStarted = true;
+  loadingCount += 1;
+  if (loadingCount === 1) {
+    uni.showLoading({
+      title: config.custom.loadingMsg,
+      mask: true,
+      fail: () => uni.hideLoading(),
     });
+  }
+}
+
+function stopLoading(config) {
+  if (!config?.__loadingStarted) return;
+
+  config.__loadingStarted = false;
+  loadingCount = Math.max(loadingCount - 1, 0);
+  if (loadingCount === 0) {
+    uni.hideLoading();
+  }
+}
+
+function showError(message) {
+  uni.showToast({
+    title: message || '服务器开小差啦，请稍后再试',
+    icon: 'none',
+    mask: true,
   });
+}
+
+function createRequestError(message, detail, config) {
+  const error = new Error(message);
+  error.detail = detail;
+  error.config = config;
+  return error;
 }
 
 function saveAuthToken(url, body) {
@@ -92,6 +78,7 @@ function saveAuthToken(url, body) {
 
 function redirectToLogin() {
   clearToken();
+
   const pages = getCurrentPages();
   const currentRoute = pages[pages.length - 1]?.route;
   if (currentRoute !== 'pages/auth/login') {
@@ -99,35 +86,70 @@ function redirectToLogin() {
   }
 }
 
-async function refreshAccessToken() {
+function getNetworkErrorMessage(error) {
+  const statusCode = error?.statusCode;
+  const statusMessages = {
+    400: '请求错误',
+    401: '登录已过期，请重新登录',
+    403: '拒绝访问',
+    404: '请求地址不存在',
+    408: '请求超时',
+    429: '请求频繁，请稍后再访问',
+    500: '服务器开小差啦，请稍后再试',
+    501: '服务未实现',
+    502: '网络错误',
+    503: '服务不可用',
+    504: '网络超时',
+    505: 'HTTP 版本不受支持',
+  };
+
+  if (error?.errMsg?.includes('timeout')) return '请求超时';
+
+  // #ifdef H5
+  if (error?.errMsg?.includes('Network')) {
+    return window.navigator.onLine ? '服务器异常' : '请检查您的网络连接';
+  }
+  // #endif
+
+  return error?.data?.msg || error?.message || statusMessages[statusCode] || '网络请求出错';
+}
+
+const http = new Request({
+  baseURL: getRequestBaseUrl(),
+  timeout: requestConfig.timeout,
+  method: 'GET',
+  header: {
+    Accept: '*/*',
+    'Content-Type': 'application/json;charset=UTF-8',
+  },
+  custom: defaultCustom,
+  // #ifdef APP-PLUS
+  sslVerify: false,
+  // #endif
+  // #ifdef H5
+  withCredentials: false,
+  // #endif
+});
+
+function refreshAccessToken() {
   if (refreshPromise) return refreshPromise;
 
   const refreshToken = getRefreshToken();
-  if (!refreshToken) return false;
+  if (!refreshToken) return Promise.resolve(false);
 
-  refreshPromise = send(
-    {
+  refreshPromise = http
+    .middleware({
       url: '/member/auth/refresh-token',
       method: 'POST',
       params: { refreshToken },
-    },
-    {
-      ...defaultCustom,
-      isToken: false,
-      showLoading: false,
-      showError: false,
-      skipRefresh: true,
-    },
-    '',
-  )
-    .then((response) => {
-      const body = response.data;
-      if (response.statusCode >= 200 && response.statusCode < 300 && body?.code === 0) {
-        setToken(body.data.accessToken, body.data.refreshToken);
-        return true;
-      }
-      return false;
+      custom: {
+        isToken: false,
+        showLoading: false,
+        showError: false,
+        skipRefresh: true,
+      },
     })
+    .then((body) => body?.code === 0 && Boolean(body?.data?.accessToken))
     .catch(() => false)
     .finally(() => {
       refreshPromise = null;
@@ -136,68 +158,88 @@ async function refreshAccessToken() {
   return refreshPromise;
 }
 
-function showError(message) {
-  uni.showToast({ title: message, icon: 'none', mask: true });
+async function retryAfterRefresh(config) {
+  const refreshed = await refreshAccessToken();
+  if (!refreshed) {
+    redirectToLogin();
+    throw createRequestError('登录已过期，请重新登录', null, config);
+  }
+
+  return http.middleware(config);
 }
 
-export default async function request(options) {
-  const custom = {
-    ...defaultCustom,
-    ...options.custom,
-  };
+http.interceptors.request.use(
+  (config) => {
+    if (config.custom.auth && !getAccessToken()) {
+      redirectToLogin();
+      return Promise.reject(createRequestError('请先登录', null, config));
+    }
 
-  if (custom.auth && !getAccessToken()) {
-    redirectToLogin();
-    return Promise.reject(createError('请先登录'));
-  }
+    startLoading(config);
 
-  if (custom.showLoading) {
-    startLoading(custom.loadingMsg);
-  }
+    const token = config.custom.isToken ? getAccessToken() : '';
+    if (token) {
+      config.header.Authorization = token;
+    } else {
+      delete config.header.Authorization;
+    }
 
-  try {
-    let response = await send(options, custom);
-    let body = response.data;
-    const unauthorized = response.statusCode === 401 || body?.code === 401;
+    config.header.terminal = getTerminal();
+    config.header['tenant-id'] = uni.getStorageSync('tenant-id') || requestConfig.tenantId;
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
 
-    if (unauthorized && !custom.skipRefresh) {
-      const refreshed = await refreshAccessToken();
-      if (!refreshed) {
+http.interceptors.response.use(
+  async (response) => {
+    const { config } = response;
+    const body = response.data;
+
+    stopLoading(config);
+    saveAuthToken(config.url, body);
+
+    if (body?.code === 401) {
+      if (config.custom.skipRefresh) {
         redirectToLogin();
-        throw createError('登录已过期，请重新登录', body);
+        throw createRequestError(body.msg || '登录已过期，请重新登录', body, config);
       }
-      response = await send(options, custom);
-      body = response.data;
+      return retryAfterRefresh(config);
     }
-
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      const message = body?.msg || `请求失败（HTTP ${response.statusCode}）`;
-      if (custom.showError) showError(message);
-      throw createError(message, body);
-    }
-
-    saveAuthToken(options.url, body);
 
     if (body?.code !== undefined && body.code !== 0) {
-      if (custom.showError) {
-        showError(body.msg || '服务器开小差啦，请稍后再试');
+      if (config.custom.showError) {
+        showError(body.msg);
       }
       return body;
     }
 
-    if (custom.showSuccess && custom.successMsg) {
-      uni.showToast({ title: custom.successMsg, icon: 'none' });
+    if (config.custom.showSuccess && config.custom.successMsg) {
+      uni.showToast({
+        title: config.custom.successMsg,
+        icon: 'none',
+      });
     }
 
     return body;
-  } catch (error) {
-    if (custom.showError && !error.detail?.code) {
-      showError(error.message || '网络请求出错');
+  },
+  async (error) => {
+    const config = error?.config;
+    stopLoading(config);
+
+    if (error?.statusCode === 401 && config && !config.custom.skipRefresh) {
+      return retryAfterRefresh(config);
     }
-    throw error;
-  } finally {
-    if (custom.showLoading) {
-      stopLoading();
+
+    const message = getNetworkErrorMessage(error);
+    if (config?.custom.showError) {
+      showError(message);
     }
-  }
+
+    return Promise.reject(createRequestError(message, error?.data || error, config));
+  },
+);
+
+export default function request(config) {
+  return http.middleware(config);
 }

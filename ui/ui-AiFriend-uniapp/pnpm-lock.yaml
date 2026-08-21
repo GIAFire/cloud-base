@@ -23,6 +23,9 @@ importers:
       '@dcloudio/uni-mp-weixin':
         specifier: 3.0.0-4070620250821001
         version: 3.0.0-4070620250821001(debug@4.4.3)(postcss@8.5.26)(rollup@4.62.4)(vue@3.5.41)
+      luch-request:
+        specifier: ^3.0.8
+        version: 3.0.8
       pinia:
         specifier: 2.0.36
         version: 2.0.36(vue@3.5.41)
@@ -575,6 +578,9 @@ packages:
   '@babel/types@7.29.8':
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
+
+  '@dcloudio/types@2.0.16':
+    resolution: {integrity: sha512-AhhjJm9XhkKHbL8Ska4b/YBi0Ts6/62DcX6qwgm1ZDfTW2XG+BBKCe8wE26d5aXi6i03v3mfObhqG8m0dYP5EA==}
 
   '@dcloudio/types@3.4.32':
     resolution: {integrity: sha512-sjhbkjUKxoym8KLEnyeXxCsxvRlBc7Bd/kNSZZRLj+lewS384bDPtq/x5FZ4iG+NrnzDmg3+HyiwV5u5vu2reQ==}
@@ -1889,6 +1895,9 @@ packages:
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
+
+  luch-request@3.0.8:
+    resolution: {integrity: sha512-5ZVp1y4tFaizbGMOuQwbeyfHnf4PhQAwQ3S1Fm1tS7juMoB14pXslxWriElhiSq6ytYYW0KVC8RShfHiNujFcQ==}
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
@@ -3227,6 +3236,8 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
+
+  '@dcloudio/types@2.0.16': {}
 
   '@dcloudio/types@3.4.32': {}
 
@@ -4886,6 +4897,10 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
+
+  luch-request@3.0.8:
+    dependencies:
+      '@dcloudio/types': 2.0.16
 
   magic-string@0.30.17:
     dependencies:
