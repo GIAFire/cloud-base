@@ -106,5 +106,9 @@ com.cloud:
     ignore-tables:
       - agent_session
       - agent_message
+      - agent_info
+      - agent_model
+      - agent_sys_prompt
+      - agent_http_header
 
 debug: false

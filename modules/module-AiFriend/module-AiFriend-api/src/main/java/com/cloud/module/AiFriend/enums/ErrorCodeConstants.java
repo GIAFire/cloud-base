@@ -8,6 +8,7 @@ import com.cloud.framework.common.exception.ErrorCode;
  * infra 系统，使用 1-001-000-000 段
  */
 public interface ErrorCodeConstants {
-    ErrorCode SESSION_NOT_EXISTS = new ErrorCode(500, "Agent会话表：保存用户和Agent之间的一段连续对话不存在");
+    ErrorCode AGENT_INFO_NOT_EXISTS = new ErrorCode(500, "Agent定义表 不存在");
+    ErrorCode SESSION_NOT_EXISTS = new ErrorCode(500, "Agent会话表 不存在");
 
 }
