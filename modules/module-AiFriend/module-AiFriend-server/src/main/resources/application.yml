@@ -104,5 +104,7 @@ com.cloud:
     enable: true
     ignore-urls:
     ignore-tables:
+      - agent_session
+      - agent_message
 
 debug: false
