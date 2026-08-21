@@ -1,23 +1,58 @@
 import { defineStore } from 'pinia';
+import AuthApi from '@/aifriend/api/auth';
+import UserApi from '@/aifriend/api/user';
+import { clearToken, getAccessToken, setToken as persistToken } from '@/aifriend/helper/token';
+
+const defaultUserInfo = {
+  avatar: '',
+  nickname: '',
+  gender: 0,
+  mobile: '',
+  point: 0,
+};
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    isLogin: Boolean(uni.getStorageSync('token')),
-    username: uni.getStorageSync('username') || '',
+    isLogin: Boolean(getAccessToken()),
+    userInfo: { ...defaultUserInfo },
   }),
   actions: {
-    loginPlaceholder({ username }) {
-      // 当前仅提供可进入 Tab 页的前端占位流程，后续在这里调用正式登录 API。
-      uni.setStorageSync('token', 'aifriend-placeholder-token');
-      uni.setStorageSync('username', username);
+    setToken(accessToken = '', refreshToken = '') {
+      if (!accessToken) {
+        clearToken();
+        this.isLogin = false;
+        return false;
+      }
+
+      persistToken(accessToken, refreshToken);
       this.isLogin = true;
-      this.username = username;
+      return true;
     },
-    logout() {
-      uni.removeStorageSync('token');
-      uni.removeStorageSync('username');
-      this.isLogin = false;
-      this.username = '';
+    syncLoginState() {
+      this.isLogin = Boolean(getAccessToken());
+      return this.isLogin;
+    },
+    async getInfo() {
+      const response = await UserApi.getUserInfo();
+      if (response.code === 0) {
+        this.userInfo = response.data;
+      }
+      return response;
+    },
+    async loginAfter() {
+      if (!this.syncLoginState()) return;
+      await this.getInfo();
+    },
+    async logout() {
+      try {
+        if (this.isLogin) {
+          await AuthApi.logout();
+        }
+      } finally {
+        this.setToken();
+        this.userInfo = { ...defaultUserInfo };
+      }
+      return !this.isLogin;
     },
   },
 });

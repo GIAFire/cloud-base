@@ -2,40 +2,57 @@
   <view class="auth-page">
     <view class="auth-page__hero">
       <text class="auth-page__brand">AI Friend</text>
-      <text class="auth-page__title">欢迎回来</text>
-      <text class="auth-page__subtitle">登录后开始规划你的 AI 朋友</text>
+      <text class="auth-page__title">账号登录</text>
+      <text class="auth-page__subtitle">使用商城会员体系的手机号和密码登录</text>
     </view>
 
     <view class="auth-page__form">
-      <af-form-field v-model="form.username" label="账号" placeholder="请输入账号" />
+      <af-form-field
+        v-model="form.mobile"
+        label="账号"
+        placeholder="请输入手机号"
+        type="number"
+        :maxlength="11"
+      />
       <af-form-field
         v-model="form.password"
         label="密码"
         placeholder="请输入密码"
         :password="true"
+        :maxlength="16"
       />
-      <af-primary-button @click="submit">登录</af-primary-button>
+
+      <view class="agreement" @click="agreed = !agreed">
+        <view class="agreement__checkbox" :class="{ 'agreement__checkbox--checked': agreed }">
+          {{ agreed ? '✓' : '' }}
+        </view>
+        <text>我已阅读并同意用户协议与隐私政策</text>
+      </view>
+
+      <af-primary-button :loading="submitting" @click="submit">登录</af-primary-button>
 
       <view class="auth-page__link" @click="router.register">
         <text>还没有账号？</text>
-        <text class="auth-page__link-text">去注册</text>
+        <text class="auth-page__link-text">短信登录/注册</text>
       </view>
-
-      <text class="auth-page__tip">当前为前端占位登录，填写任意非空账号和密码即可进入。</text>
     </view>
   </view>
 </template>
 
 <script setup>
 import { onShow } from '@dcloudio/uni-app';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import AuthApi from '@/aifriend/api/auth';
+import { isMobile, isPassword } from '@/aifriend/helper/test';
 import router from '@/aifriend/router';
 import store from '@/aifriend/store';
 
 const form = reactive({
-  username: '',
+  mobile: '',
   password: '',
 });
+const agreed = ref(false);
+const submitting = ref(false);
 
 onShow(() => {
   if (uni.getStorageSync('token')) {
@@ -43,19 +60,34 @@ onShow(() => {
   }
 });
 
-function submit() {
-  if (!form.username.trim() || !form.password) {
-    uni.showToast({
-      title: '请输入账号和密码',
-      icon: 'none',
-    });
+async function submit() {
+  if (!isMobile(form.mobile)) {
+    uni.showToast({ title: '手机号码格式不正确', icon: 'none' });
+    return;
+  }
+  if (!isPassword(form.password)) {
+    uni.showToast({ title: '密码需包含字母和数字，长度为 6-12 位', icon: 'none' });
+    return;
+  }
+  if (!agreed.value) {
+    uni.showToast({ title: '请先同意用户协议与隐私政策', icon: 'none' });
     return;
   }
 
-  store('user').loginPlaceholder({
-    username: form.username.trim(),
-  });
-  router.home();
+  submitting.value = true;
+  try {
+    const response = await AuthApi.login(form);
+    if (response.code === 0) {
+      const userStore = store('user');
+      userStore.syncLoginState();
+      userStore.loginAfter().catch(() => {});
+      router.home();
+    }
+  } catch {
+    // 请求层已经统一展示错误提示。
+  } finally {
+    submitting.value = false;
+  }
 }
 </script>
 
@@ -115,14 +147,30 @@ function submit() {
     color: #665cf6;
     font-weight: 600;
   }
+}
 
-  &__tip {
-    display: block;
-    margin-top: 28rpx;
-    color: #999daa;
+.agreement {
+  display: flex;
+  align-items: center;
+  margin: 4rpx 0 30rpx;
+  color: #777b88;
+  font-size: 23rpx;
+
+  &__checkbox {
+    width: 32rpx;
+    height: 32rpx;
+    margin-right: 12rpx;
+    border: 2rpx solid #c9cbd3;
+    border-radius: 8rpx;
+    color: #ffffff;
     font-size: 22rpx;
-    line-height: 1.6;
+    line-height: 28rpx;
     text-align: center;
+
+    &--checked {
+      border-color: #665cf6;
+      background: #665cf6;
+    }
   }
 }
 </style>

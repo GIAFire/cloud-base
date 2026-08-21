@@ -13,12 +13,20 @@ pnpm dev:h5
 
 ## 后端配置
 
-默认连接 `http://127.0.0.1:8088`，首页会自动请求：
+默认通过统一网关 `http://localhost:8081` 请求，App 接口前缀为 `/app-api`。首页登录后会自动请求：
 
 ```text
-GET /AiFriend/test/get
+GET http://localhost:8081/app-api/AiFriend/test/get
 ```
 
-接口地址在 `.env` 中配置。H5 开发环境使用 Vite 代理；真机运行时请将 `AIFRIEND_BASE_URL` 改为后端所在电脑的局域网地址。
+接口地址在 `.env` 中配置。H5 开发环境会将浏览器发出的 `/app-api/**` 原路径代理到网关，不会添加额外前缀；真机运行时请将 `AIFRIEND_BASE_URL` 改为网关所在电脑的局域网地址。
 
-当前注册、登录是前端占位流程：填写非空账号和密码即可进入主页，方便先搭建后续需求。正式认证接口确定后，可在 `aifriend/api` 和 `aifriend/store/user.js` 中替换。
+认证逻辑与 `ui-mall-uniapp` 一致：
+
+- 手机号 + 密码：`POST /app-api/member/auth/login`
+- 获取验证码：`POST /app-api/member/auth/send-sms-code`
+- 短信登录/自动注册：`POST /app-api/member/auth/sms-login`
+- 刷新令牌：`POST /app-api/member/auth/refresh-token`
+- 登出：`POST /app-api/member/auth/logout`
+
+登录成功后保存 `accessToken` 和 `refreshToken`；访问令牌失效时请求层会自动刷新并重放原请求。

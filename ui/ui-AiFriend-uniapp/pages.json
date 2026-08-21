@@ -16,7 +16,7 @@
     {
       "path": "pages/auth/register",
       "style": {
-        "navigationBarTitleText": "注册",
+        "navigationBarTitleText": "短信登录/注册",
         "navigationStyle": "custom"
       }
     },

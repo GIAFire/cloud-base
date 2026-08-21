@@ -6,6 +6,7 @@ const TestApi = {
       url: '/AiFriend/test/get',
       method: 'GET',
       custom: {
+        auth: true,
         showLoading: false,
         showError: false,
       },
