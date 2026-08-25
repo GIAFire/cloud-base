@@ -95,3 +95,22 @@ com.cloud:
     ignore-tables:
 
 debug: false
+
+
+agent:
+  runtime:
+    type: ${AGENT_RUNTIME_TYPE:agentscope}
+
+    agentscope:
+      agent-id: ${AGENT_ID:base-chat-agent}
+      agent-name: ${AGENT_NAME:BaseChatAgent}
+      system-prompt: ${AGENT_SYSTEM_PROMPT:你是一个专业、准确、简洁的企业级智能助手。}
+      max-iters: ${AGENT_MAX_ITERS:1}
+
+      model:
+        base-url: ${OPENAI_BASE_URL2:https://api.openai.com/v1}
+        api-key: ${OPENAI_API_KEY2:}
+        model-name: glm-5
+        max-tokens: ${AGENT_MODEL_MAX_TOKENS:4096}
+        timeout: ${AGENT_MODEL_TIMEOUT:2m}
+        max-attempts: ${AGENT_MODEL_MAX_ATTEMPTS:10}

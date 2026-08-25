@@ -58,6 +58,29 @@ public final class ChatEvent {
         );
     }
 
+    public static ChatEvent messageThinkingDelta(
+            Long sessionId,
+            Long runId,
+            long sequence,
+            String delta
+    ) {
+        if (delta == null || delta.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "delta must not be null or empty"
+            );
+        }
+
+        return new ChatEvent(
+                sessionId,
+                runId,
+                sequence,
+                ChatEventType.MESSAGE_THINKING_DELTA,
+                delta,
+                null,
+                null
+        );
+    }
+
     public static ChatEvent messageDelta(
             Long sessionId,
             Long runId,

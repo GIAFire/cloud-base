@@ -8,8 +8,13 @@ import lombok.RequiredArgsConstructor;
 public enum ChatEventType {
 
     RUN_STARTED("run.started"),
+
+    MESSAGE_THINKING_DELTA("message.thinking.delta"),
+
     MESSAGE_DELTA("message.delta"),
+
     RUN_COMPLETED("run.completed"),
+
     RUN_FAILED("run.failed");
 
     private final String value;

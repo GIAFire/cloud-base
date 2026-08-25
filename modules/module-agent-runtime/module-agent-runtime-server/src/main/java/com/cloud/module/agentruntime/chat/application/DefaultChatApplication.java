@@ -116,10 +116,53 @@ public final class DefaultChatApplication implements ChatApplication {
         }
 
         return switch (runtimeEvent.getType()) {
-            case STARTED -> mapStartedEvent(state);
-            case TEXT_DELTA -> mapTextDeltaEvent(state, runtimeEvent);
-            case COMPLETED -> mapCompletedEvent(state);
+            case STARTED ->
+                    mapStartedEvent(state);
+
+            case THINKING_DELTA ->
+                    mapThinkingDeltaEvent(state, runtimeEvent);
+
+            case TEXT_DELTA ->
+                    mapTextDeltaEvent(state, runtimeEvent);
+
+            case COMPLETED ->
+                    mapCompletedEvent(state);
         };
+    }
+
+    private Mono<ChatEvent> mapThinkingDeltaEvent(
+            RunStreamState state,
+            RuntimeEvent runtimeEvent
+    ) {
+        if (!state.started) {
+            return Mono.error(
+                    new IllegalStateException(
+                            "Runtime emitted THINKING_DELTA before STARTED"
+                    )
+            );
+        }
+
+        String delta = runtimeEvent.getDelta();
+
+        if (delta == null || delta.isEmpty()) {
+            return Mono.error(
+                    new IllegalStateException(
+                            "Runtime emitted an empty THINKING_DELTA"
+                    )
+            );
+        }
+
+        /*
+         * 思考内容只发送给前端，不写入最终 assistantContent。
+         */
+        return Mono.just(
+                ChatEvent.messageThinkingDelta(
+                        state.preparedRun.getSessionId(),
+                        state.preparedRun.getRunId(),
+                        state.nextSequence(),
+                        delta
+                )
+        );
     }
 
     private Mono<ChatEvent> mapStartedEvent(RunStreamState state) {

@@ -8,30 +8,61 @@ import java.util.Objects;
 public final class RuntimeEvent {
 
     private final RuntimeEventType type;
+
     private final String delta;
 
     private RuntimeEvent(
             RuntimeEventType type,
             String delta
     ) {
-        this.type = Objects.requireNonNull(type,"type must not be null");
+        this.type = Objects.requireNonNull(
+                type,
+                "type must not be null"
+        );
         this.delta = delta;
     }
 
     public static RuntimeEvent started() {
-        return new RuntimeEvent(RuntimeEventType.STARTED,null);
+        return new RuntimeEvent(
+                RuntimeEventType.STARTED,
+                null
+        );
     }
 
-    public static RuntimeEvent textDelta(String delta) {
-        if (delta == null || delta.isEmpty()) {
-            throw new IllegalArgumentException("delta must not be null or empty");
-        }
+    public static RuntimeEvent thinkingDelta(
+            String delta
+    ) {
+        requireDelta(delta);
 
-        return new RuntimeEvent(RuntimeEventType.TEXT_DELTA,delta
+        return new RuntimeEvent(
+                RuntimeEventType.THINKING_DELTA,
+                delta
+        );
+    }
+
+    public static RuntimeEvent textDelta(
+            String delta
+    ) {
+        requireDelta(delta);
+
+        return new RuntimeEvent(
+                RuntimeEventType.TEXT_DELTA,
+                delta
         );
     }
 
     public static RuntimeEvent completed() {
-        return new RuntimeEvent(RuntimeEventType.COMPLETED,null);
+        return new RuntimeEvent(
+                RuntimeEventType.COMPLETED,
+                null
+        );
+    }
+
+    private static void requireDelta(String delta) {
+        if (delta == null || delta.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "delta must not be null or empty"
+            );
+        }
     }
 }
