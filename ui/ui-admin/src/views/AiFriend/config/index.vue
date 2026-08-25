@@ -8,185 +8,23 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="Agent 主键ID" prop="id">
-        <el-input
-          v-model="queryParams.id"
-          placeholder="请输入Agent 主键ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="关联 ai_agent_model.id" prop="modelId">
-        <el-input
-          v-model="queryParams.modelId"
-          placeholder="请输入关联 ai_agent_model.id"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="关联 ai_agent_sys_prompt.id" prop="sysPromptId">
-        <el-input
-          v-model="queryParams.sysPromptId"
-          placeholder="请输入关联 ai_agent_sys_prompt.id"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="Agent唯一编码" prop="agentCode">
+      <el-form-item label="code" prop="agentCode">
         <el-input
           v-model="queryParams.agentCode"
-          placeholder="请输入Agent唯一编码"
+          placeholder="请输入Agent code"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="Agent 显示名称" prop="agentName">
+      <el-form-item label="名称" prop="agentName">
         <el-input
           v-model="queryParams.agentName"
-          placeholder="请输入Agent 显示名称"
+          placeholder="请输入名称"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
-      </el-form-item>
-      <el-form-item label="最大循环次数" prop="maxIters">
-        <el-input
-          v-model="queryParams.maxIters"
-          placeholder="请输入最大循环次数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="默认权限模式" prop="permissionMode">
-        <el-select
-          v-model="queryParams.permissionMode"
-          placeholder="请选择默认权限模式"
-          clearable
-          class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getStrDictOptions(DICT_TYPE.AGENT_PERMISSION_TYPE)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否启用上下文压缩：1启用，0关闭" prop="compactionEnabled">
-        <el-select
-          v-model="queryParams.compactionEnabled"
-          placeholder="请选择是否启用上下文压缩：1启用，0关闭"
-          clearable
-          class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="触发压缩消息数" prop="triggerMessages">
-        <el-input
-          v-model="queryParams.triggerMessages"
-          placeholder="请输入触发压缩消息数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="压缩后保留消息数" prop="keepMessages">
-        <el-input
-          v-model="queryParams.keepMessages"
-          placeholder="请输入压缩后保留消息数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="触发压缩token数" prop="triggerTokens">
-        <el-input
-          v-model="queryParams.triggerTokens"
-          placeholder="请输入触发压缩token数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="压缩后保留token数" prop="keepTokens">
-        <el-input
-          v-model="queryParams.keepTokens"
-          placeholder="请输入压缩后保留token数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="是否启用大工具结果卸载：1启用，0关闭" prop="toolResultEvictionEnabled">
-        <el-select
-          v-model="queryParams.toolResultEvictionEnabled"
-          placeholder="请选择是否启用大工具结果卸载：1启用，0关闭"
-          clearable
-          class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否启用长期记忆:1启用,0禁用" prop="memoryEnable">
-        <el-select
-          v-model="queryParams.memoryEnable"
-          placeholder="请选择是否启用长期记忆:1启用,0禁用"
-          clearable
-          class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否启用Plan Mode：1启用，0关闭" prop="planModeEnabled">
-        <el-select
-          v-model="queryParams.planModeEnabled"
-          placeholder="请选择是否启用Plan Mode：1启用，0关闭"
-          clearable
-          class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭" prop="allowShellInPlanMode">
-        <el-select
-          v-model="queryParams.allowShellInPlanMode"
-          placeholder="请选择Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭"
-          clearable
-          class="!w-240px"
-        >
-          <el-option
-            v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
       </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
@@ -243,47 +81,9 @@
         @selection-change="handleRowCheckboxChange"
     >
     <el-table-column type="selection" width="55" />
-      <el-table-column label="Agent 主键ID" align="center" prop="id" />
-      <el-table-column label="关联 ai_agent_model.id" align="center" prop="modelId" />
-      <el-table-column label="关联 ai_agent_sys_prompt.id" align="center" prop="sysPromptId" />
-      <el-table-column label="Agent唯一编码" align="center" prop="agentCode" />
-      <el-table-column label="Agent 显示名称" align="center" prop="agentName" />
-      <el-table-column label="Agent 描述" align="center" prop="description" />
-      <el-table-column label="最大循环次数" align="center" prop="maxIters" />
-      <el-table-column label="默认权限模式" align="center" prop="permissionMode">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.AGENT_PERMISSION_TYPE" :value="scope.row.permissionMode" />
-        </template>
-      </el-table-column>
-      <el-table-column label="是否启用上下文压缩：1启用，0关闭" align="center" prop="compactionEnabled">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.compactionEnabled" />
-        </template>
-      </el-table-column>
-      <el-table-column label="触发压缩消息数" align="center" prop="triggerMessages" />
-      <el-table-column label="压缩后保留消息数" align="center" prop="keepMessages" />
-      <el-table-column label="触发压缩token数" align="center" prop="triggerTokens" />
-      <el-table-column label="压缩后保留token数" align="center" prop="keepTokens" />
-      <el-table-column label="是否启用大工具结果卸载：1启用，0关闭" align="center" prop="toolResultEvictionEnabled">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.toolResultEvictionEnabled" />
-        </template>
-      </el-table-column>
-      <el-table-column label="是否启用长期记忆:1启用,0禁用" align="center" prop="memoryEnable">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.memoryEnable" />
-        </template>
-      </el-table-column>
-      <el-table-column label="是否启用Plan Mode：1启用，0关闭" align="center" prop="planModeEnabled">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.planModeEnabled" />
-        </template>
-      </el-table-column>
-      <el-table-column label="Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭" align="center" prop="allowShellInPlanMode">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.allowShellInPlanMode" />
-        </template>
-      </el-table-column>
+      <el-table-column label="Agent code" align="center" prop="agentCode" />
+      <el-table-column label="Agent 名称" align="center" prop="agentName" />
+      <el-table-column label="描述" align="center" prop="description" />
       <el-table-column
         label="创建时间"
         align="center"
