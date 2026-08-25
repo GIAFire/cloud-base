@@ -22,6 +22,7 @@
         <module>server</module>
         <module>module-agent</module>
         <module>module-AiFriend</module>
+        <module>module-agent-runtime</module>
     </modules>
     <packaging>pom</packaging>
 
