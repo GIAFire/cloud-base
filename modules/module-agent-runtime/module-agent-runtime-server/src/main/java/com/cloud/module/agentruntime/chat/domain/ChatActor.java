@@ -13,5 +13,11 @@ public final class ChatActor {
     public ChatActor(Long tenantId, Long userId) {
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
+        if (tenantId != null && tenantId <= 0) {
+            throw new IllegalArgumentException("tenantId must be greater than 0");
+        }
+        if (userId != null && userId <= 0) {
+            throw new IllegalArgumentException("userId must be greater than 0");
+        }
     }
 }
