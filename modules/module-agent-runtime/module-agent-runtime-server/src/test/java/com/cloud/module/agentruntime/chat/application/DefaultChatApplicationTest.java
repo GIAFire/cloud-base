@@ -12,6 +12,7 @@ import com.cloud.module.agentruntime.chat.domain.ChatEventType;
 import com.cloud.module.agentruntime.chat.domain.ChatMessage;
 import com.cloud.module.agentruntime.chat.domain.ChatRole;
 import com.cloud.module.agentruntime.chat.runtime.RuntimeEvent;
+import com.cloud.module.agentruntime.chat.store.ChatStore;
 import com.cloud.module.agentruntime.support.RecordingChatStore;
 import com.cloud.module.agentruntime.support.ScriptedAgentRuntime;
 import org.junit.jupiter.api.AfterEach;
@@ -19,10 +20,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -121,6 +126,56 @@ class DefaultChatApplicationTest {
         assertThat(
                 finalization.getAssistantContent()
         ).isEqualTo("你好");
+    }
+
+    @Test
+    void waits_for_finish_before_emitting_run_completed() {
+        ScriptedAgentRuntime runtime = new ScriptedAgentRuntime(
+                Flux.just(
+                        RuntimeEvent.started(),
+                        RuntimeEvent.textDelta("你好"),
+                        RuntimeEvent.completed()
+                )
+        );
+
+        AtomicBoolean finishCalled = new AtomicBoolean();
+        AtomicReference<RunFinalization> recordedFinalization = new AtomicReference<>();
+        Sinks.Empty<Void> finishGate = Sinks.empty();
+
+        ChatStore store = new ChatStore() {
+
+            @Override
+            public Mono<PreparedRun> begin(StartChatCommand command) {
+                return Mono.just(preparedRun());
+            }
+
+            @Override
+            public Mono<Void> finish(RunFinalization finalization) {
+                finishCalled.set(true);
+                recordedFinalization.set(finalization);
+                return finishGate.asMono();
+            }
+        };
+
+        ChatApplication application = new DefaultChatApplication(runtime, store);
+
+        StepVerifier.create(application.stream(command()))
+                .expectNextMatches(event -> event.getType() == ChatEventType.RUN_STARTED)
+                .expectNextMatches(event -> event.getType() == ChatEventType.MESSAGE_DELTA)
+                /*
+                 * finishGate 尚未完成；如果 run.completed 被提前发送，
+                 * expectNoEvent 会立即失败。
+                 */
+                .expectNoEvent(Duration.ofMillis(100))
+                .then(() -> {
+                    assertThat(finishCalled).isTrue();
+                    assertThat(recordedFinalization.get()).isNotNull();
+                    assertThat(recordedFinalization.get().getStatus())
+                            .isEqualTo(AgentRunStatus.SUCCEEDED);
+                    finishGate.tryEmitEmpty();
+                })
+                .expectNextMatches(event -> event.getType() == ChatEventType.RUN_COMPLETED)
+                .verifyComplete();
     }
 
     @Test
@@ -225,6 +280,8 @@ class DefaultChatApplicationTest {
 
     @Test
     void marks_run_cancelled_when_subscriber_cancels() {
+        AtomicBoolean upstreamCancelled = new AtomicBoolean();
+
         ScriptedAgentRuntime runtime =
                 new ScriptedAgentRuntime(
                         Flux.concat(
@@ -232,7 +289,7 @@ class DefaultChatApplicationTest {
                                         RuntimeEvent.started()
                                 ),
                                 Flux.<RuntimeEvent>never()
-                        )
+                        ).doOnCancel(() -> upstreamCancelled.set(true))
                 );
 
         RecordingChatStore store =
@@ -271,6 +328,8 @@ class DefaultChatApplicationTest {
                 .isEqualTo(
                         AgentRunStatus.CANCELLED
                 );
+
+        assertThat(upstreamCancelled).isTrue();
     }
 
     private StartChatCommand command() {
