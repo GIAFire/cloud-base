@@ -113,30 +113,6 @@ public final class AgentScopeRuntime implements AgentRuntime {
 
             case AGENT_END ->
                     sink.next(RuntimeEvent.completed());
-
-            /*
-             * 当前基座明确不支持工具、人工确认和外部执行。
-             * 如果出现这些事件，说明 Agent 配置发生了预期外变化。
-             */
-            case TOOL_CALL_START,
-                 TOOL_CALL_DELTA,
-                 TOOL_CALL_END,
-                 TOOL_RESULT_START,
-                 TOOL_RESULT_TEXT_DELTA,
-                 TOOL_RESULT_DATA_DELTA,
-                 TOOL_RESULT_END,
-                 REQUIRE_USER_CONFIRM,
-                 REQUIRE_EXTERNAL_EXECUTION,
-                 USER_CONFIRM_RESULT,
-                 EXTERNAL_EXECUTION_RESULT,
-                 SUBAGENT_EXPOSED ->
-                    sink.error(
-                            new IllegalStateException(
-                                    "Unsupported AgentScope event: "
-                                            + event.getType()
-                            )
-                    );
-
             /*
              * ModelCall、BlockStart、BlockEnd 等内部事件暂时不向上暴露。
              */
