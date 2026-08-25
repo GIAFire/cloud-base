@@ -54,7 +54,7 @@ public final class DefaultChatApplication implements ChatApplication {
 
                 this::finishSucceeded,
 
-                (currentState, error) -> finishFailed(currentState, error),
+                (currentState, error) -> finishFailed(currentState),
 
                 this::finishCancelled
         );
@@ -71,24 +71,20 @@ public final class DefaultChatApplication implements ChatApplication {
                                 state.nextSequence()
                         )
                 ))
-                .onErrorResume(error -> {
-                    log.error(
-                            "Agent run failed, sessionId={}, runId={}",
-                            preparedRun.getSessionId(),
-                            preparedRun.getRunId(),
-                            error
-                    );
-
-                    return Mono.just(
-                            ChatEvent.runFailed(
-                                    preparedRun.getSessionId(),
-                                    preparedRun.getRunId(),
-                                    state.nextSequence(),
-                                    RUNTIME_ERROR_CODE,
-                                    RUNTIME_ERROR_MESSAGE
-                            )
-                    );
-                });
+                /*
+                 * 只有 Agent 运行失败且 FAILED 状态已经成功落库，才转换为
+                 * run.failed。收尾失败会继续作为错误向下游传播，避免客户端
+                 * 误以为 Run 已经可靠结束。
+                 */
+                .onErrorResume(RuntimeExecutionException.class, error -> Mono.just(
+                        ChatEvent.runFailed(
+                                preparedRun.getSessionId(),
+                                preparedRun.getRunId(),
+                                state.nextSequence(),
+                                RUNTIME_ERROR_CODE,
+                                RUNTIME_ERROR_MESSAGE
+                        )
+                ));
     }
 
     private Flux<ChatEvent> streamRuntime(RunStreamState state,AgentInvocation invocation) {
@@ -101,7 +97,13 @@ public final class DefaultChatApplication implements ChatApplication {
                  * AgentRuntime 必须显式发送 COMPLETED。
                  * 仅仅让 Flux 自然结束不能代表一次合法的 Agent 完成。
                  */
-                .concatWith(Mono.defer(() -> validateRuntimeCompletion(state) ));
+                .concatWith(Mono.defer(() -> validateRuntimeCompletion(state)))
+                /*
+                 * 原始异常可能包含 API Key、Authorization 或模型响应。
+                 * 在进入收尾链路前将其替换为不携带 message、cause 和堆栈的
+                 * 内部异常，同时日志只记录异常类型和 Run 标识。
+                 */
+                .onErrorMap(error -> runtimeExecutionFailed(state, error));
     }
 
     private Mono<ChatEvent> mapRuntimeEvent(RunStreamState state,RuntimeEvent runtimeEvent) {
@@ -195,30 +197,74 @@ public final class DefaultChatApplication implements ChatApplication {
     }
 
     private Mono<Void> finishSucceeded(RunStreamState state) {
-        return Mono.defer(() -> chatStore.finish(
+        return finishRun(
+                state,
                 RunFinalization.succeeded(
                         state.preparedRun.getSessionId(),
                         state.preparedRun.getRunId(),
                         state.assistantContent.toString()
                 )
-        ));
+        );
     }
 
-    private Mono<Void> finishFailed(RunStreamState state,Throwable error) {
-        return Mono.defer(() -> chatStore.finish(
+    private Mono<Void> finishFailed(RunStreamState state) {
+        return finishRun(
+                state,
                 RunFinalization.failed(
                         state.preparedRun.getSessionId(),
                         state.preparedRun.getRunId(),
                         RUNTIME_ERROR_CODE,
                         RUNTIME_ERROR_MESSAGE
                 )
-        ));
+        );
     }
 
     private Mono<Void> finishCancelled(RunStreamState state) {
-        return Mono.defer(() -> chatStore.finish(
-                RunFinalization.cancelled(state.preparedRun.getSessionId(),state.preparedRun.getRunId())
-        ));
+        return finishRun(
+                state,
+                RunFinalization.cancelled(
+                        state.preparedRun.getSessionId(),
+                        state.preparedRun.getRunId()
+                )
+        );
+    }
+
+    private Mono<Void> finishRun(
+            RunStreamState state,
+            RunFinalization finalization
+    ) {
+        return Mono.defer(() -> chatStore.finish(finalization))
+                .onErrorMap(error -> finalizationFailed(state, finalization, error));
+    }
+
+    private RuntimeExecutionException runtimeExecutionFailed(
+            RunStreamState state,
+            Throwable error
+    ) {
+        log.error(
+                "Agent runtime failed, sessionId={}, runId={}, errorType={}",
+                state.preparedRun.getSessionId(),
+                state.preparedRun.getRunId(),
+                error.getClass().getName()
+        );
+
+        return new RuntimeExecutionException();
+    }
+
+    private RunFinalizationException finalizationFailed(
+            RunStreamState state,
+            RunFinalization finalization,
+            Throwable error
+    ) {
+        log.error(
+                "Agent run finalization failed, status={}, sessionId={}, runId={}, errorType={}",
+                finalization.getStatus(),
+                state.preparedRun.getSessionId(),
+                state.preparedRun.getRunId(),
+                error.getClass().getName()
+        );
+
+        return new RunFinalizationException();
     }
 
     private static final class RunStreamState {
@@ -236,6 +282,20 @@ public final class DefaultChatApplication implements ChatApplication {
 
         private long nextSequence() {
             return sequence.incrementAndGet();
+        }
+    }
+
+    private static final class RuntimeExecutionException extends RuntimeException {
+
+        private RuntimeExecutionException() {
+            super(RUNTIME_ERROR_MESSAGE, null, false, false);
+        }
+    }
+
+    private static final class RunFinalizationException extends RuntimeException {
+
+        private RunFinalizationException() {
+            super("Agent run finalization failed", null, false, false);
         }
     }
 }

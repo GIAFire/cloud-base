@@ -37,6 +37,15 @@ logging:
   file:
     name: ${user.home}/logs/${spring.application.name}.log # 日志文件名，全路径
 
+agent:
+  runtime:
+    sse:
+      core-pool-size: ${AGENT_RUNTIME_SSE_CORE_POOL_SIZE:16}
+      max-pool-size: ${AGENT_RUNTIME_SSE_MAX_POOL_SIZE:64}
+      queue-capacity: ${AGENT_RUNTIME_SSE_QUEUE_CAPACITY:256}
+      keep-alive-seconds: ${AGENT_RUNTIME_SSE_KEEP_ALIVE_SECONDS:60}
+      request-timeout: ${AGENT_RUNTIME_SSE_REQUEST_TIMEOUT:10m}
+
 --- #################### 接口文档配置 ####################
 
 # MyBatis Plus 的配置项

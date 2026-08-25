@@ -1,5 +1,8 @@
 package com.cloud.module.agentruntime.chat.application;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import com.cloud.module.agentruntime.chat.application.command.StartChatCommand;
 import com.cloud.module.agentruntime.chat.application.model.PreparedRun;
 import com.cloud.module.agentruntime.chat.application.model.RunFinalization;
@@ -11,7 +14,10 @@ import com.cloud.module.agentruntime.chat.domain.ChatRole;
 import com.cloud.module.agentruntime.chat.runtime.RuntimeEvent;
 import com.cloud.module.agentruntime.support.RecordingChatStore;
 import com.cloud.module.agentruntime.support.ScriptedAgentRuntime;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -24,6 +30,23 @@ class DefaultChatApplicationTest {
 
     private static final Long SESSION_ID = 101L;
     private static final Long RUN_ID = 202L;
+
+    private Logger applicationLogger;
+    private ListAppender<ILoggingEvent> logAppender;
+
+    @BeforeEach
+    void setUpLogCapture() {
+        applicationLogger = (Logger) LoggerFactory.getLogger(DefaultChatApplication.class);
+        logAppender = new ListAppender<>();
+        logAppender.start();
+        applicationLogger.addAppender(logAppender);
+    }
+
+    @AfterEach
+    void tearDownLogCapture() {
+        applicationLogger.detachAppender(logAppender);
+        logAppender.stop();
+    }
 
     @Test
     void streams_started_deltas_and_completed_in_order() {
@@ -164,6 +187,40 @@ class DefaultChatApplicationTest {
 
         assertThat(finalization.getErrorMessage())
                 .doesNotContain("secret-value");
+
+        assertLogsDoNotContain("secret-value");
+    }
+
+    @Test
+    void propagates_safe_error_when_success_finalization_fails() {
+        ScriptedAgentRuntime runtime = new ScriptedAgentRuntime(
+                Flux.just(
+                        RuntimeEvent.started(),
+                        RuntimeEvent.textDelta("你好"),
+                        RuntimeEvent.completed()
+                )
+        );
+
+        RecordingChatStore store = new RecordingChatStore(
+                preparedRun(),
+                new RuntimeException("api-key=secret-finalization-value")
+        );
+
+        ChatApplication application = new DefaultChatApplication(runtime, store);
+
+        StepVerifier.create(application.stream(command()))
+                .assertNext(event -> assertThat(event.getType())
+                        .isEqualTo(ChatEventType.RUN_STARTED))
+                .assertNext(event -> assertThat(event.getType())
+                        .isEqualTo(ChatEventType.MESSAGE_DELTA))
+                .expectErrorSatisfies(error -> {
+                    assertThrowableDoesNotContain(error, "secret-finalization-value");
+                    assertThat(rootCauseOf(error).getMessage()).contains("finalization failed");
+                })
+                .verify();
+
+        assertThat(store.getFinalizations()).isEmpty();
+        assertLogsDoNotContain("secret-finalization-value");
     }
 
     @Test
@@ -236,5 +293,34 @@ class DefaultChatApplicationTest {
                         )
                 )
         );
+    }
+
+    private void assertLogsDoNotContain(String sensitiveValue) {
+        assertThat(logAppender.list)
+                .extracting(ILoggingEvent::getFormattedMessage)
+                .allSatisfy(message -> assertThat(message).doesNotContain(sensitiveValue));
+
+        assertThat(logAppender.list)
+                .extracting(ILoggingEvent::getThrowableProxy)
+                .allMatch(throwableProxy -> throwableProxy == null);
+    }
+
+    private void assertThrowableDoesNotContain(Throwable error, String sensitiveValue) {
+        Throwable current = error;
+
+        while (current != null) {
+            assertThat(current.getMessage()).doesNotContain(sensitiveValue);
+            current = current.getCause();
+        }
+    }
+
+    private Throwable rootCauseOf(Throwable error) {
+        Throwable current = error;
+
+        while (current.getCause() != null) {
+            current = current.getCause();
+        }
+
+        return current;
     }
 }

@@ -18,6 +18,8 @@ public final class RecordingChatStore
 
     private final PreparedRun preparedRun;
 
+    private final Throwable finishError;
+
     private final List<RunFinalization> finalizations =
             new CopyOnWriteArrayList<>();
 
@@ -27,10 +29,18 @@ public final class RecordingChatStore
     public RecordingChatStore(
             PreparedRun preparedRun
     ) {
+        this(preparedRun, null);
+    }
+
+    public RecordingChatStore(
+            PreparedRun preparedRun,
+            Throwable finishError
+    ) {
         this.preparedRun = Objects.requireNonNull(
                 preparedRun,
                 "preparedRun must not be null"
         );
+        this.finishError = finishError;
     }
 
     @Override
@@ -44,6 +54,10 @@ public final class RecordingChatStore
     public Mono<Void> finish(
             RunFinalization finalization
     ) {
+        if (finishError != null) {
+            return Mono.error(finishError);
+        }
+
         return Mono.fromRunnable(() -> {
             finalizations.add(finalization);
             finalizationLatch.countDown();

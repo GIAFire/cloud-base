@@ -3,15 +3,21 @@ package com.cloud.module.agentruntime.controller.admin.chat;
 import com.cloud.framework.security.core.LoginUser;
 import com.cloud.module.agentruntime.chat.application.ChatApplication;
 import com.cloud.module.agentruntime.chat.domain.ChatEvent;
+import com.cloud.module.agentruntime.framework.web.config.AgentRuntimeWebMvcConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import reactor.core.publisher.Flux;
 
 import java.nio.charset.StandardCharsets;
@@ -27,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ChatControllerTest {
 
     private MockMvc mockMvc;
+    private AnnotationConfigWebApplicationContext webApplicationContext;
 
     @BeforeEach
     void setUp() {
@@ -50,12 +57,22 @@ class ChatControllerTest {
                         )
                 );
 
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(
-                        new ChatController(
-                                chatApplication
-                        )
+        webApplicationContext = new AnnotationConfigWebApplicationContext();
+        webApplicationContext.setServletContext(new MockServletContext());
+        webApplicationContext.register(
+                ControllerTestWebConfiguration.class,
+                AgentRuntimeWebMvcConfiguration.class
+        );
+        webApplicationContext.register((registry, environment) ->
+                registry.registerBean(
+                        ChatApplication.class,
+                        specification -> specification.supplier(context -> chatApplication)
                 )
+        );
+        webApplicationContext.refresh();
+
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
                 .build();
 
         LoginUser loginUser =
@@ -80,6 +97,7 @@ class ChatControllerTest {
     @AfterEach
     void tearDown() {
         SecurityContextHolder.clearContext();
+        webApplicationContext.close();
     }
 
     @Test
@@ -158,5 +176,33 @@ class ChatControllerTest {
 
         assertThat(deltaIndex)
                 .isLessThan(completedIndex);
+    }
+
+    @Test
+    void rejects_session_id_above_long_max_value() throws Exception {
+        mockMvc.perform(
+                        post("/agent-runtime/chat/stream")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.TEXT_EVENT_STREAM)
+                                .content("""
+                                        {
+                                          "sessionId": "9223372036854775808",
+                                          "requestId": "request-001",
+                                          "content": "你好"
+                                        }
+                                        """)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(request().asyncNotStarted());
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @EnableWebMvc
+    static class ControllerTestWebConfiguration {
+
+        @Bean
+        ChatController chatController(ChatApplication chatApplication) {
+            return new ChatController(chatApplication);
+        }
     }
 }
