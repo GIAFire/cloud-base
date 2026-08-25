@@ -1,6 +1,5 @@
 package com.cloud.module.agentruntime.chat.adapter.dev;
 
-import com.cloud.module.agentruntime.chat.domain.ChatMessage;
 import com.cloud.module.agentruntime.chat.runtime.AgentInvocation;
 import com.cloud.module.agentruntime.chat.runtime.AgentRuntime;
 import com.cloud.module.agentruntime.chat.runtime.RuntimeEvent;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
-import java.util.List;
 
 @Component
 @Profile("dev")
@@ -26,25 +24,17 @@ public final class EchoAgentRuntime implements AgentRuntime {
     public Flux<RuntimeEvent> stream(
             AgentInvocation invocation
     ) {
-        return Flux.defer(() -> {
-            List<ChatMessage> messages =
-                    invocation.getMessages();
-
-            ChatMessage currentUserMessage =
-                    messages.get(messages.size() - 1);
-
-            return Flux.just(
+        return Flux.defer(() -> Flux.just(
                             RuntimeEvent.started(),
                             RuntimeEvent.thinkingDelta(
                                     "正在理解用户问题..."
                             ),
                             RuntimeEvent.textDelta("Echo: "),
                             RuntimeEvent.textDelta(
-                                    currentUserMessage.getContent()
+                                    invocation.getContent()
                             ),
                             RuntimeEvent.completed()
                     )
-                    .delayElements(Duration.ofMillis(120));
-        });
+                    .delayElements(Duration.ofMillis(120)));
     }
 }

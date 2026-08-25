@@ -4,13 +4,13 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.cloud.module.agentruntime.chat.application.command.StartChatCommand;
-import com.cloud.module.agentruntime.chat.application.model.PreparedRun;
 import com.cloud.module.agentruntime.chat.application.model.RunFinalization;
+import com.cloud.module.agentruntime.chat.application.model.StartedRun;
 import com.cloud.module.agentruntime.chat.domain.AgentRunStatus;
 import com.cloud.module.agentruntime.chat.domain.ChatActor;
 import com.cloud.module.agentruntime.chat.domain.ChatEventType;
-import com.cloud.module.agentruntime.chat.domain.ChatMessage;
-import com.cloud.module.agentruntime.chat.domain.ChatRole;
+import com.cloud.module.agentruntime.chat.runtime.AgentInvocation;
+import com.cloud.module.agentruntime.chat.runtime.AgentRuntime;
 import com.cloud.module.agentruntime.chat.runtime.RuntimeEvent;
 import com.cloud.module.agentruntime.chat.store.ChatStore;
 import com.cloud.module.agentruntime.support.RecordingChatStore;
@@ -25,7 +25,6 @@ import reactor.core.publisher.Sinks;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -65,7 +64,7 @@ class DefaultChatApplicationTest {
 
         RecordingChatStore store =
                 new RecordingChatStore(
-                        preparedRun()
+                        startedRun()
                 );
 
         ChatApplication application =
@@ -129,6 +128,35 @@ class DefaultChatApplicationTest {
     }
 
     @Test
+    void passes_only_current_command_content_to_runtime() {
+        AtomicReference<AgentInvocation> capturedInvocation = new AtomicReference<>();
+
+        AgentRuntime runtime = invocation -> {
+            capturedInvocation.set(invocation);
+            return Flux.just(
+                    RuntimeEvent.started(),
+                    RuntimeEvent.textDelta("已收到"),
+                    RuntimeEvent.completed()
+            );
+        };
+
+        RecordingChatStore store = new RecordingChatStore(startedRun());
+        ChatApplication application = new DefaultChatApplication(runtime, store);
+
+        StepVerifier.create(application.stream(command()))
+                .expectNextCount(3)
+                .verifyComplete();
+
+        AgentInvocation invocation = capturedInvocation.get();
+        assertThat(invocation).isNotNull();
+        assertThat(invocation.getSessionId()).isEqualTo(SESSION_ID);
+        assertThat(invocation.getRunId()).isEqualTo(RUN_ID);
+        assertThat(invocation.getActor().getTenantId()).isEqualTo(1L);
+        assertThat(invocation.getActor().getUserId()).isEqualTo(2L);
+        assertThat(invocation.getContent()).isEqualTo("你好");
+    }
+
+    @Test
     void waits_for_finish_before_emitting_run_completed() {
         ScriptedAgentRuntime runtime = new ScriptedAgentRuntime(
                 Flux.just(
@@ -145,8 +173,8 @@ class DefaultChatApplicationTest {
         ChatStore store = new ChatStore() {
 
             @Override
-            public Mono<PreparedRun> begin(StartChatCommand command) {
-                return Mono.just(preparedRun());
+            public Mono<StartedRun> begin(StartChatCommand command) {
+                return Mono.just(startedRun());
             }
 
             @Override
@@ -196,7 +224,7 @@ class DefaultChatApplicationTest {
 
         RecordingChatStore store =
                 new RecordingChatStore(
-                        preparedRun()
+                        startedRun()
                 );
 
         ChatApplication application =
@@ -257,7 +285,7 @@ class DefaultChatApplicationTest {
         );
 
         RecordingChatStore store = new RecordingChatStore(
-                preparedRun(),
+                startedRun(),
                 new RuntimeException("api-key=secret-finalization-value")
         );
 
@@ -294,7 +322,7 @@ class DefaultChatApplicationTest {
 
         RecordingChatStore store =
                 new RecordingChatStore(
-                        preparedRun()
+                        startedRun()
                 );
 
         ChatApplication application =
@@ -341,17 +369,8 @@ class DefaultChatApplicationTest {
         );
     }
 
-    private PreparedRun preparedRun() {
-        return new PreparedRun(
-                SESSION_ID,
-                RUN_ID,
-                List.of(
-                        new ChatMessage(
-                                ChatRole.USER,
-                                "你好"
-                        )
-                )
-        );
+    private StartedRun startedRun() {
+        return new StartedRun(SESSION_ID, RUN_ID);
     }
 
     private void assertLogsDoNotContain(String sensitiveValue) {

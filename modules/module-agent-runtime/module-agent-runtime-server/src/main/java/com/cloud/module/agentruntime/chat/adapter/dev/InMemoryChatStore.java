@@ -1,8 +1,8 @@
 package com.cloud.module.agentruntime.chat.adapter.dev;
 
 import com.cloud.module.agentruntime.chat.application.command.StartChatCommand;
-import com.cloud.module.agentruntime.chat.application.model.PreparedRun;
 import com.cloud.module.agentruntime.chat.application.model.RunFinalization;
+import com.cloud.module.agentruntime.chat.application.model.StartedRun;
 import com.cloud.module.agentruntime.chat.domain.AgentRunStatus;
 import com.cloud.module.agentruntime.chat.domain.ChatActor;
 import com.cloud.module.agentruntime.chat.domain.ChatMessage;
@@ -34,7 +34,7 @@ public final class InMemoryChatStore implements ChatStore {
     private final ConcurrentMap<Long, RunFinalization> finalizations = new ConcurrentHashMap<>();
 
     @Override
-    public Mono<PreparedRun> begin(StartChatCommand command) {
+    public Mono<StartedRun> begin(StartChatCommand command) {
         return Mono.fromSupplier(() -> {
             SessionState sessionState = resolveSession(command);
 
@@ -45,7 +45,7 @@ public final class InMemoryChatStore implements ChatStore {
 
                 runSessions.put(runId, sessionState.sessionId);
 
-                return new PreparedRun(sessionState.sessionId,runId,new ArrayList<>(sessionState.messages));
+                return new StartedRun(sessionState.sessionId, runId);
             }
         });
     }
@@ -53,6 +53,14 @@ public final class InMemoryChatStore implements ChatStore {
     @Override
     public Mono<Void> finish(RunFinalization finalization) {
         return Mono.fromRunnable(() -> {
+            RunFinalization previousFinalization =
+                    finalizations.get(finalization.getRunId());
+
+            if (previousFinalization != null) {
+                requireSameFinalization(previousFinalization, finalization);
+                return;
+            }
+
             Long expectedSessionId = runSessions.get(finalization.getRunId());
 
             if (expectedSessionId == null) {
@@ -63,14 +71,6 @@ public final class InMemoryChatStore implements ChatStore {
                 throw new IllegalStateException("Run does not belong to session");
             }
 
-            RunFinalization previous =
-                    finalizations.putIfAbsent(finalization.getRunId(),finalization);
-
-            if (previous != null) {
-                throw new IllegalStateException("Run has already been finalized: " + finalization.getRunId()
-                );
-            }
-
             SessionState sessionState =
                     sessions.get(finalization.getSessionId());
 
@@ -79,17 +79,41 @@ public final class InMemoryChatStore implements ChatStore {
                 );
             }
 
-            if (finalization.getStatus() == AgentRunStatus.SUCCEEDED) {
-                synchronized (sessionState) {
+            synchronized (sessionState) {
+                previousFinalization = finalizations.get(finalization.getRunId());
+
+                if (previousFinalization != null) {
+                    requireSameFinalization(previousFinalization, finalization);
+                    return;
+                }
+
+                if (finalization.getStatus() == AgentRunStatus.SUCCEEDED) {
                     sessionState.messages.add(
                             new ChatMessage(ChatRole.ASSISTANT, finalization.getAssistantContent())
                     );
                 }
-            }
 
-            runSessions.remove(finalization.getRunId()
-            );
+                finalizations.put(finalization.getRunId(), finalization);
+                runSessions.remove(finalization.getRunId());
+            }
         });
+    }
+
+    private void requireSameFinalization(
+            RunFinalization previous,
+            RunFinalization current
+    ) {
+        if (previous.getStatus() != current.getStatus()
+                || !Objects.equals(previous.getSessionId(), current.getSessionId())
+                || !Objects.equals(previous.getRunId(), current.getRunId())
+                || !Objects.equals(previous.getAssistantContent(), current.getAssistantContent())
+                || !Objects.equals(previous.getErrorCode(), current.getErrorCode())
+                || !Objects.equals(previous.getErrorMessage(), current.getErrorMessage())) {
+            throw new IllegalStateException(
+                    "Run has already been finalized with a different result: "
+                            + current.getRunId()
+            );
+        }
     }
 
     private SessionState resolveSession(StartChatCommand command) {

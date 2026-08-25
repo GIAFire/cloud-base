@@ -1,8 +1,6 @@
 package com.cloud.module.agentruntime.chat.adapter.agentscope;
 
 import com.cloud.module.agentruntime.chat.domain.ChatActor;
-import com.cloud.module.agentruntime.chat.domain.ChatMessage;
-import com.cloud.module.agentruntime.chat.domain.ChatRole;
 import com.cloud.module.agentruntime.chat.runtime.AgentInvocation;
 import com.cloud.module.agentruntime.chat.runtime.AgentRuntime;
 import com.cloud.module.agentruntime.chat.runtime.RuntimeEvent;
@@ -15,7 +13,6 @@ import io.agentscope.harness.agent.HarnessAgent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
 
-import java.util.List;
 import java.util.Objects;
 
 public final class AgentScopeRuntime implements AgentRuntime {
@@ -39,13 +36,10 @@ public final class AgentScopeRuntime implements AgentRuntime {
         );
 
         return Flux.defer(() -> {
-            ChatMessage currentUserMessage =
-                    getCurrentUserMessage(invocation);
-
             RuntimeContext runtimeContext =
                     createRuntimeContext(invocation);
 
-            UserMessage userMessage = new UserMessage("user",currentUserMessage.getContent());
+            UserMessage userMessage = new UserMessage("user", invocation.getContent());
 
             /*
              * 这里只传当前用户消息。
@@ -58,23 +52,6 @@ public final class AgentScopeRuntime implements AgentRuntime {
                     .streamEvents(userMessage, runtimeContext)
                     .<RuntimeEvent>handle(this::mapAgentEvent);
         });
-    }
-
-    private ChatMessage getCurrentUserMessage(
-            AgentInvocation invocation
-    ) {
-        List<ChatMessage> messages = invocation.getMessages();
-
-        ChatMessage currentMessage =
-                messages.get(messages.size() - 1);
-
-        if (currentMessage.getRole() != ChatRole.USER) {
-            throw new IllegalStateException(
-                    "the current invocation message must be a user message"
-            );
-        }
-
-        return currentMessage;
     }
 
     private RuntimeContext createRuntimeContext(

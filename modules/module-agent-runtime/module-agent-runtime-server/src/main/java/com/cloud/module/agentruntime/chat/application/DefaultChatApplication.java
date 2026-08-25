@@ -1,8 +1,8 @@
 package com.cloud.module.agentruntime.chat.application;
 
 import com.cloud.module.agentruntime.chat.application.command.StartChatCommand;
-import com.cloud.module.agentruntime.chat.application.model.PreparedRun;
 import com.cloud.module.agentruntime.chat.application.model.RunFinalization;
+import com.cloud.module.agentruntime.chat.application.model.StartedRun;
 import com.cloud.module.agentruntime.chat.domain.ChatEvent;
 import com.cloud.module.agentruntime.chat.runtime.AgentInvocation;
 import com.cloud.module.agentruntime.chat.runtime.AgentRuntime;
@@ -34,19 +34,19 @@ public final class DefaultChatApplication implements ChatApplication {
 
         return Flux.defer(() -> chatStore.begin(command)
                 .switchIfEmpty(Mono.error(new IllegalStateException("ChatStore.begin returned empty")))
-                .flatMapMany(preparedRun -> executeRun(command, preparedRun)));
+                .flatMapMany(startedRun -> executeRun(command, startedRun)));
     }
 
-    private Flux<ChatEvent> executeRun(StartChatCommand command,PreparedRun preparedRun) {
-        RunStreamState state = new RunStreamState(preparedRun);
+    private Flux<ChatEvent> executeRun(StartChatCommand command, StartedRun startedRun) {
+        RunStreamState state = new RunStreamState(startedRun);
 
         Flux<ChatEvent> managedEvents = Flux.usingWhen(
                 Mono.just(state),currentState -> Flux.defer(() -> {
                     AgentInvocation invocation = new AgentInvocation(
-                            preparedRun.getSessionId(),
-                            preparedRun.getRunId(),
+                            startedRun.getSessionId(),
+                            startedRun.getRunId(),
                             command.getActor(),
-                            preparedRun.getHistory()
+                            command.getContent()
                     );
 
                     return streamRuntime(currentState, invocation);
@@ -66,8 +66,8 @@ public final class DefaultChatApplication implements ChatApplication {
         return managedEvents
                 .concatWith(Mono.fromSupplier(() ->
                         ChatEvent.runCompleted(
-                                preparedRun.getSessionId(),
-                                preparedRun.getRunId(),
+                                startedRun.getSessionId(),
+                                startedRun.getRunId(),
                                 state.nextSequence()
                         )
                 ))
@@ -78,8 +78,8 @@ public final class DefaultChatApplication implements ChatApplication {
                  */
                 .onErrorResume(RuntimeExecutionException.class, error -> Mono.just(
                         ChatEvent.runFailed(
-                                preparedRun.getSessionId(),
-                                preparedRun.getRunId(),
+                                startedRun.getSessionId(),
+                                startedRun.getRunId(),
                                 state.nextSequence(),
                                 RUNTIME_ERROR_CODE,
                                 RUNTIME_ERROR_MESSAGE
@@ -157,8 +157,8 @@ public final class DefaultChatApplication implements ChatApplication {
          */
         return Mono.just(
                 ChatEvent.messageThinkingDelta(
-                        state.preparedRun.getSessionId(),
-                        state.preparedRun.getRunId(),
+                        state.startedRun.getSessionId(),
+                        state.startedRun.getRunId(),
                         state.nextSequence(),
                         delta
                 )
@@ -174,8 +174,8 @@ public final class DefaultChatApplication implements ChatApplication {
 
         return Mono.just(
                 ChatEvent.runStarted(
-                        state.preparedRun.getSessionId(),
-                        state.preparedRun.getRunId(),
+                        state.startedRun.getSessionId(),
+                        state.startedRun.getRunId(),
                         state.nextSequence()
                 )
         );
@@ -199,8 +199,8 @@ public final class DefaultChatApplication implements ChatApplication {
 
         return Mono.just(
                 ChatEvent.messageDelta(
-                        state.preparedRun.getSessionId(),
-                        state.preparedRun.getRunId(),
+                        state.startedRun.getSessionId(),
+                        state.startedRun.getRunId(),
                         state.nextSequence(),
                         delta
                 )
@@ -243,8 +243,8 @@ public final class DefaultChatApplication implements ChatApplication {
         return finishRun(
                 state,
                 RunFinalization.succeeded(
-                        state.preparedRun.getSessionId(),
-                        state.preparedRun.getRunId(),
+                        state.startedRun.getSessionId(),
+                        state.startedRun.getRunId(),
                         state.assistantContent.toString()
                 )
         );
@@ -254,8 +254,8 @@ public final class DefaultChatApplication implements ChatApplication {
         return finishRun(
                 state,
                 RunFinalization.failed(
-                        state.preparedRun.getSessionId(),
-                        state.preparedRun.getRunId(),
+                        state.startedRun.getSessionId(),
+                        state.startedRun.getRunId(),
                         RUNTIME_ERROR_CODE,
                         RUNTIME_ERROR_MESSAGE
                 )
@@ -266,8 +266,8 @@ public final class DefaultChatApplication implements ChatApplication {
         return finishRun(
                 state,
                 RunFinalization.cancelled(
-                        state.preparedRun.getSessionId(),
-                        state.preparedRun.getRunId()
+                        state.startedRun.getSessionId(),
+                        state.startedRun.getRunId()
                 )
         );
     }
@@ -286,8 +286,8 @@ public final class DefaultChatApplication implements ChatApplication {
     ) {
         log.error(
                 "Agent runtime failed, sessionId={}, runId={}, errorType={}",
-                state.preparedRun.getSessionId(),
-                state.preparedRun.getRunId(),
+                state.startedRun.getSessionId(),
+                state.startedRun.getRunId(),
                 error.getClass().getName()
         );
 
@@ -302,8 +302,8 @@ public final class DefaultChatApplication implements ChatApplication {
         log.error(
                 "Agent run finalization failed, status={}, sessionId={}, runId={}, errorType={}",
                 finalization.getStatus(),
-                state.preparedRun.getSessionId(),
-                state.preparedRun.getRunId(),
+                state.startedRun.getSessionId(),
+                state.startedRun.getRunId(),
                 error.getClass().getName()
         );
 
@@ -312,15 +312,15 @@ public final class DefaultChatApplication implements ChatApplication {
 
     private static final class RunStreamState {
 
-        private final PreparedRun preparedRun;
+        private final StartedRun startedRun;
         private final StringBuilder assistantContent = new StringBuilder();
         private final AtomicLong sequence = new AtomicLong();
 
         private boolean started;
         private boolean completed;
 
-        private RunStreamState( PreparedRun preparedRun ) {
-            this.preparedRun = Objects.requireNonNull(preparedRun,"preparedRun must not be null");
+        private RunStreamState(StartedRun startedRun) {
+            this.startedRun = Objects.requireNonNull(startedRun, "startedRun must not be null");
         }
 
         private long nextSequence() {

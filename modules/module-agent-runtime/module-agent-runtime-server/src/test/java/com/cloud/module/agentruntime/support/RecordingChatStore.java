@@ -1,8 +1,8 @@
 package com.cloud.module.agentruntime.support;
 
 import com.cloud.module.agentruntime.chat.application.command.StartChatCommand;
-import com.cloud.module.agentruntime.chat.application.model.PreparedRun;
 import com.cloud.module.agentruntime.chat.application.model.RunFinalization;
+import com.cloud.module.agentruntime.chat.application.model.StartedRun;
 import com.cloud.module.agentruntime.chat.store.ChatStore;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public final class RecordingChatStore
         implements ChatStore {
 
-    private final PreparedRun preparedRun;
+    private final StartedRun startedRun;
 
     private final Throwable finishError;
 
@@ -27,27 +27,27 @@ public final class RecordingChatStore
             new CountDownLatch(1);
 
     public RecordingChatStore(
-            PreparedRun preparedRun
+            StartedRun startedRun
     ) {
-        this(preparedRun, null);
+        this(startedRun, null);
     }
 
     public RecordingChatStore(
-            PreparedRun preparedRun,
+            StartedRun startedRun,
             Throwable finishError
     ) {
-        this.preparedRun = Objects.requireNonNull(
-                preparedRun,
-                "preparedRun must not be null"
+        this.startedRun = Objects.requireNonNull(
+                startedRun,
+                "startedRun must not be null"
         );
         this.finishError = finishError;
     }
 
     @Override
-    public Mono<PreparedRun> begin(
+    public Mono<StartedRun> begin(
             StartChatCommand command
     ) {
-        return Mono.just(preparedRun);
+        return Mono.just(startedRun);
     }
 
     @Override
