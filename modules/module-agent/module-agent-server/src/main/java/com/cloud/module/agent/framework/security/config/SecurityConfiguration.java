@@ -8,11 +8,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 
 /**
- * agent 模块的 Security 配置
+ * Agent Server 的安全规则补充。
+ *
+ * <p>仅放行文档、监控和内部 RPC 路径；聊天接口不在白名单中，必须由全局
+ * 安全链认证，ChatController 还会再次要求 LoginUser 非空。</p>
  */
 @Configuration("agentSecurityConfiguration")
 public class SecurityConfiguration {
 
+    /** 注册模块级路径授权规则。 */
     @Bean("agentAuthorizeRequestsCustomizer")
     public AuthorizeRequestsCustomizer authorizeRequestsCustomizer() {
         return new AuthorizeRequestsCustomizer() {

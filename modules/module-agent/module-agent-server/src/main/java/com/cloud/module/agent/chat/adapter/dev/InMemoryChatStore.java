@@ -20,6 +20,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * ChatStore 的进程内 Adapter，供开发和快速测试使用。
+ *
+ * <p>它刻意复现 MySQL Adapter 的接口语义：requestId 幂等、同 Session 单 Run、
+ * 归属校验、相同最终结果幂等以及不同最终结果冲突。所有数据随 JVM 退出丢失，
+ * 不适合生产环境。</p>
+ */
 @Component
 @ConditionalOnProperty(
         prefix = "agent.runtime.store",
@@ -29,8 +36,10 @@ import java.util.concurrent.atomic.AtomicLong;
 )
 public final class InMemoryChatStore implements ChatStore {
 
+    /** 开发用 Session ID 分配器。 */
     private final AtomicLong sessionSequence = new AtomicLong(1_000);
 
+    /** 开发用 Run ID 分配器。 */
     private final AtomicLong runSequence = new AtomicLong(2_000);
 
     /**
@@ -43,10 +52,13 @@ public final class InMemoryChatStore implements ChatStore {
 
     private final Map<Long, SessionState> sessions = new HashMap<>();
 
+    /** 通过 Run ID 定位运行状态和最终结果。 */
     private final Map<Long, RunState> runs = new HashMap<>();
 
+    /** 复现数据库唯一键 (tenantId, userId, requestId)。 */
     private final Map<RequestKey, RunState> requestRuns = new HashMap<>();
 
+    /** 在同一临界区完成幂等检查、会话互斥、用户消息保存和 Run 创建。 */
     @Override
     public Mono<StartedRun> begin(StartChatCommand command) {
         Objects.requireNonNull(command, "command must not be null");
@@ -90,6 +102,7 @@ public final class InMemoryChatStore implements ChatStore {
         });
     }
 
+    /** 在同一临界区完成归属校验、幂等终结和成功消息保存。 */
     @Override
     public Mono<Void> finish(RunFinalization finalization) {
         Objects.requireNonNull(finalization, "finalization must not be null");
@@ -184,6 +197,7 @@ public final class InMemoryChatStore implements ChatStore {
         return sessionState;
     }
 
+    /** 内存中的 Session 聚合状态。 */
     private static final class SessionState {
 
         private final Long sessionId;
@@ -211,6 +225,7 @@ public final class InMemoryChatStore implements ChatStore {
         }
     }
 
+    /** 内存中的 Run 状态；finalization 非空表示已经进入终态。 */
     private static final class RunState {
 
         private final Long runId;
@@ -245,6 +260,7 @@ public final class InMemoryChatStore implements ChatStore {
         }
     }
 
+    /** 与数据库 requestId 唯一索引等价的复合键。 */
     private static final class RequestKey {
 
         private final Long tenantId;

@@ -104,7 +104,7 @@ class ChatControllerTest {
     void returns_chat_events_as_sse() throws Exception {
         MvcResult mvcResult = mockMvc.perform(
                         post(
-                                "/agent-runtime/chat/stream"
+                                "/agent/chat/stream"
                         )
                                 .contentType(
                                         MediaType.APPLICATION_JSON
@@ -181,7 +181,7 @@ class ChatControllerTest {
     @Test
     void rejects_session_id_above_long_max_value() throws Exception {
         mockMvc.perform(
-                        post("/agent-runtime/chat/stream")
+                        post("/agent/chat/stream")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.TEXT_EVENT_STREAM)
                                 .content("""

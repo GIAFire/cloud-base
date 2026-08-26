@@ -10,6 +10,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+/**
+ * AgentScope Runtime 的条件装配。
+ *
+ * <p>仅当 {@code agent.runtime.type=agentscope} 时创建模型、单例 HarnessAgent
+ * 和 AgentRuntime Adapter，避免与开发用 EchoAgentRuntime 同时存在。</p>
+ */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(
         prefix = "agent.runtime",
@@ -18,30 +25,30 @@ import org.springframework.beans.factory.annotation.Qualifier;
 )
 public class AgentScopeRuntimeConfiguration {
 
+    /**
+     * 创建 OpenAI-compatible 流式模型。
+     *
+     * <p>配置只在 Adapter 激活时校验；API Key 允许为空，以兼容不要求鉴权的
+     * 本地兼容服务。超时和重试由 AgentScope ExecutionConfig 执行。</p>
+     */
     @Bean
-    public Model agentScopeChatModel(
-            AgentScopeRuntimeProperties properties
-    ) {
+    public Model agentScopeChatModel(AgentScopeRuntimeProperties properties) {
         properties.validateForActivation();
 
-        AgentScopeRuntimeProperties.ModelProperties modelProperties =
-                properties.getModel();
+        AgentScopeRuntimeProperties.ModelProperties modelProperties = properties.getModel();
 
-        ExecutionConfig executionConfig =
-                ExecutionConfig.builder()
+        ExecutionConfig executionConfig = ExecutionConfig.builder()
                         .timeout(modelProperties.getTimeout())
                         .maxAttempts(modelProperties.getMaxAttempts())
                         .build();
 
-        GenerateOptions generateOptions =
-                GenerateOptions.builder()
+        GenerateOptions generateOptions = GenerateOptions.builder()
                         .stream(true)
                         .maxTokens(modelProperties.getMaxTokens())
                         .executionConfig(executionConfig)
                         .build();
 
-        OpenAIChatModel.Builder builder =
-                OpenAIChatModel.builder()
+        OpenAIChatModel.Builder builder = OpenAIChatModel.builder()
                         .baseUrl(modelProperties.getBaseUrl())
                         .modelName(modelProperties.getModelName())
                         .stream(true)
@@ -75,15 +82,13 @@ public class AgentScopeRuntimeConfiguration {
                 .sysPrompt(properties.getSystemPrompt())
                 .model(model)
                 .maxIters(properties.getMaxIters())
-
                 .enableAgentTracingLog(false)
                 .build();
     }
 
+    /** 将容器管理的 HarnessAgent 包装为模块内部 AgentRuntime seam。 */
     @Bean
-    public AgentRuntime agentScopeRuntime(
-            HarnessAgent baseHarnessAgent
-    ) {
+    public AgentRuntime agentScopeRuntime(HarnessAgent baseHarnessAgent) {
         return new AgentScopeRuntime(baseHarnessAgent);
     }
 }

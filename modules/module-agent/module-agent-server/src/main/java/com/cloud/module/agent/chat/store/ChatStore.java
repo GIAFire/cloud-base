@@ -5,6 +5,17 @@ import com.cloud.module.agent.chat.application.model.RunFinalization;
 import com.cloud.module.agent.chat.application.model.StartedRun;
 import reactor.core.publisher.Mono;
 
+/**
+ * 业务聊天状态存储 seam。
+ *
+ * <p>该接口只管理 Session、Run 和最终消息，不管理 HarnessAgent 的模型上下文。
+ * begin/finish 都是事务语义操作，Adapter 必须保证幂等、数据归属校验和状态
+ * 转换约束；应用层不感知其背后是进程内存还是 MySQL。</p>
+ *
+ * <p>虽然接口使用 Reactor 类型，但这不要求底层存储必须是非阻塞实现。
+ * MyBatis Adapter 会把阻塞事务调度到 boundedElastic，并在目标线程恢复租户
+ * 上下文。</p>
+ */
 public interface ChatStore {
 
     /**
