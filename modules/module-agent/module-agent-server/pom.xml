@@ -1,23 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.cloud</groupId>
         <artifactId>module-agent</artifactId>
         <version>${revision}</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>module-agent-server</artifactId>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
     <description>
-        agent 模块，提供agent功能
+        module-agent 模块，agent运行基座
     </description>
 
     <properties>
-        <agentscope.version>2.0.0</agentscope.version>
+        <agentscope.version>2.0.1</agentscope.version>
         <grpc.version>1.77.0</grpc.version>
         <nacos-client.version>3.2.1-2026.03.30</nacos-client.version>
     </properties>
@@ -49,6 +48,7 @@
     </dependencyManagement>
 
     <dependencies>
+
         <!-- agentScope 基础 -->
         <dependency>
             <groupId>io.agentscope</groupId>
@@ -138,15 +138,6 @@
             <groupId>io.agentscope</groupId>
             <artifactId>agentscope-extensions-rag-dify</artifactId>
         </dependency>
-        <!-- SSE / Flux 支持 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-reactor-netty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
 
 
         <!-- Spring Cloud 基础 -->
@@ -224,21 +215,22 @@
             <artifactId>spring-boot-starter-mq</artifactId>
         </dependency>
 
-        <!-- 工具类相关 -->
-        <dependency>
-            <groupId>com.cloud</groupId>
-            <artifactId>spring-boot-starter-excel</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.cloud</groupId>
-            <artifactId>spring-boot-starter-biz-ip</artifactId>
-        </dependency>
-
         <!-- 监控相关 -->
         <dependency>
             <groupId>com.cloud</groupId>
             <artifactId>spring-boot-starter-monitor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

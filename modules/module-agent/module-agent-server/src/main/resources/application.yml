@@ -1,10 +1,9 @@
 server:
-  port: 8087
-#  servlet:
-#    context-path: /agent
+  port: 8089
 spring:
   application:
     name: agent-server
+
   profiles:
     active: dev
 
@@ -40,27 +39,13 @@ logging:
 
 --- #################### 接口文档配置 ####################
 
-springdoc:
-  api-docs:
-    enabled: true # 1. 是否开启 Swagger 接文档的元数据
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: true # 2.1 是否开启 Swagger 文档的官方 UI 界面
-    path: /swagger-ui
-  default-flat-param-object: true # 参见 https://doc.xiaominfo.com/docs/faq/v4/knife4j-parameterobject-flat-param 文档
-
-knife4j:
-  enable: true
-  setting:
-    language: zh_cn
-
 # MyBatis Plus 的配置项
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true # 虽然默认为 true ，但是还是显示去指定下。
   global-config:
     db-config:
-      id-type: NONE # “智能”模式，基于 IdTypeEnvironmentPostProcessor + 数据源的类型，自动适配成 AUTO、INPUT 模式。
+      id-type: ASSIGN_ID # “智能”模式，基于 IdTypeEnvironmentPostProcessor + 数据源的类型，自动适配成 AUTO、INPUT 模式。
       #      id-type: AUTO # 自增 ID，适合 MySQL 等直接自增的数据库
       #      id-type: INPUT # 用户输入 ID，适合 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库
       #      id-type: ASSIGN_ID # 分配 ID，默认使用雪花算法。注意，Oracle、PostgreSQL、Kingbase、DB2、H2 数据库时，需要去除实体类上的 @KeySequence 注解
@@ -74,29 +59,9 @@ mybatis-plus:
 mybatis-plus-join:
   banner: false # 关闭控制台的 Banner 打印
 
-# Spring Data Redis 配置
-spring:
-  data:
-    redis:
-      repositories:
-        enabled: false # 项目未使用到 Spring Data Redis 的 Repository，所以直接禁用，保证启动速度
-
-# VO 转换（数据翻译）相关
-easy-trans:
-  is-enable-global: false # 【默认禁用，对性能确认压力大】启用全局翻译（拦截所有 SpringMVC ResponseBody 进行自动翻译 )。如果对于性能要求很高可关闭此配置，或通过 @IgnoreTrans 忽略某个接口
-
 --- #################### RPC 远程调用相关配置 ####################
 
 --- #################### MQ 消息队列相关配置 ####################
-
---- #################### 定时任务相关配置 ####################
-
-xxl:
-  job:
-    executor:
-      appname: ${spring.application.name} # 执行器 AppName
-      logpath: ${user.home}/logs/xxl-job/${spring.application.name} # 执行器运行日志文件存储磁盘路径
-    accessToken: default_token # 执行器通讯TOKEN
 
 --- #################### Cloud相关配置 ####################
 
@@ -121,3 +86,30 @@ com.cloud:
     ignore-tables:
 
 debug: false
+
+
+agent:
+  runtime:
+    type: ${AGENT_RUNTIME_TYPE:agentscope}
+    store:
+      type: ${AGENT_CHAT_STORE_TYPE:mysql}
+    sse:
+      core-pool-size: ${AGENT_RUNTIME_SSE_CORE_POOL_SIZE:16}
+      max-pool-size: ${AGENT_RUNTIME_SSE_MAX_POOL_SIZE:64}
+      queue-capacity: ${AGENT_RUNTIME_SSE_QUEUE_CAPACITY:256}
+      keep-alive-seconds: ${AGENT_RUNTIME_SSE_KEEP_ALIVE_SECONDS:60}
+      request-timeout: ${AGENT_RUNTIME_SSE_REQUEST_TIMEOUT:10m}
+
+    agentscope:
+      agent-id: ${AGENT_ID:111222333}
+      agent-name: ${AGENT_NAME:BaseChatAgent}
+      system-prompt: ${AGENT_SYSTEM_PROMPT:你是一个专业、准确、简洁的企业级智能助手。}
+      max-iters: ${AGENT_MAX_ITERS:1}
+
+      model:
+        base-url: ${OPENAI_BASE_URL2:https://api.openai.com/v1}
+        api-key: ${OPENAI_API_KEY2:}
+        model-name: glm-5
+        max-tokens: ${AGENT_MODEL_MAX_TOKENS:4096}
+        timeout: ${AGENT_MODEL_TIMEOUT:2m}
+        max-attempts: ${AGENT_MODEL_MAX_ATTEMPTS:1}

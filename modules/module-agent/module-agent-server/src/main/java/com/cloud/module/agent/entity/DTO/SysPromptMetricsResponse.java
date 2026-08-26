@@ -1,9 +1,0 @@
-package com.cloud.module.agent.entity.DTO;
-
-public record SysPromptMetricsResponse(
-        long total,
-        long newToday,
-        long boundPrompts,
-        long boundAgents
-) {
-}

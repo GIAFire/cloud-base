@@ -164,20 +164,6 @@ spring:
                                 - Path=/app-api/AiFriend/**
                             filters:
                                 - RewritePath=/app-api/AiFriend/v3/api-docs, /v3/api-docs
-                        ## agent-runtime-server 服务
-                        -   id: agent-runtime-admin-api # 路由的编号
-                            uri: grayLb://agent-runtime-server
-                            predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
-                                - Path=/admin-api/agent-runtime/**
-                            filters:
-                                - RewritePath=/admin-api/agent-runtime/v3/api-docs, /v3/api-docs
-                        ## agent-runtime-server 服务
-                        -   id: agent-runtime-app-api # 路由的编号
-                            uri: grayLb://agent-runtime-server
-                            predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
-                                - Path=/app-api/agent-runtime/**
-                            filters:
-                                - RewritePath=/app-api/agent-runtime/v3/api-docs, /v3/api-docs
                     x-forwarded:
                         prefix-enabled: false # 避免 Swagger 重复带上额外的 /admin-api/system 前缀
                     default-filters:

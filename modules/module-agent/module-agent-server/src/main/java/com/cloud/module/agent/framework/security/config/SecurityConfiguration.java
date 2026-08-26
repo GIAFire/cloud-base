@@ -1,15 +1,16 @@
 package com.cloud.module.agent.framework.security.config;
 
 import com.cloud.framework.security.config.AuthorizeRequestsCustomizer;
+import com.cloud.module.agent.enums.ApiConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 
 /**
- * Agent 模块的 Security 配置
+ * agent 模块的 Security 配置
  */
-@Configuration(proxyBeanMethods = false, value = "agentSecurityConfiguration")
+@Configuration("agentSecurityConfiguration")
 public class SecurityConfiguration {
 
     @Bean("agentAuthorizeRequestsCustomizer")
@@ -23,11 +24,13 @@ public class SecurityConfiguration {
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/swagger-ui").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll();
-                // Druid 监控
-                registry.requestMatchers("/druid/**").permitAll();
                 // Spring Boot Actuator 的安全配置
                 registry.requestMatchers("/actuator").permitAll()
                         .requestMatchers("/actuator/**").permitAll();
+                // Druid 监控
+                registry.requestMatchers("/druid/**").permitAll();
+                // RPC 服务的安全配置
+                registry.requestMatchers(ApiConstants.PREFIX + "/**").permitAll();
             }
 
         };
