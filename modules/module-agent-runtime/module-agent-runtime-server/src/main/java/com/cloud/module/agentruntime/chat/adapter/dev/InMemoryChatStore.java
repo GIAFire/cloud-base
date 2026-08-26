@@ -8,16 +8,16 @@ import com.cloud.module.agentruntime.chat.domain.ChatActor;
 import com.cloud.module.agentruntime.chat.domain.ChatMessage;
 import com.cloud.module.agentruntime.chat.domain.ChatRole;
 import com.cloud.module.agentruntime.chat.store.ChatStore;
+import com.cloud.module.agentruntime.chat.store.ChatStoreException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
@@ -33,23 +33,57 @@ public final class InMemoryChatStore implements ChatStore {
 
     private final AtomicLong runSequence = new AtomicLong(2_000);
 
-    private final ConcurrentMap<Long, SessionState> sessions = new ConcurrentHashMap<>();
+    /**
+     * 内存 Adapter 的全部状态都由同一把锁保护。
+     *
+     * 这是开发和测试实现，优先保证它与 MySQL Adapter 具有完全相同的
+     * 原子性和状态约束，而不是追求跨会话并行吞吐。
+     */
+    private final Object stateMonitor = new Object();
 
-    private final ConcurrentMap<Long, Long> runSessions = new ConcurrentHashMap<>();
+    private final Map<Long, SessionState> sessions = new HashMap<>();
 
-    private final ConcurrentMap<Long, RunFinalization> finalizations = new ConcurrentHashMap<>();
+    private final Map<Long, RunState> runs = new HashMap<>();
+
+    private final Map<RequestKey, RunState> requestRuns = new HashMap<>();
 
     @Override
     public Mono<StartedRun> begin(StartChatCommand command) {
-        return Mono.fromSupplier(() -> {
-            SessionState sessionState = resolveSession(command);
+        Objects.requireNonNull(command, "command must not be null");
 
-            synchronized (sessionState) {
+        return Mono.fromSupplier(() -> {
+            synchronized (stateMonitor) {
+                RequestKey requestKey = RequestKey.from(command);
+                RunState duplicateRun = requestRuns.get(requestKey);
+
+                if (duplicateRun != null) {
+                    throw ChatStoreException.duplicateRequest(
+                            duplicateRun.sessionId,
+                            duplicateRun.runId
+                    );
+                }
+
+                SessionState sessionState = resolveSession(command);
+
+                if (sessionState.activeRunId != null) {
+                    throw ChatStoreException.sessionBusy(
+                            sessionState.sessionId,
+                            sessionState.activeRunId
+                    );
+                }
+
                 sessionState.messages.add(new ChatMessage(ChatRole.USER, command.getContent()));
 
                 Long runId = runSequence.incrementAndGet();
+                RunState runState = new RunState(
+                        runId,
+                        sessionState.sessionId,
+                        command.getActor()
+                );
 
-                runSessions.put(runId, sessionState.sessionId);
+                sessionState.activeRunId = runId;
+                runs.put(runId, runState);
+                requestRuns.put(requestKey, runState);
 
                 return new StartedRun(sessionState.sessionId, runId);
             }
@@ -58,37 +92,30 @@ public final class InMemoryChatStore implements ChatStore {
 
     @Override
     public Mono<Void> finish(RunFinalization finalization) {
+        Objects.requireNonNull(finalization, "finalization must not be null");
+
         return Mono.fromRunnable(() -> {
-            RunFinalization previousFinalization =
-                    finalizations.get(finalization.getRunId());
+            synchronized (stateMonitor) {
+                SessionState sessionState = sessions.get(finalization.getSessionId());
 
-            if (previousFinalization != null) {
-                requireSameFinalization(previousFinalization, finalization);
-                return;
-            }
+                if (sessionState == null) {
+                    throw ChatStoreException.sessionNotFound(finalization.getSessionId());
+                }
 
-            Long expectedSessionId = runSessions.get(finalization.getRunId());
+                sessionState.requireOwner(finalization.getActor());
 
-            if (expectedSessionId == null) {
-                throw new IllegalStateException("Run does not exist: " + finalization.getRunId());
-            }
+                RunState runState = runs.get(finalization.getRunId());
 
-            if (!Objects.equals(expectedSessionId,finalization.getSessionId())) {
-                throw new IllegalStateException("Run does not belong to session");
-            }
+                if (runState == null) {
+                    throw ChatStoreException.runNotFound(
+                            finalization.getSessionId(),
+                            finalization.getRunId()
+                    );
+                }
 
-            SessionState sessionState =
-                    sessions.get(finalization.getSessionId());
+                runState.requireOwner(finalization);
 
-            if (sessionState == null) {
-                throw new IllegalStateException("Session does not exist: " + finalization.getSessionId()
-                );
-            }
-
-            sessionState.requireOwner(finalization.getActor());
-
-            synchronized (sessionState) {
-                previousFinalization = finalizations.get(finalization.getRunId());
+                RunFinalization previousFinalization = runState.finalization;
 
                 if (previousFinalization != null) {
                     requireSameFinalization(previousFinalization, finalization);
@@ -101,8 +128,8 @@ public final class InMemoryChatStore implements ChatStore {
                     );
                 }
 
-                finalizations.put(finalization.getRunId(), finalization);
-                runSessions.remove(finalization.getRunId());
+                runState.finalization = finalization;
+                sessionState.activeRunId = null;
             }
         });
     }
@@ -117,9 +144,9 @@ public final class InMemoryChatStore implements ChatStore {
                 || !Objects.equals(previous.getAssistantContent(), current.getAssistantContent())
                 || !Objects.equals(previous.getErrorCode(), current.getErrorCode())
                 || !Objects.equals(previous.getErrorMessage(), current.getErrorMessage())) {
-            throw new IllegalStateException(
-                    "Run has already been finalized with a different result: "
-                            + current.getRunId()
+            throw ChatStoreException.finalizationConflict(
+                    current.getSessionId(),
+                    current.getRunId()
             );
         }
     }
@@ -132,7 +159,7 @@ public final class InMemoryChatStore implements ChatStore {
         SessionState sessionState = sessions.get(command.getSessionId());
 
         if (sessionState == null) {
-            throw new IllegalArgumentException("Session does not exist: " + command.getSessionId());
+            throw ChatStoreException.sessionNotFound(command.getSessionId());
         }
 
         sessionState.requireOwner(command.getActor());
@@ -164,23 +191,108 @@ public final class InMemoryChatStore implements ChatStore {
         private final Long userId;
         private final List<ChatMessage> messages = new ArrayList<>();
 
+        private Long activeRunId;
+
         private SessionState(
                 Long sessionId,
                 Long tenantId,
-                Long userId ) {
+                Long userId
+        ) {
             this.sessionId = sessionId;
             this.tenantId = tenantId;
             this.userId = userId;
         }
 
         private void requireOwner(ChatActor actor) {
-            if (!Objects.equals(tenantId,actor.getTenantId())) {
-                throw new IllegalArgumentException("Session does not belong to tenant");
+            if (!Objects.equals(tenantId, actor.getTenantId())
+                    || !Objects.equals(userId, actor.getUserId())) {
+                throw ChatStoreException.sessionAccessDenied(sessionId);
+            }
+        }
+    }
+
+    private static final class RunState {
+
+        private final Long runId;
+        private final Long sessionId;
+        private final Long tenantId;
+        private final Long userId;
+
+        private RunFinalization finalization;
+
+        private RunState(
+                Long runId,
+                Long sessionId,
+                ChatActor actor
+        ) {
+            this.runId = runId;
+            this.sessionId = sessionId;
+            this.tenantId = actor.getTenantId();
+            this.userId = actor.getUserId();
+        }
+
+        private void requireOwner(RunFinalization current) {
+            ChatActor actor = current.getActor();
+
+            if (!Objects.equals(sessionId, current.getSessionId())
+                    || !Objects.equals(tenantId, actor.getTenantId())
+                    || !Objects.equals(userId, actor.getUserId())) {
+                throw ChatStoreException.finalizationConflict(
+                        current.getSessionId(),
+                        current.getRunId()
+                );
+            }
+        }
+    }
+
+    private static final class RequestKey {
+
+        private final Long tenantId;
+        private final Long userId;
+        private final String requestId;
+
+        private RequestKey(
+                Long tenantId,
+                Long userId,
+                String requestId
+        ) {
+            this.tenantId = tenantId;
+            this.userId = userId;
+            this.requestId = requestId;
+        }
+
+        private static RequestKey from(StartChatCommand command) {
+            ChatActor actor = command.getActor();
+
+            return new RequestKey(
+                    actor.getTenantId(),
+                    actor.getUserId(),
+                    command.getRequestId()
+            );
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
             }
 
-            if (!Objects.equals(userId,actor.getUserId())) {
-                throw new IllegalArgumentException("Session does not belong to user");
+            if (!(other instanceof RequestKey that)) {
+                return false;
             }
+
+            return Objects.equals(tenantId, that.tenantId)
+                    && Objects.equals(userId, that.userId)
+                    && Objects.equals(requestId, that.requestId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(
+                    tenantId,
+                    userId,
+                    requestId
+            );
         }
     }
 }

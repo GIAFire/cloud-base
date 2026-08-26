@@ -2,6 +2,7 @@ package com.cloud.module.agentruntime.dal.mysql.chat;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cloud.framework.mybatis.core.mapper.BaseMapperX;
+import com.cloud.module.agentruntime.chat.domain.AgentMessageType;
 import com.cloud.module.agentruntime.chat.domain.ChatRole;
 import com.cloud.module.agentruntime.dal.dataobject.chat.AgentMessageDO;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,7 +22,7 @@ public interface AgentMessageMapper extends BaseMapperX<AgentMessageDO> {
                         )
                         .eq(
                                 AgentMessageDO::getMessageType,
-                                "ASSISTANT_TEXT"
+                                AgentMessageType.ASSISTANT_TEXT.name()
                         )
         );
     }

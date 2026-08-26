@@ -4,6 +4,7 @@ import com.cloud.framework.mybatis.core.dataobject.BaseDO;
 import com.cloud.module.agentruntime.chat.application.command.StartChatCommand;
 import com.cloud.module.agentruntime.chat.application.model.RunFinalization;
 import com.cloud.module.agentruntime.chat.application.model.StartedRun;
+import com.cloud.module.agentruntime.chat.domain.AgentMessageType;
 import com.cloud.module.agentruntime.chat.domain.AgentRunStatus;
 import com.cloud.module.agentruntime.chat.domain.ChatActor;
 import com.cloud.module.agentruntime.chat.domain.ChatRole;
@@ -22,10 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ChatStoreTransactions {
-
-    private static final String USER_TEXT = "USER_TEXT";
-
-    private static final String ASSISTANT_TEXT = "ASSISTANT_TEXT";
 
     private static final int TITLE_MAX_LENGTH = 100;
 
@@ -106,7 +103,7 @@ public class ChatStoreTransactions {
                 run.getId(),
                 userMessageSeq,
                 ChatRole.USER,
-                USER_TEXT,
+                AgentMessageType.USER_TEXT,
                 command.getContent(),
                 actor,
                 now
@@ -191,7 +188,7 @@ public class ChatStoreTransactions {
                     run.getId(),
                     assistantMessageSeq,
                     ChatRole.ASSISTANT,
-                    ASSISTANT_TEXT,
+                    AgentMessageType.ASSISTANT_TEXT,
                     finalization.getAssistantContent(),
                     actor,
                     endedAt
@@ -349,7 +346,7 @@ public class ChatStoreTransactions {
             Long runId,
             long sequence,
             ChatRole role,
-            String messageType,
+            AgentMessageType messageType,
             String content,
             ChatActor actor,
             LocalDateTime now
@@ -360,7 +357,7 @@ public class ChatStoreTransactions {
         message.setRunId(runId);
         message.setSeq(sequence);
         message.setRole(role.name());
-        message.setMessageType(messageType);
+        message.setMessageType(messageType.name());
         message.setTextContent(content);
 
         initializeInsertFields(
