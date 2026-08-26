@@ -34,17 +34,32 @@ public final class AgentInvocation {
      */
     private final String content;
 
+    /** API 方法入口处取得的单调时钟值。 */
+    private final long requestStartedNanos;
+
     public AgentInvocation(
             Long sessionId,
             Long runId,
             ChatActor actor,
             String content
     ) {
+        this(sessionId, runId, actor, content, System.nanoTime());
+    }
+
+    /** 创建携带 API 入口时间的运行时调用。 */
+    public AgentInvocation(
+            Long sessionId,
+            Long runId,
+            ChatActor actor,
+            String content,
+            long requestStartedNanos
+    ) {
         this.sessionId = requirePositive(sessionId, "sessionId");
         this.runId = requirePositive(runId, "runId");
         this.actor = Objects.requireNonNull(actor, "actor must not be null");
 
         this.content = requireText(content, "content");
+        this.requestStartedNanos = requestStartedNanos;
     }
 
     private static Long requirePositive(Long value, String fieldName) {

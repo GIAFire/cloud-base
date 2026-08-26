@@ -17,6 +17,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static com.cloud.module.agent.chat.observability.ChatTiming.elapsedMillis;
 
 /**
  * 默认聊天应用实现，是完整运行链路的编排中心。
@@ -60,9 +63,26 @@ public final class DefaultChatApplication implements ChatApplication {
     public Flux<ChatEvent> stream(StartChatCommand command) {
         Objects.requireNonNull(command, "command 不能为空");
 
-        return Flux.defer(() -> chatStore.begin(command)
-                .switchIfEmpty(Mono.error(new IllegalStateException("ChatStore.begin 不能为空")))
-                .flatMapMany(startedRun -> executeRun(command, startedRun)));
+        return Flux.defer(() -> {
+            long beginStartedNanos = System.nanoTime();
+            AtomicReference<StartedRun> observedRun = new AtomicReference<>();
+
+            return chatStore.begin(command)
+                    .switchIfEmpty(Mono.error(new IllegalStateException("ChatStore.begin 不能为空")))
+                    .doOnNext(observedRun::set)
+                    .doFinally(signalType -> log.info(
+                            "chat-timing metric=chat.store.begin.duration durationMs={} outcome={} "
+                                    + "tenantId={} userId={} requestedSessionId={} sessionId={} runId={}",
+                            elapsedMillis(beginStartedNanos),
+                            signalType,
+                            command.getActor().getTenantId(),
+                            command.getActor().getUserId(),
+                            command.getSessionId(),
+                            observedRun.get() == null ? null : observedRun.get().getSessionId(),
+                            observedRun.get() == null ? null : observedRun.get().getRunId()
+                    ))
+                    .flatMapMany(startedRun -> executeRun(command, startedRun));
+        });
     }
 
     /**
@@ -80,7 +100,8 @@ public final class DefaultChatApplication implements ChatApplication {
                             startedRun.getSessionId(),
                             startedRun.getRunId(),
                             command.getActor(),
-                            command.getContent()
+                            command.getContent(),
+                            command.getRequestStartedNanos()
                     );
 
                     return streamRuntime(currentState, invocation);
@@ -327,7 +348,23 @@ public final class DefaultChatApplication implements ChatApplication {
      * 延迟执行 ChatStore.finish，并把收尾故障与 Agent 运行故障分开处理。
      */
     private Mono<Void> finishRun(RunStreamState state, RunFinalization finalization) {
-        return Mono.defer(() -> chatStore.finish(finalization))
+        return Mono.defer(() -> {
+                    long finishStartedNanos = System.nanoTime();
+
+                    return chatStore.finish(finalization)
+                            .doFinally(signalType -> log.info(
+                                    "chat-timing metric=chat.store.finish.duration durationMs={} "
+                                            + "outcome={} status={} tenantId={} userId={} "
+                                            + "sessionId={} runId={}",
+                                    elapsedMillis(finishStartedNanos),
+                                    signalType,
+                                    finalization.getStatus(),
+                                    finalization.getActor().getTenantId(),
+                                    finalization.getActor().getUserId(),
+                                    finalization.getSessionId(),
+                                    finalization.getRunId()
+                            ));
+                })
                 .onErrorMap(error -> finalizationFailed(state, finalization, error));
     }
 

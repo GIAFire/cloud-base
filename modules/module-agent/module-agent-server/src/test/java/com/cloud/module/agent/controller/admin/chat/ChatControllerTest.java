@@ -3,7 +3,7 @@ package com.cloud.module.agent.controller.admin.chat;
 import com.cloud.framework.security.core.LoginUser;
 import com.cloud.module.agent.chat.application.ChatApplication;
 import com.cloud.module.agent.chat.domain.ChatEvent;
-import com.cloud.module.agent.framework.web.config.AgentRuntimeWebMvcConfiguration;
+import com.cloud.module.agent.framework.web.config.AgentWebMvcConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ class ChatControllerTest {
         webApplicationContext.setServletContext(new MockServletContext());
         webApplicationContext.register(
                 ControllerTestWebConfiguration.class,
-                AgentRuntimeWebMvcConfiguration.class
+                AgentWebMvcConfiguration.class
         );
         webApplicationContext.register((registry, environment) ->
                 registry.registerBean(

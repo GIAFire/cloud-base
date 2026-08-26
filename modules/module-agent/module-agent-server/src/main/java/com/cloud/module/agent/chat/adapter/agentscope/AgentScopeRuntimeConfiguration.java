@@ -4,12 +4,17 @@ import com.cloud.module.agent.chat.runtime.AgentRuntime;
 import io.agentscope.core.model.ExecutionConfig;
 import io.agentscope.core.model.GenerateOptions;
 import io.agentscope.core.model.Model;
+import io.agentscope.core.state.AgentStateStore;
+import io.agentscope.core.state.JsonFileAgentStateStore;
 import io.agentscope.extensions.model.openai.OpenAIChatModel;
 import io.agentscope.harness.agent.HarnessAgent;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * AgentScope Runtime 的条件装配。
@@ -76,14 +81,34 @@ public class AgentScopeRuntimeConfiguration {
             @Qualifier("agentScopeChatModel") Model model,
             AgentScopeRuntimeProperties properties
     ) {
+        AgentStateStore stateStore = new TimingAgentStateStore(
+                new JsonFileAgentStateStore(defaultStateDirectory(properties.getAgentId()))
+        );
+
         return HarnessAgent.builder()
                 .agentId(String.valueOf(properties.getAgentId()))
                 .name(properties.getAgentName())
                 .sysPrompt(properties.getSystemPrompt())
                 .model(model)
+                .modelExecutionConfig(ExecutionConfig.builder().maxAttempts(1).build())
                 .maxIters(properties.getMaxIters())
                 .enableAgentTracingLog(false)
+                .stateStore(stateStore)
                 .build();
+    }
+
+    /**
+     * 复用 HarnessAgent 默认的 StateStore 目录规则。
+     *
+     * <p>显式创建存储只是为了安装耗时装饰器；未配置覆盖项时仍然写入
+     * {@code ~/.agentscope/state/{agentId}}，不会迁移或丢失现有会话状态。</p>
+     */
+    private Path defaultStateDirectory(Long agentId) {
+        String override = System.getProperty("agentscope.state.home");
+        Path root = override != null && !override.isBlank()
+                ? Paths.get(override)
+                : Paths.get(System.getProperty("user.home"), ".agentscope", "state");
+        return root.resolve(String.valueOf(agentId));
     }
 
     /** 将容器管理的 HarnessAgent 包装为模块内部 AgentRuntime seam。 */

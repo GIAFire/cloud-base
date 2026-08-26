@@ -87,7 +87,7 @@ public class ChatStoreTransactions {
 
         ChatActor actor = command.getActor();
 
-        AgentRunDO duplicateRun = runMapper.selectByUserAndRequestId(actor.getUserId(),command.getRequestId());
+        AgentRunDO duplicateRun = runMapper.selectByUserAndRequestId(actor.getUserId(),command.getRequestId(),command.getSessionId());
 
         if (duplicateRun != null) {
             throw ChatStoreException.duplicateRequest(duplicateRun.getSessionId(),duplicateRun.getId());

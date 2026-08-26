@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+import static com.cloud.module.agent.chat.observability.ChatTiming.elapsedMillis;
 
 /**
  * Agent 聊天的 HTTP/SSE 入站 Adapter。
@@ -28,6 +33,7 @@ import reactor.core.publisher.Flux;
  * 下层模块。</p>
  */
 @Tag(name = "智能体运行 - 聊天")
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/agent/chat")
@@ -45,6 +51,7 @@ public class ChatController {
     @Operation(summary = "发起流式聊天")
     @PostMapping(value = "/stream",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<ChatStreamEventResponse>> stream(@Valid @RequestBody ChatStreamRequest request) {
+        long requestStartedNanos = System.nanoTime();
         LoginUser loginUser = SecurityFrameworkUtils.getLoginUser();
 
         if (loginUser == null) {
@@ -59,10 +66,34 @@ public class ChatController {
                         sessionId,
                         request.getRequestId(),
                         request.getContent(),
-                        actor
+                        actor,
+                        requestStartedNanos
                 );
 
-        return chatApplication.stream(command).map(this::toServerSentEvent);
+        AtomicReference<Long> emittedSessionId = new AtomicReference<>(sessionId);
+        AtomicReference<Long> emittedRunId = new AtomicReference<>();
+
+        return chatApplication.stream(command)
+                .doOnNext(event -> {
+                    emittedSessionId.set(event.getSessionId());
+                    emittedRunId.set(event.getRunId());
+                })
+                .map(this::toServerSentEvent)
+                /*
+                 * 该区间从 Controller 方法入口开始，在应用事件流完成、失败或
+                 * 被客户端取消时结束；它表示服务端 SSE Publisher 生命周期，
+                 * 不包含最后一个字节离开操作系统缓冲区后的公网传输时间。
+                 */
+                .doFinally(signalType -> log.info(
+                        "chat-timing metric=chat.sse.total.duration durationMs={} outcome={} "
+                                + "tenantId={} userId={} sessionId={} runId={}",
+                        elapsedMillis(requestStartedNanos),
+                        signalType,
+                        actor.getTenantId(),
+                        actor.getUserId(),
+                        emittedSessionId.get(),
+                        emittedRunId.get()
+                ));
     }
 
     /**

@@ -27,13 +27,34 @@ public class StartChatCommand {
     private final ChatActor actor;
 
     /**
+     * Controller 方法入口处取得的单调时钟值，用于跨层计算接口端到端耗时。
+     */
+    private final long requestStartedNanos;
+
+    /**
      * 创建并立即校验命令，确保无效数据不会进入 ChatStore 或 AgentRuntime。
      */
     public StartChatCommand(Long sessionId, String requestId, String content, ChatActor actor) {
+        this(sessionId, requestId, content, actor, System.nanoTime());
+    }
+
+    /**
+     * 创建携带接口入口时间的命令。
+     *
+     * <p>该时间只用于计算 JVM 内耗时，不作为业务时间戳保存或传输。</p>
+     */
+    public StartChatCommand(
+            Long sessionId,
+            String requestId,
+            String content,
+            ChatActor actor,
+            long requestStartedNanos
+    ) {
         this.sessionId = sessionId;
         this.requestId = Objects.requireNonNull(requestId, "requestId 不能为空");
         this.content = Objects.requireNonNull(content, "content 不能为空");
         this.actor = Objects.requireNonNull(actor, "actor 不能为空");
+        this.requestStartedNanos = requestStartedNanos;
         if (sessionId != null && sessionId <= 0) {
             throw new IllegalArgumentException("sessionId 不能为空");
         }

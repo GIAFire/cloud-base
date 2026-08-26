@@ -13,10 +13,11 @@ public interface AgentRunMapper extends BaseMapperX<AgentRunDO> {
     /**
      * 查询用户范围内已使用的 requestId；tenantId 由多租户拦截器追加。
      */
-    default AgentRunDO selectByUserAndRequestId(Long userId, String requestId) {
+    default AgentRunDO selectByUserAndRequestId(Long userId, String requestId,Long sessionId) {
         return selectOne(new LambdaQueryWrapper<AgentRunDO>()
                         .eq(AgentRunDO::getUserId, userId)
-                        .eq(AgentRunDO::getRequestId, requestId));
+                        .eq(AgentRunDO::getRequestId, requestId)
+                        .eq(AgentRunDO::getSessionId, sessionId));
     }
 
     /** 按主键锁定 Run，必须在 Spring 事务内调用。 */
