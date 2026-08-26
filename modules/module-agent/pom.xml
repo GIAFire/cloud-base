@@ -17,7 +17,7 @@
 
     <name>${project.artifactId}</name>
     <description>
-        module-agent-runtime 模块，agent运行基座
+        module-agent 模块，agent运行基座
     </description>
 
 </project>
