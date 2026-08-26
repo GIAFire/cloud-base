@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(
-        prefix = "agent.runtime.store",
+        prefix = "agent.store",
         name = "type",
         havingValue = "mysql"
 )
@@ -36,7 +36,7 @@ public class ChatStorePersistenceConfiguration {
 
         if (agentId == null || agentId <= 0) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope.agent-id " + "must be greater than 0"
+                    "agent.agentscope.agent-id " + "must be greater than 0"
             );
         }
 

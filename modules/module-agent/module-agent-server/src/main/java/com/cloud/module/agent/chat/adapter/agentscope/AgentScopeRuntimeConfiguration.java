@@ -24,7 +24,7 @@ import java.nio.file.Paths;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(
-        prefix = "agent.runtime",
+        prefix = "agent",
         name = "type",
         havingValue = "agentscope"
 )

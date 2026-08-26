@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Component
 @ConditionalOnProperty(
-        prefix = "agent.runtime.store",
+        prefix = "agent.store",
         name = "type",
         havingValue = "memory",
         matchIfMissing = true

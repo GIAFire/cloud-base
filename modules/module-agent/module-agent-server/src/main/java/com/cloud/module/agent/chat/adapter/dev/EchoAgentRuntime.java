@@ -20,7 +20,7 @@ import java.time.Duration;
 @Component
 @Profile("dev")
 @ConditionalOnProperty(
-        prefix = "agent.runtime",
+        prefix = "agent",
         name = "type",
         havingValue = "echo",
         matchIfMissing = true

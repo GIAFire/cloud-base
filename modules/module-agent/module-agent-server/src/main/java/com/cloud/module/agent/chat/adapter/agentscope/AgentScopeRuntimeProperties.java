@@ -15,7 +15,7 @@ import java.time.Duration;
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "agent.runtime.agentscope")
+@ConfigurationProperties(prefix = "agent.agentscope")
 public class AgentScopeRuntimeProperties {
 
     /** 业务 Agent 标识，同时写入新建 Session 并作为 AgentScope agentId。 */
@@ -41,7 +41,7 @@ public class AgentScopeRuntimeProperties {
     public void validateForActivation() {
         if (agentId == null || agentId <= 0) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope.agent-id must be greater than 0"
+                    "agent.agentscope.agent-id must be greater than 0"
             );
         }
         requireText(agentName, "agentName");
@@ -49,13 +49,13 @@ public class AgentScopeRuntimeProperties {
 
         if (maxIters < 1) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope.max-iters must be greater than 0"
+                    "agent.agentscope.max-iters must be greater than 0"
             );
         }
 
         if (model == null) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope.model must not be null"
+                    "agent.agentscope.model must not be null"
             );
         }
 
@@ -65,7 +65,7 @@ public class AgentScopeRuntimeProperties {
         if (model.getMaxTokens() == null
                 || model.getMaxTokens() < 1) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope.model.max-tokens must be greater than 0"
+                    "agent.agentscope.model.max-tokens must be greater than 0"
             );
         }
 
@@ -73,14 +73,14 @@ public class AgentScopeRuntimeProperties {
                 || model.getTimeout().isZero()
                 || model.getTimeout().isNegative()) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope.model.timeout must be greater than 0"
+                    "agent.agentscope.model.timeout must be greater than 0"
             );
         }
 
         if (model.getMaxAttempts() == null
                 || model.getMaxAttempts() < 1) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope.model.max-attempts must be greater than 0"
+                    "agent.agentscope.model.max-attempts must be greater than 0"
             );
         }
     }
@@ -88,7 +88,7 @@ public class AgentScopeRuntimeProperties {
     private static void requireText(String value, String fieldName) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(
-                    "agent.runtime.agentscope." + fieldName + " 不能为空"
+                    "agent.agentscope." + fieldName + " 不能为空"
             );
         }
     }
