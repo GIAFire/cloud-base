@@ -1,6 +1,7 @@
 package com.cloud.module.agentruntime.chat.application.model;
 
 import com.cloud.module.agentruntime.chat.domain.AgentRunStatus;
+import com.cloud.module.agentruntime.chat.domain.ChatActor;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -9,27 +10,23 @@ import java.util.Objects;
 public final class RunFinalization {
 
     private final Long sessionId;
+
     private final Long runId;
+
+    private final ChatActor actor;
+
     private final AgentRunStatus status;
 
-    /**
-     * 成功时保存的完整助手回复。
-     */
     private final String assistantContent;
 
-    /**
-     * 失败时使用的安全错误码。
-     */
     private final String errorCode;
 
-    /**
-     * 失败时使用的已脱敏错误信息。
-     */
     private final String errorMessage;
 
     private RunFinalization(
             Long sessionId,
             Long runId,
+            ChatActor actor,
             AgentRunStatus status,
             String assistantContent,
             String errorCode,
@@ -39,7 +36,14 @@ public final class RunFinalization {
                 sessionId,
                 "sessionId"
         );
-        this.runId = requirePositive(runId, "runId");
+        this.runId = requirePositive(
+                runId,
+                "runId"
+        );
+        this.actor = Objects.requireNonNull(
+                actor,
+                "actor must not be null"
+        );
         this.status = Objects.requireNonNull(
                 status,
                 "status must not be null"
@@ -51,6 +55,13 @@ public final class RunFinalization {
             );
         }
 
+        validateContent(
+                status,
+                assistantContent,
+                errorCode,
+                errorMessage
+        );
+
         this.assistantContent = assistantContent;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
@@ -59,13 +70,13 @@ public final class RunFinalization {
     public static RunFinalization succeeded(
             Long sessionId,
             Long runId,
+            ChatActor actor,
             String assistantContent
     ) {
-        requireText(assistantContent, "assistantContent");
-
         return new RunFinalization(
                 sessionId,
                 runId,
+                actor,
                 AgentRunStatus.SUCCEEDED,
                 assistantContent,
                 null,
@@ -76,15 +87,14 @@ public final class RunFinalization {
     public static RunFinalization failed(
             Long sessionId,
             Long runId,
+            ChatActor actor,
             String errorCode,
             String errorMessage
     ) {
-        requireText(errorCode, "errorCode");
-        requireText(errorMessage, "errorMessage");
-
         return new RunFinalization(
                 sessionId,
                 runId,
+                actor,
                 AgentRunStatus.FAILED,
                 null,
                 errorCode,
@@ -94,11 +104,13 @@ public final class RunFinalization {
 
     public static RunFinalization cancelled(
             Long sessionId,
-            Long runId
+            Long runId,
+            ChatActor actor
     ) {
         return new RunFinalization(
                 sessionId,
                 runId,
+                actor,
                 AgentRunStatus.CANCELLED,
                 null,
                 null,
@@ -106,8 +118,72 @@ public final class RunFinalization {
         );
     }
 
-    private static Long requirePositive(Long value, String fieldName) {
-        Objects.requireNonNull(value, fieldName + " must not be null");
+    private static void validateContent(
+            AgentRunStatus status,
+            String assistantContent,
+            String errorCode,
+            String errorMessage
+    ) {
+        switch (status) {
+            case SUCCEEDED -> {
+                requireText(
+                        assistantContent,
+                        "assistantContent"
+                );
+
+                if (errorCode != null
+                        || errorMessage != null) {
+                    throw new IllegalArgumentException(
+                            "successful finalization "
+                                    + "must not contain an error"
+                    );
+                }
+            }
+
+            case FAILED -> {
+                requireText(
+                        errorCode,
+                        "errorCode"
+                );
+                requireText(
+                        errorMessage,
+                        "errorMessage"
+                );
+
+                if (assistantContent != null) {
+                    throw new IllegalArgumentException(
+                            "failed finalization "
+                                    + "must not contain assistantContent"
+                    );
+                }
+            }
+
+            case CANCELLED -> {
+                if (assistantContent != null
+                        || errorCode != null
+                        || errorMessage != null) {
+                    throw new IllegalArgumentException(
+                            "cancelled finalization "
+                                    + "must not contain result content"
+                    );
+                }
+            }
+
+            case RUNNING -> throw
+                    new IllegalArgumentException(
+                            "RUNNING is not a final status"
+                    );
+        }
+    }
+
+    private static Long requirePositive(
+            Long value,
+            String fieldName
+    ) {
+        Objects.requireNonNull(
+                value,
+                fieldName + " must not be null"
+        );
 
         if (value <= 0) {
             throw new IllegalArgumentException(
@@ -118,13 +194,14 @@ public final class RunFinalization {
         return value;
     }
 
-    private static String requireText(String value, String fieldName) {
+    private static void requireText(
+            String value,
+            String fieldName
+    ) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(
                     fieldName + " must not be blank"
             );
         }
-
-        return value;
     }
 }

@@ -11,7 +11,7 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "agent.runtime.agentscope")
 public class AgentScopeRuntimeProperties {
 
-    private String agentId = "base-chat-agent";
+    private Long agentId = 111222333L;
 
     private String agentName = "BaseChatAgent";
 
@@ -25,7 +25,11 @@ public class AgentScopeRuntimeProperties {
     private ModelProperties model = new ModelProperties();
 
     public void validateForActivation() {
-        requireText(agentId, "agentId");
+        if (agentId == null || agentId <= 0) {
+            throw new IllegalArgumentException(
+                    "agent.runtime.agentscope.agent-id must be greater than 0"
+            );
+        }
         requireText(agentName, "agentName");
         requireText(systemPrompt, "systemPrompt");
 

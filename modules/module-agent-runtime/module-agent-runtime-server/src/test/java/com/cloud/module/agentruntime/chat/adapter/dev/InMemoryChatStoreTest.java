@@ -21,6 +21,7 @@ class InMemoryChatStoreTest {
         RunFinalization finalization = RunFinalization.succeeded(
                 startedRun.getSessionId(),
                 startedRun.getRunId(),
+                command().getActor(),
                 "你好"
         );
 
@@ -41,11 +42,13 @@ class InMemoryChatStoreTest {
         RunFinalization succeeded = RunFinalization.succeeded(
                 startedRun.getSessionId(),
                 startedRun.getRunId(),
+                command().getActor(),
                 "你好"
         );
         RunFinalization failed = RunFinalization.failed(
                 startedRun.getSessionId(),
                 startedRun.getRunId(),
+                command().getActor(),
                 "AGENT_RUNTIME_ERROR",
                 "智能体运行失败，请稍后重试"
         );

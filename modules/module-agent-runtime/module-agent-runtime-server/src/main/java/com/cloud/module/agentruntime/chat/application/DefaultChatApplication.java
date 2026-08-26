@@ -3,6 +3,7 @@ package com.cloud.module.agentruntime.chat.application;
 import com.cloud.module.agentruntime.chat.application.command.StartChatCommand;
 import com.cloud.module.agentruntime.chat.application.model.RunFinalization;
 import com.cloud.module.agentruntime.chat.application.model.StartedRun;
+import com.cloud.module.agentruntime.chat.domain.ChatActor;
 import com.cloud.module.agentruntime.chat.domain.ChatEvent;
 import com.cloud.module.agentruntime.chat.runtime.AgentInvocation;
 import com.cloud.module.agentruntime.chat.runtime.AgentRuntime;
@@ -38,7 +39,10 @@ public final class DefaultChatApplication implements ChatApplication {
     }
 
     private Flux<ChatEvent> executeRun(StartChatCommand command, StartedRun startedRun) {
-        RunStreamState state = new RunStreamState(startedRun);
+        RunStreamState state = new RunStreamState(
+                startedRun,
+                command.getActor()
+        );
 
         Flux<ChatEvent> managedEvents = Flux.usingWhen(
                 Mono.just(state),currentState -> Flux.defer(() -> {
@@ -239,35 +243,44 @@ public final class DefaultChatApplication implements ChatApplication {
         return Mono.empty();
     }
 
-    private Mono<Void> finishSucceeded(RunStreamState state) {
+    private Mono<Void> finishSucceeded(
+            RunStreamState state
+    ) {
         return finishRun(
                 state,
                 RunFinalization.succeeded(
                         state.startedRun.getSessionId(),
                         state.startedRun.getRunId(),
+                        state.actor,
                         state.assistantContent.toString()
                 )
         );
     }
 
-    private Mono<Void> finishFailed(RunStreamState state) {
+    private Mono<Void> finishFailed(
+            RunStreamState state
+    ) {
         return finishRun(
                 state,
                 RunFinalization.failed(
                         state.startedRun.getSessionId(),
                         state.startedRun.getRunId(),
+                        state.actor,
                         RUNTIME_ERROR_CODE,
                         RUNTIME_ERROR_MESSAGE
                 )
         );
     }
 
-    private Mono<Void> finishCancelled(RunStreamState state) {
+    private Mono<Void> finishCancelled(
+            RunStreamState state
+    ) {
         return finishRun(
                 state,
                 RunFinalization.cancelled(
                         state.startedRun.getSessionId(),
-                        state.startedRun.getRunId()
+                        state.startedRun.getRunId(),
+                        state.actor
                 )
         );
     }
@@ -313,14 +326,31 @@ public final class DefaultChatApplication implements ChatApplication {
     private static final class RunStreamState {
 
         private final StartedRun startedRun;
-        private final StringBuilder assistantContent = new StringBuilder();
-        private final AtomicLong sequence = new AtomicLong();
+
+        private final ChatActor actor;
+
+        private final StringBuilder assistantContent =
+                new StringBuilder();
+
+        private final AtomicLong sequence =
+                new AtomicLong();
 
         private boolean started;
+
         private boolean completed;
 
-        private RunStreamState(StartedRun startedRun) {
-            this.startedRun = Objects.requireNonNull(startedRun, "startedRun must not be null");
+        private RunStreamState(
+                StartedRun startedRun,
+                ChatActor actor
+        ) {
+            this.startedRun = Objects.requireNonNull(
+                    startedRun,
+                    "startedRun must not be null"
+            );
+            this.actor = Objects.requireNonNull(
+                    actor,
+                    "actor must not be null"
+            );
         }
 
         private long nextSequence() {

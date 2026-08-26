@@ -8,6 +8,7 @@ import com.cloud.module.agentruntime.chat.domain.ChatActor;
 import com.cloud.module.agentruntime.chat.domain.ChatMessage;
 import com.cloud.module.agentruntime.chat.domain.ChatRole;
 import com.cloud.module.agentruntime.chat.store.ChatStore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -20,7 +21,12 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
-@Profile("dev")
+@ConditionalOnProperty(
+        prefix = "agent.runtime.store",
+        name = "type",
+        havingValue = "memory",
+        matchIfMissing = true
+)
 public final class InMemoryChatStore implements ChatStore {
 
     private final AtomicLong sessionSequence = new AtomicLong(1_000);
@@ -78,6 +84,8 @@ public final class InMemoryChatStore implements ChatStore {
                 throw new IllegalStateException("Session does not exist: " + finalization.getSessionId()
                 );
             }
+
+            sessionState.requireOwner(finalization.getActor());
 
             synchronized (sessionState) {
                 previousFinalization = finalizations.get(finalization.getRunId());

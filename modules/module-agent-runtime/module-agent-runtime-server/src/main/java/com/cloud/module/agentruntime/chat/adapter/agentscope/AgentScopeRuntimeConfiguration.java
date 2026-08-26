@@ -70,7 +70,7 @@ public class AgentScopeRuntimeConfiguration {
             AgentScopeRuntimeProperties properties
     ) {
         return HarnessAgent.builder()
-                .agentId(properties.getAgentId())
+                .agentId(String.valueOf(properties.getAgentId()))
                 .name(properties.getAgentName())
                 .sysPrompt(properties.getSystemPrompt())
                 .model(model)
