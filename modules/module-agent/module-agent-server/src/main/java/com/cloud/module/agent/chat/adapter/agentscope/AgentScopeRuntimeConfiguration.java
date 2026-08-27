@@ -84,30 +84,6 @@ public class AgentScopeRuntimeConfiguration {
             @Qualifier("agentScopeChatModel") Model model,
             AgentScopeRuntimeProperties properties
     ) {
-        AgentStateStore stateStore = new TimingAgentStateStore(
-                new JsonFileAgentStateStore(defaultStateDirectory(properties.getAgentId()))
-        );
-
-        /*
-         * Harness 的长期记忆刷新与维护直接调用 Model，不发布主 Agent 的
-         * MODEL_CALL_START/END 事件。给记忆管线单独安装模型装饰器，既保持
-         * 默认记忆行为不变，也能把隐藏模型请求从总耗时中拆出来。
-         */
-//        MemoryConfig defaultMemoryConfig = MemoryConfig.defaults();
-//        String flushPrompt = MemoryFlushManager.DEFAULT_FLUSH_PROMPT;
-//        String maintenancePrompt = String.format(
-//                MemoryConsolidator.DEFAULT_CONSOLIDATION_PROMPT,
-//                defaultMemoryConfig.consolidationMaxTokens(),
-//                defaultMemoryConfig.consolidationMaxTokens() * 4
-//        );
-//        Model timingMemoryModel = new TimingMemoryModel(
-//                model,
-//                flushPrompt,
-//                maintenancePrompt
-//        );
-//        MemoryConfig timingMemoryConfig = MemoryConfig.builder()
-//                .model(timingMemoryModel)
-//                .build();
 
         return HarnessAgent.builder()
                 .agentId(String.valueOf(properties.getAgentId()))
@@ -117,8 +93,6 @@ public class AgentScopeRuntimeConfiguration {
                 .modelExecutionConfig(ExecutionConfig.builder().maxAttempts(1).build())
                 .maxIters(properties.getMaxIters())
                 .enableAgentTracingLog(false)
-//                .memory(timingMemoryConfig)
-//                .stateStore(stateStore)
 
                 .disableFilesystemTools()
                 .disableShellTool()
@@ -130,10 +104,8 @@ public class AgentScopeRuntimeConfiguration {
                 .disableSubagents()
                 .disableDynamicSubagents()
 
-//                .disableMemoryTools()
-//                .disableMemoryHooks()
+                .disableMemoryHooks()
 
-//                .disableWorkspaceContext()
                 .disableAtPathExpansion()
 
                 .disableCompaction()
