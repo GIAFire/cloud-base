@@ -8,6 +8,9 @@ import io.agentscope.core.state.AgentStateStore;
 import io.agentscope.core.state.JsonFileAgentStateStore;
 import io.agentscope.extensions.model.openai.OpenAIChatModel;
 import io.agentscope.harness.agent.HarnessAgent;
+import io.agentscope.harness.agent.memory.MemoryConfig;
+import io.agentscope.harness.agent.memory.MemoryConsolidator;
+import io.agentscope.harness.agent.memory.MemoryFlushManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -85,6 +88,27 @@ public class AgentScopeRuntimeConfiguration {
                 new JsonFileAgentStateStore(defaultStateDirectory(properties.getAgentId()))
         );
 
+        /*
+         * Harness 的长期记忆刷新与维护直接调用 Model，不发布主 Agent 的
+         * MODEL_CALL_START/END 事件。给记忆管线单独安装模型装饰器，既保持
+         * 默认记忆行为不变，也能把隐藏模型请求从总耗时中拆出来。
+         */
+//        MemoryConfig defaultMemoryConfig = MemoryConfig.defaults();
+//        String flushPrompt = MemoryFlushManager.DEFAULT_FLUSH_PROMPT;
+//        String maintenancePrompt = String.format(
+//                MemoryConsolidator.DEFAULT_CONSOLIDATION_PROMPT,
+//                defaultMemoryConfig.consolidationMaxTokens(),
+//                defaultMemoryConfig.consolidationMaxTokens() * 4
+//        );
+//        Model timingMemoryModel = new TimingMemoryModel(
+//                model,
+//                flushPrompt,
+//                maintenancePrompt
+//        );
+//        MemoryConfig timingMemoryConfig = MemoryConfig.builder()
+//                .model(timingMemoryModel)
+//                .build();
+
         return HarnessAgent.builder()
                 .agentId(String.valueOf(properties.getAgentId()))
                 .name(properties.getAgentName())
@@ -93,7 +117,27 @@ public class AgentScopeRuntimeConfiguration {
                 .modelExecutionConfig(ExecutionConfig.builder().maxAttempts(1).build())
                 .maxIters(properties.getMaxIters())
                 .enableAgentTracingLog(false)
-                .stateStore(stateStore)
+//                .memory(timingMemoryConfig)
+//                .stateStore(stateStore)
+
+                .disableFilesystemTools()
+                .disableShellTool()
+                .disableToolsConfig()
+
+                .disableDynamicSkills()
+                .disableDefaultWorkspaceSkills()
+
+                .disableSubagents()
+                .disableDynamicSubagents()
+
+//                .disableMemoryTools()
+//                .disableMemoryHooks()
+
+//                .disableWorkspaceContext()
+                .disableAtPathExpansion()
+
+                .disableCompaction()
+                .disableToolResultEviction()
                 .build();
     }
 

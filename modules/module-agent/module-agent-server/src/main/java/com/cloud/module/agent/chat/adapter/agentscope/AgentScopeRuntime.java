@@ -10,6 +10,8 @@ import io.agentscope.core.event.ModelCallEndEvent;
 import io.agentscope.core.event.ModelCallStartEvent;
 import io.agentscope.core.event.TextBlockDeltaEvent;
 import io.agentscope.core.event.ThinkingBlockDeltaEvent;
+import io.agentscope.core.event.ToolResultEndEvent;
+import io.agentscope.core.event.ToolResultStartEvent;
 import io.agentscope.core.message.UserMessage;
 import io.agentscope.harness.agent.HarnessAgent;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.SignalType;
 import reactor.core.publisher.SynchronousSink;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.cloud.module.agent.chat.observability.ChatTiming.elapsedMillis;
@@ -66,7 +71,13 @@ public final class AgentScopeRuntime implements AgentRuntime {
                     .streamEvents(userMessage, runtimeContext)
                     .<RuntimeEvent>handle((event, sink) ->
                             mapAgentEvent(event, sink, timingState))
-                    .doFinally(timingState::finishInvocation);
+                    .doFinally(timingState::finishInvocation)
+                    /*
+                     * 记忆模型会在 boundedElastic 上执行。将调用标识写入 Reactor
+                     * Context，保证换线程后仍能关联到当前 tenant/session/run。
+                     */
+                    .contextWrite(context ->
+                            AgentTimingContext.write(context, invocation));
         });
     }
 
@@ -103,6 +114,16 @@ public final class AgentScopeRuntime implements AgentRuntime {
             case MODEL_CALL_END ->
                     timingState.finishModelCall((ModelCallEndEvent) event);
 
+            /*
+             * TOOL_CALL_START/END 只代表模型正在生成工具调用参数；真正的工具
+             * 执行区间由 TOOL_RESULT_START/END 表示，因此在这里成对计时。
+             */
+            case TOOL_RESULT_START ->
+                    timingState.startToolCall((ToolResultStartEvent) event);
+
+            case TOOL_RESULT_END ->
+                    timingState.finishToolCall((ToolResultEndEvent) event);
+
             case THINKING_BLOCK_DELTA -> {
                 ThinkingBlockDeltaEvent deltaEvent = (ThinkingBlockDeltaEvent) event;
                 if (hasText(deltaEvent.getDelta())) {
@@ -115,12 +136,15 @@ public final class AgentScopeRuntime implements AgentRuntime {
                 TextBlockDeltaEvent deltaEvent = (TextBlockDeltaEvent) event;
                 if (hasText(deltaEvent.getDelta())) {
                     timingState.firstTokenEmitted();
+                    timingState.firstTextTokenEmitted();
                 }
                 mapTextDelta(deltaEvent, sink);
             }
 
-            case AGENT_END ->
-                    sink.next(RuntimeEvent.completed());
+            case AGENT_END -> {
+                timingState.agentEnded();
+                sink.next(RuntimeEvent.completed());
+            }
             /*
              * ModelCall、BlockStart、BlockEnd 等内部事件暂时不向上暴露。
              */
@@ -164,7 +188,7 @@ public final class AgentScopeRuntime implements AgentRuntime {
      * <p>MODEL_CALL_START/END 可能出现多次，因此模型指标按 callIndex 分别
      * 记录；接口入口到首 Token 只在整个请求的第一段有效内容到达时记录一次。</p>
      */
-    private static final class RuntimeTimingState {
+    static final class RuntimeTimingState {
 
         private final AgentInvocation invocation;
 
@@ -180,12 +204,29 @@ public final class AgentScopeRuntime implements AgentRuntime {
 
         private boolean apiFirstTokenLogged;
 
-        private RuntimeTimingState(AgentInvocation invocation) {
+        /** 接口入口到第一个非空正文 TextDelta 只记录一次。 */
+        private boolean apiFirstTextTokenLogged;
+
+        /** 单次 Run 内按工具真正开始执行的顺序递增。 */
+        private int toolCallIndex;
+
+        /**
+         * 工具可能并行执行，必须按 toolCallId 分别保存起点，不能复用单个计时字段。
+         */
+        private final Map<String, ActiveToolCall> activeToolCalls = new HashMap<>();
+
+        /** 最后一次主 Agent 模型调用结束的时刻。 */
+        private long lastModelCallFinishedNanos;
+
+        /** Agent 核心逻辑发布 AGENT_END 的时刻，即记忆后处理的起点。 */
+        private long agentEndedNanos;
+
+        RuntimeTimingState(AgentInvocation invocation) {
             this.invocation = invocation;
         }
 
         /** 开始计量一次真实模型调用。 */
-        private void startModelCall(ModelCallStartEvent event) {
+        void startModelCall(ModelCallStartEvent event) {
             if (modelCallActive) {
                 logModelCallFinished("REPLACED_BY_NEXT_MODEL_CALL");
             }
@@ -226,8 +267,26 @@ public final class AgentScopeRuntime implements AgentRuntime {
             }
         }
 
+        /** 记录接口入口到首个非空助手正文 Token 的耗时。 */
+        void firstTextTokenEmitted() {
+            if (apiFirstTextTokenLogged) {
+                return;
+            }
+
+            apiFirstTextTokenLogged = true;
+            log.info(
+                    "chat-timing metric=chat.api-to-first-text-token.duration durationMs={} "
+                            + "outcome=FIRST_TEXT_TOKEN tenantId={} userId={} sessionId={} runId={}",
+                    elapsedMillis(invocation.getRequestStartedNanos()),
+                    invocation.getActor().getTenantId(),
+                    invocation.getActor().getUserId(),
+                    invocation.getSessionId(),
+                    invocation.getRunId()
+            );
+        }
+
         /** 正常结束一次模型调用并记录完整调用时间。 */
-        private void finishModelCall(ModelCallEndEvent event) {
+        void finishModelCall(ModelCallEndEvent event) {
             if (!modelCallActive) {
                 return;
             }
@@ -238,12 +297,115 @@ public final class AgentScopeRuntime implements AgentRuntime {
             logModelCallFinished("SUCCESS");
         }
 
+        /** 开始计量一次真正的工具执行，而不是模型生成工具参数的时间。 */
+        void startToolCall(ToolResultStartEvent event) {
+            String key = toolCallKey(
+                    event.getSource(),
+                    event.getReplyId(),
+                    event.getToolCallId(),
+                    event.getToolCallName()
+            );
+
+            toolCallIndex++;
+            ActiveToolCall current = new ActiveToolCall(
+                    toolCallIndex,
+                    modelCallIndex,
+                    System.nanoTime(),
+                    event.getReplyId(),
+                    event.getToolCallId(),
+                    event.getToolCallName(),
+                    event.getSource()
+            );
+            ActiveToolCall replaced = activeToolCalls.put(key, current);
+
+            if (replaced != null) {
+                logToolCallFinished(replaced, "REPLACED_BY_DUPLICATE_START");
+            }
+        }
+
+        /** 使用框架返回的 ToolResultState 作为工具调用结果。 */
+        void finishToolCall(ToolResultEndEvent event) {
+            String key = toolCallKey(
+                    event.getSource(),
+                    event.getReplyId(),
+                    event.getToolCallId(),
+                    event.getToolCallName()
+            );
+            ActiveToolCall activeToolCall = activeToolCalls.remove(key);
+
+            if (activeToolCall == null) {
+                log.warn(
+                        "chat-timing-unmatched event=TOOL_RESULT_END toolName={} toolCallId={} "
+                                + "replyId={} source={} sessionId={} runId={}",
+                        event.getToolCallName(),
+                        event.getToolCallId(),
+                        event.getReplyId(),
+                        event.getSource(),
+                        invocation.getSessionId(),
+                        invocation.getRunId()
+                );
+                return;
+            }
+
+            String outcome = event.getState() == null
+                    ? "UNKNOWN"
+                    : event.getState().getValue().toUpperCase(Locale.ROOT);
+            logToolCallFinished(activeToolCall, outcome);
+        }
+
+        /**
+         * 记录 Agent 核心结束边界。
+         *
+         * <p>Harness 的 MemoryMaintenance/MemoryFlush 使用 concatWith 追加在
+         * AGENT_END 之后，所以 AGENT_END 到 Flux 终止正好覆盖记忆后处理。</p>
+         */
+        private void agentEnded() {
+            if (agentEndedNanos == 0L) {
+                agentEndedNanos = System.nanoTime();
+            }
+        }
+
         /**
          * 流失败或取消时补记没有正常收到 MODEL_CALL_END 的模型调用。
          */
         private void finishInvocation(SignalType signalType) {
             if (modelCallActive) {
                 logModelCallFinished(signalType.name());
+            }
+
+            if (!activeToolCalls.isEmpty()) {
+                activeToolCalls.values().forEach(activeToolCall ->
+                        logToolCallFinished(
+                                activeToolCall,
+                                "NO_END_" + signalType.name()
+                        ));
+                activeToolCalls.clear();
+            }
+
+            if (lastModelCallFinishedNanos != 0L) {
+                log.info(
+                        "chat-timing metric=agent.runtime.after-model.duration durationMs={} "
+                                + "outcome={} tenantId={} userId={} sessionId={} runId={}",
+                        elapsedMillis(lastModelCallFinishedNanos),
+                        signalType,
+                        invocation.getActor().getTenantId(),
+                        invocation.getActor().getUserId(),
+                        invocation.getSessionId(),
+                        invocation.getRunId()
+                );
+            }
+
+            if (agentEndedNanos != 0L) {
+                log.info(
+                        "chat-timing metric=agent.memory.post-processing.duration durationMs={} "
+                                + "outcome={} tenantId={} userId={} sessionId={} runId={}",
+                        elapsedMillis(agentEndedNanos),
+                        signalType,
+                        invocation.getActor().getTenantId(),
+                        invocation.getActor().getUserId(),
+                        invocation.getSessionId(),
+                        invocation.getRunId()
+                );
             }
 
             if (!apiFirstTokenLogged) {
@@ -258,6 +420,57 @@ public final class AgentScopeRuntime implements AgentRuntime {
                         invocation.getRunId()
                 );
             }
+
+            if (!apiFirstTextTokenLogged) {
+                log.info(
+                        "chat-timing metric=chat.api-to-first-text-token.duration durationMs={} "
+                                + "outcome=NO_TEXT_TOKEN_{} tenantId={} userId={} "
+                                + "sessionId={} runId={}",
+                        elapsedMillis(invocation.getRequestStartedNanos()),
+                        signalType,
+                        invocation.getActor().getTenantId(),
+                        invocation.getActor().getUserId(),
+                        invocation.getSessionId(),
+                        invocation.getRunId()
+                );
+            }
+        }
+
+        /** 输出工具执行耗时及其所属模型轮次，并移除活动计时状态。 */
+        private void logToolCallFinished(ActiveToolCall toolCall, String outcome) {
+            log.info(
+                    "chat-timing metric=agent.tool.duration durationMs={} outcome={} "
+                            + "toolName={} callIndex={} modelCallIndex={} toolCallId={} "
+                            + "replyId={} source={} tenantId={} userId={} sessionId={} runId={}",
+                    elapsedMillis(toolCall.startedNanos),
+                    outcome,
+                    toolCall.toolName,
+                    toolCall.callIndex,
+                    toolCall.modelCallIndex,
+                    toolCall.toolCallId,
+                    toolCall.replyId,
+                    toolCall.source,
+                    invocation.getActor().getTenantId(),
+                    invocation.getActor().getUserId(),
+                    invocation.getSessionId(),
+                    invocation.getRunId()
+            );
+        }
+
+        /**
+         * source 参与 key，避免父 Agent 与转发进来的子 Agent 复用 toolCallId。
+         * 框架通常总会提供 toolCallId；缺失时退化为 replyId + toolName。
+         */
+        private String toolCallKey(
+                String source,
+                String replyId,
+                String toolCallId,
+                String toolName
+        ) {
+            String effectiveId = toolCallId != null && !toolCallId.isBlank()
+                    ? toolCallId
+                    : String.valueOf(replyId) + ":" + String.valueOf(toolName);
+            return String.valueOf(source) + ":" + effectiveId;
         }
 
         /** 输出模型首 Token 缺失状态和模型总耗时，并关闭当前调用计时。 */
@@ -286,7 +499,44 @@ public final class AgentScopeRuntime implements AgentRuntime {
                     invocation.getRunId()
             );
 
+            lastModelCallFinishedNanos = System.nanoTime();
             modelCallActive = false;
+        }
+
+        /** 单个活动工具调用的不可变计时快照。 */
+        private static final class ActiveToolCall {
+
+            private final int callIndex;
+
+            private final int modelCallIndex;
+
+            private final long startedNanos;
+
+            private final String replyId;
+
+            private final String toolCallId;
+
+            private final String toolName;
+
+            private final String source;
+
+            private ActiveToolCall(
+                    int callIndex,
+                    int modelCallIndex,
+                    long startedNanos,
+                    String replyId,
+                    String toolCallId,
+                    String toolName,
+                    String source
+            ) {
+                this.callIndex = callIndex;
+                this.modelCallIndex = modelCallIndex;
+                this.startedNanos = startedNanos;
+                this.replyId = replyId;
+                this.toolCallId = toolCallId;
+                this.toolName = toolName;
+                this.source = source;
+            }
         }
     }
 }
