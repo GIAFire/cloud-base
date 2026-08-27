@@ -87,6 +87,7 @@ class AgentScopeRuntimeTimingTest {
 
     private AgentScopeRuntime.RuntimeTimingState timingState() {
         AgentInvocation invocation = new AgentInvocation(
+                100L,
                 101L,
                 202L,
                 new ChatActor(1L, 2L),

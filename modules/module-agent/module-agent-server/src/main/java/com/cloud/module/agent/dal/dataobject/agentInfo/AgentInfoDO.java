@@ -1,11 +1,15 @@
 package com.cloud.module.agent.dal.dataobject.agentInfo;
 
-import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
-import com.cloud.framework.mybatis.core.dataobject.BaseDO;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cloud.framework.tenant.core.db.TenantBaseDO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * Agent 定义表 DO
@@ -20,7 +24,7 @@ import com.cloud.framework.mybatis.core.dataobject.BaseDO;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AgentInfoDO extends BaseDO {
+public class AgentInfoDO extends TenantBaseDO {
 
     /**
      * Agent 主键ID
@@ -28,11 +32,11 @@ public class AgentInfoDO extends BaseDO {
     @TableId
     private Long id;
     /**
-     * 关联 ai_agent_model.id
+     * 关联 agent_model.id
      */
     private Long modelId;
     /**
-     * 关联 ai_agent_sys_prompt.id
+     * 关联 agent_sys_prompt.id
      */
     private Long sysPromptId;
     /**
@@ -93,4 +97,4 @@ public class AgentInfoDO extends BaseDO {
     private Boolean allowShellInPlanMode;
 
 
-}
+}

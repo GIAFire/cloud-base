@@ -89,9 +89,6 @@ debug: false
 
 
 agent:
-  type: ${AGENT_RUNTIME_TYPE:agentscope}
-  store:
-    type: ${AGENT_CHAT_STORE_TYPE:mysql}
   sse:
     core-pool-size: ${AGENT_RUNTIME_SSE_CORE_POOL_SIZE:16}
     max-pool-size: ${AGENT_RUNTIME_SSE_MAX_POOL_SIZE:64}
@@ -99,16 +96,6 @@ agent:
     keep-alive-seconds: ${AGENT_RUNTIME_SSE_KEEP_ALIVE_SECONDS:60}
     request-timeout: ${AGENT_RUNTIME_SSE_REQUEST_TIMEOUT:10m}
 
-  agentscope:
-    agent-id: ${AGENT_ID:111222333}
-    agent-name: ${AGENT_NAME:BaseChatAgent}
-    system-prompt: ${AGENT_SYSTEM_PROMPT:你是一个专业、准确、简洁的企业级智能助手。}
-    max-iters: ${AGENT_MAX_ITERS:1}
-
-    model:
-      base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
-      api-key: ${OPENAI_API_KEY:}
-      model-name: deepseek-v4-flash
-      max-tokens: ${AGENT_MODEL_MAX_TOKENS:4096}
-      timeout: ${AGENT_MODEL_TIMEOUT:2m}
-      max-attempts: ${AGENT_MODEL_MAX_ATTEMPTS:1}
+  runtime:
+    model-timeout: ${AGENT_MODEL_TIMEOUT:2m}
+    model-max-attempts: ${AGENT_MODEL_MAX_ATTEMPTS:1}

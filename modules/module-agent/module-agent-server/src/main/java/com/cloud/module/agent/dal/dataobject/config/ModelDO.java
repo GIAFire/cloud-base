@@ -1,13 +1,17 @@
 package com.cloud.module.agent.dal.dataobject.config;
 
-import lombok.*;
-import java.util.*;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cloud.framework.tenant.core.db.TenantBaseDO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
-import com.cloud.framework.mybatis.core.dataobject.BaseDO;
 
 /**
  * 模型配置表 DO
@@ -22,7 +26,7 @@ import com.cloud.framework.mybatis.core.dataobject.BaseDO;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModelDO extends BaseDO {
+public class ModelDO extends TenantBaseDO {
 
     /**
      * 模型配置主键ID
@@ -40,6 +44,7 @@ public class ModelDO extends BaseDO {
     /**
      * API Key；当前阶段明文存储，仅模型详情接口允许返回
      */
+    @ToString.Exclude
     private String apiKey;
     /**
      * 模型说明

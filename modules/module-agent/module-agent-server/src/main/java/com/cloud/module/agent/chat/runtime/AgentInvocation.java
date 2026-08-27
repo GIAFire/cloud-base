@@ -14,6 +14,9 @@ import java.util.Objects;
 @Getter
 public final class AgentInvocation {
 
+    /** 本次运行使用的 Agent 定义 ID。 */
+    private final Long agentId;
+
     /**
      * 会话ID，后续用于构造 AgentScope RuntimeContext。
      */
@@ -38,22 +41,25 @@ public final class AgentInvocation {
     private final long requestStartedNanos;
 
     public AgentInvocation(
+            Long agentId,
             Long sessionId,
             Long runId,
             ChatActor actor,
             String content
     ) {
-        this(sessionId, runId, actor, content, System.nanoTime());
+        this(agentId, sessionId, runId, actor, content, System.nanoTime());
     }
 
     /** 创建携带 API 入口时间的运行时调用。 */
     public AgentInvocation(
+            Long agentId,
             Long sessionId,
             Long runId,
             ChatActor actor,
             String content,
             long requestStartedNanos
     ) {
+        this.agentId = requirePositive(agentId, "agentId");
         this.sessionId = requirePositive(sessionId, "sessionId");
         this.runId = requirePositive(runId, "runId");
         this.actor = Objects.requireNonNull(actor, "actor must not be null");

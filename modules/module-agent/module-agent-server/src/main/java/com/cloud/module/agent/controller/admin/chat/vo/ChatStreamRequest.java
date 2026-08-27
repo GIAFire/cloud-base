@@ -16,6 +16,14 @@ import lombok.Data;
 public class ChatStreamRequest {
 
     /**
+     * AgentId
+     */
+    @NotBlank(message = "agentId 不能为空")
+    @Pattern(regexp = "^[1-9]\\d*$",message = "agentId 格式不正确")
+    @DecimalMax(value = "9223372036854775807",message = "agentId 超出有效范围")
+    private String agentId;
+
+    /**
      * 第一次对话可以不传。
      */
     @Pattern(regexp = "^[1-9]\\d*$",message = "sessionId 格式不正确")

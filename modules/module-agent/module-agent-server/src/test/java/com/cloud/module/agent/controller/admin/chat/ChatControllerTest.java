@@ -114,6 +114,7 @@ class ChatControllerTest {
                                 )
                                 .content("""
                                         {
+                                          "agentId": "100",
                                           "sessionId": "101",
                                           "requestId": "request-001",
                                           "content": "你好"
@@ -186,6 +187,7 @@ class ChatControllerTest {
                                 .accept(MediaType.TEXT_EVENT_STREAM)
                                 .content("""
                                         {
+                                          "agentId": "100",
                                           "sessionId": "9223372036854775808",
                                           "requestId": "request-001",
                                           "content": "你好"

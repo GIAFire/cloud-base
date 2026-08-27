@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
  *
  * <p>扫描 {@code com.cloud.module.agent} 下的 Web Adapter、聊天应用层、
  * AgentScope Adapter、ChatStore Adapter 以及配置属性。具体运行时和存储实现
- * 由 {@code agent.runtime.type}、{@code agent.runtime.store.type} 条件装配。</p>
+ * ChatStore 与 AgentScope Runtime 均采用模块内唯一的生产实现直接装配。</p>
  *
  * @author Cloud
  */

@@ -49,7 +49,7 @@ public final class DefaultChatApplication implements ChatApplication {
     /** 对外稳定、已脱敏的运行错误文案。 */
     private static final String RUNTIME_ERROR_MESSAGE = "智能体运行失败，请稍后重试";
 
-    /** Agent 框架 seam，可由 AgentScope 或 Echo Adapter 实现。 */
+    /** Agent 框架 seam，由 AgentScope Adapter 实现。 */
     private final AgentRuntime agentRuntime;
 
     /** 业务状态 seam，可由内存或 MySQL Adapter 实现。 */
@@ -97,6 +97,7 @@ public final class DefaultChatApplication implements ChatApplication {
         Flux<ChatEvent> managedEvents = Flux.usingWhen(
                 Mono.just(state),currentState -> Flux.defer(() -> {
                     AgentInvocation invocation = new AgentInvocation(
+                            startedRun.getAgentId(),
                             startedRun.getSessionId(),
                             startedRun.getRunId(),
                             command.getActor(),

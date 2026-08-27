@@ -14,6 +14,9 @@ import java.util.Objects;
 @Getter
 public class StartChatCommand {
 
+    /** 前端选择的 Agent 定义标识；不能为空。 */
+    private final Long agentId;
+
     /** 会话标识；首次对话允许为空。 */
     private final Long sessionId;
 
@@ -34,8 +37,8 @@ public class StartChatCommand {
     /**
      * 创建并立即校验命令，确保无效数据不会进入 ChatStore 或 AgentRuntime。
      */
-    public StartChatCommand(Long sessionId, String requestId, String content, ChatActor actor) {
-        this(sessionId, requestId, content, actor, System.nanoTime());
+    public StartChatCommand(Long agentId, Long sessionId, String requestId, String content, ChatActor actor) {
+        this(agentId, sessionId, requestId, content, actor, System.nanoTime());
     }
 
     /**
@@ -44,6 +47,7 @@ public class StartChatCommand {
      * <p>该时间只用于计算 JVM 内耗时，不作为业务时间戳保存或传输。</p>
      */
     public StartChatCommand(
+            Long agentId,
             Long sessionId,
             String requestId,
             String content,
@@ -51,6 +55,7 @@ public class StartChatCommand {
             long requestStartedNanos
     ) {
         this.sessionId = sessionId;
+        this.agentId = requirePositive(agentId, "agentId");
         this.requestId = Objects.requireNonNull(requestId, "requestId 不能为空");
         this.content = Objects.requireNonNull(content, "content 不能为空");
         this.actor = Objects.requireNonNull(actor, "actor 不能为空");
@@ -64,5 +69,13 @@ public class StartChatCommand {
         if (content.isBlank()) {
             throw new IllegalArgumentException("content 不能为空");
         }
+    }
+
+    private static Long requirePositive(Long value, String fieldName) {
+        Objects.requireNonNull(value, fieldName + " 不能为空");
+        if (value <= 0) {
+            throw new IllegalArgumentException(fieldName + " 必须大于 0");
+        }
+        return value;
     }
 }

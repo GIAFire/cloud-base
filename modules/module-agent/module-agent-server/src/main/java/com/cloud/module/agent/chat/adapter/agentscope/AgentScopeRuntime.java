@@ -4,6 +4,7 @@ import com.cloud.module.agent.chat.domain.ChatActor;
 import com.cloud.module.agent.chat.runtime.AgentInvocation;
 import com.cloud.module.agent.chat.runtime.AgentRuntime;
 import com.cloud.module.agent.chat.runtime.RuntimeEvent;
+import com.cloud.module.agent.chat.runtime.definition.AgentDefinitionLoader;
 import io.agentscope.core.agent.RuntimeContext;
 import io.agentscope.core.event.AgentEvent;
 import io.agentscope.core.event.ModelCallEndEvent;
@@ -16,6 +17,7 @@ import io.agentscope.core.message.UserMessage;
 import io.agentscope.harness.agent.HarnessAgent;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;
 import reactor.core.publisher.SynchronousSink;
 
@@ -33,17 +35,29 @@ import static com.cloud.module.agent.chat.observability.ChatTiming.elapsedMillis
  * 转换为 UserMessage、把 AgentEvent 压缩为模块认可的 RuntimeEvent。历史
  * 对话由 HarnessAgent 依据 RuntimeContext 从 AgentScope StateStore 管理。</p>
  *
- * <p>HarnessAgent 是线程安全的单例资源，本 Adapter 不在单次调用结束时关闭
- * 它。AgentScope 异常和取消信号保持 Reactor 原语义向上传播。</p>
+ * <p>每次调用先按 agentId 加载数据库定义，再创建独立 HarnessAgent；完成、
+ * 失败和取消都会关闭该实例。AgentScope 异常和取消信号保持 Reactor 原语义
+ * 向上传播。</p>
  */
 @Slf4j
 public final class AgentScopeRuntime implements AgentRuntime {
 
-    /** 由 Spring 容器管理生命周期的单例 HarnessAgent。 */
-    private final HarnessAgent harnessAgent;
+    private final AgentDefinitionLoader definitionLoader;
 
-    public AgentScopeRuntime(HarnessAgent harnessAgent) {
-        this.harnessAgent = Objects.requireNonNull(harnessAgent, "harnessAgent 不能为空");
+    private final HarnessAgentFactory harnessAgentFactory;
+
+    public AgentScopeRuntime(
+            AgentDefinitionLoader definitionLoader,
+            HarnessAgentFactory harnessAgentFactory
+    ) {
+        this.definitionLoader = Objects.requireNonNull(
+                definitionLoader,
+                "definitionLoader 不能为空"
+        );
+        this.harnessAgentFactory = Objects.requireNonNull(
+                harnessAgentFactory,
+                "harnessAgentFactory 不能为空"
+        );
     }
 
     /**
@@ -54,6 +68,22 @@ public final class AgentScopeRuntime implements AgentRuntime {
     public Flux<RuntimeEvent> stream(AgentInvocation invocation) {
         Objects.requireNonNull(invocation, "invocation must not be null");
 
+        return definitionLoader.load(invocation.getAgentId(), invocation.getActor())
+                .switchIfEmpty(Mono.error(
+                        new IllegalStateException("AgentDefinitionLoader returned empty")
+                ))
+                .flatMapMany(definition -> Flux.using(
+                        () -> harnessAgentFactory.create(definition, invocation.getActor()),
+                        harnessAgent -> streamHarnessAgent(harnessAgent, invocation),
+                        HarnessAgent::close
+                ));
+    }
+
+    /** 将单次 HarnessAgent 调用延迟到订阅时执行。 */
+    private Flux<RuntimeEvent> streamHarnessAgent(
+            HarnessAgent harnessAgent,
+            AgentInvocation invocation
+    ) {
         return Flux.defer(() -> {
             RuntimeContext runtimeContext = createRuntimeContext(invocation);
             RuntimeTimingState timingState = new RuntimeTimingState(invocation);

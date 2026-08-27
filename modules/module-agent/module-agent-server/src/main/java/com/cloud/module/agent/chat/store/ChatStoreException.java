@@ -51,6 +51,26 @@ public final class ChatStoreException extends IllegalStateException {
                 "该会话不属于当前用户", sessionId, null, null );
     }
 
+    /**
+     * 已有 Session 绑定的 Agent 与本次请求的 Agent 不一致。
+     */
+    public static ChatStoreException sessionAgentMismatch(
+            Long sessionId,
+            Long sessionAgentId,
+            Long requestedAgentId
+    ) {
+        return new ChatStoreException(
+                Reason.SESSION_AGENT_MISMATCH,
+                "当前会话不允许切换 Agent，sessionAgentId="
+                        + sessionAgentId
+                        + ", requestedAgentId="
+                        + requestedAgentId,
+                sessionId,
+                null,
+                null
+        );
+    }
+
     public static ChatStoreException sessionBusy(Long sessionId, Long runId) {
         return new ChatStoreException(
                 Reason.SESSION_BUSY,
@@ -90,6 +110,8 @@ public final class ChatStoreException extends IllegalStateException {
         SESSION_NOT_FOUND,
         /** Session 不属于当前租户、用户或 Agent。 */
         SESSION_ACCESS_DENIED,
+        /** 请求的 Agent 与 Session 已绑定的 Agent 不一致。 */
+        SESSION_AGENT_MISMATCH,
         /** Session 已有 RUNNING Run，拒绝并发执行。 */
         SESSION_BUSY,
         /** 指定 Run 不存在。 */

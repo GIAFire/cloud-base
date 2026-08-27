@@ -40,8 +40,8 @@ public final class MybatisChatStore implements ChatStore {
         ChatActor actor = command.getActor();
 
         return Mono.fromCallable(() -> executeInTenant(
-                                actor.getTenantId(),
-                                () -> transactions.begin(command)))
+                actor.getTenantId(),
+                () -> transactions.begin(command)))
                 /*
                  * MyBatis/JDBC 是阻塞调用，不能占用模型流或 HTTP Client 线程。
                  */

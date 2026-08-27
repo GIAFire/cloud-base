@@ -14,12 +14,15 @@ import java.util.Objects;
 @Getter
 public final class StartedRun {
 
+    private final Long agentId;
+
     private final Long sessionId;
 
     private final Long runId;
 
     /** 创建 ChatStore begin 阶段的不可变结果。 */
-    public StartedRun(Long sessionId, Long runId) {
+    public StartedRun(Long agentId, Long sessionId, Long runId) {
+        this.agentId = requirePositive(agentId, "agentId");
         this.sessionId = requirePositive(sessionId, "sessionId");
         this.runId = requirePositive(runId, "runId");
     }

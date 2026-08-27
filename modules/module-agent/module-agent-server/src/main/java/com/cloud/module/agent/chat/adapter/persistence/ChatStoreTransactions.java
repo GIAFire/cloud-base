@@ -52,15 +52,11 @@ public class ChatStoreTransactions {
     /** 最终业务消息的读写。 */
     private final AgentMessageMapper messageMapper;
 
-    /** 当前基座固定 Agent 标识，新会话必须绑定到它。 */
-    private final Long agentId;
-
     /** 使用显式依赖构造事务实现，便于测试中替换 Mapper。 */
     public ChatStoreTransactions(
             AgentSessionMapper sessionMapper,
             AgentRunMapper runMapper,
-            AgentMessageMapper messageMapper,
-            Long agentId
+            AgentMessageMapper messageMapper
     ) {
         this.sessionMapper = Objects.requireNonNull(
                 sessionMapper, "sessionMapper must not be null"
@@ -71,7 +67,6 @@ public class ChatStoreTransactions {
         this.messageMapper = Objects.requireNonNull(
                 messageMapper, "messageMapper must not be null"
         );
-        this.agentId = requirePositive(agentId, "agentId");
     }
 
     /**
@@ -116,7 +111,7 @@ public class ChatStoreTransactions {
 
         updateSessionMessagePosition(session, userMessageSeq, actor, now);
 
-        return new StartedRun(session.getId(), run.getId());
+        return new StartedRun(session.getAgentId(), session.getId(), run.getId());
     }
 
     /**
@@ -193,7 +188,7 @@ public class ChatStoreTransactions {
             throw ChatStoreException.sessionNotFound(command.getSessionId());
         }
 
-        requireSessionOwner(session, actor);
+        requireSessionOwnerAndAgent(session, actor, command.getAgentId());
 
         return session;
     }
@@ -204,7 +199,7 @@ public class ChatStoreTransactions {
     private AgentSessionDO createSession(StartChatCommand command, ChatActor actor, LocalDateTime now) {
         AgentSessionDO session = new AgentSessionDO();
 
-        session.setAgentId(agentId);
+        session.setAgentId(command.getAgentId());
         session.setUserId(actor.getUserId());
         session.setTitle(createTitle(command.getContent()));
         session.setLastMessageSeq(0L);
@@ -383,17 +378,30 @@ public class ChatStoreTransactions {
         }
     }
 
-    /** 校验 Session 同时属于当前租户、用户和固定 Agent。 */
+    /** 校验 Session 属于当前 actor，并且不允许在已有会话中切换 Agent。 */
+    private void requireSessionOwnerAndAgent(
+            AgentSessionDO session,
+            ChatActor actor,
+            Long requestedAgentId
+    ) {
+        requireSessionOwner(session, actor);
+
+        if (!Objects.equals(session.getAgentId(), requestedAgentId)) {
+            throw ChatStoreException.sessionAgentMismatch(
+                    session.getId(),
+                    session.getAgentId(),
+                    requestedAgentId
+            );
+        }
+    }
+
+    /** 校验 Session 属于当前租户和用户。 */
     private void requireSessionOwner(AgentSessionDO session, ChatActor actor) {
         if (!Objects.equals(session.getUserId(), actor.getUserId())) {
             throw ChatStoreException.sessionAccessDenied(session.getId());
         }
 
-        if (!Objects.equals(session.getTenantId(),actor.getTenantId())) {
-            throw ChatStoreException.sessionAccessDenied(session.getId());
-        }
-
-        if (!Objects.equals(session.getAgentId(),agentId)) {
+        if (!Objects.equals(session.getTenantId(), actor.getTenantId())) {
             throw ChatStoreException.sessionAccessDenied(session.getId());
         }
     }

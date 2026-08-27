@@ -1,11 +1,15 @@
 package com.cloud.module.agent.dal.dataobject.config;
 
-import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
-import com.cloud.framework.mybatis.core.dataobject.BaseDO;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cloud.framework.tenant.core.db.TenantBaseDO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * 系统提示词表 DO
@@ -20,7 +24,7 @@ import com.cloud.framework.mybatis.core.dataobject.BaseDO;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SysPromptDO extends BaseDO {
+public class SysPromptDO extends TenantBaseDO {
 
     /**
      * 提示词模板主键ID

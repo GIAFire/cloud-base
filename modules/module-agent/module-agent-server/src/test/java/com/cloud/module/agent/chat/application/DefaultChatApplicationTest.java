@@ -34,7 +34,7 @@ class DefaultChatApplicationTest {
 
     private static final Long SESSION_ID = 101L;
     private static final Long RUN_ID = 202L;
-
+    private static final Long AGENT_ID = 100L;
     private Logger applicationLogger;
     private ListAppender<ILoggingEvent> logAppender;
 
@@ -149,6 +149,7 @@ class DefaultChatApplicationTest {
 
         AgentInvocation invocation = capturedInvocation.get();
         assertThat(invocation).isNotNull();
+        assertThat(invocation.getAgentId()).isEqualTo(AGENT_ID);
         assertThat(invocation.getSessionId()).isEqualTo(SESSION_ID);
         assertThat(invocation.getRunId()).isEqualTo(RUN_ID);
         assertThat(invocation.getActor().getTenantId()).isEqualTo(1L);
@@ -362,6 +363,7 @@ class DefaultChatApplicationTest {
 
     private StartChatCommand command() {
         return new StartChatCommand(
+                AGENT_ID,
                 SESSION_ID,
                 "request-001",
                 "你好",
@@ -370,7 +372,11 @@ class DefaultChatApplicationTest {
     }
 
     private StartedRun startedRun() {
-        return new StartedRun(SESSION_ID, RUN_ID);
+        return new StartedRun(
+                AGENT_ID,
+                SESSION_ID,
+                RUN_ID
+        );
     }
 
     private void assertLogsDoNotContain(String sensitiveValue) {

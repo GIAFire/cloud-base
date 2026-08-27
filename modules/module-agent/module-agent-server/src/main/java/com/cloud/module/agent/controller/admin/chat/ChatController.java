@@ -63,6 +63,7 @@ public class ChatController {
         Long sessionId = request.getSessionId() == null ? null : Long.valueOf(request.getSessionId());
 
         StartChatCommand command = new StartChatCommand(
+                        Long.valueOf(request.getAgentId()),
                         sessionId,
                         request.getRequestId(),
                         request.getContent(),
