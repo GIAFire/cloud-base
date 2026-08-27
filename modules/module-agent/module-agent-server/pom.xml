@@ -232,6 +232,12 @@
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- 工具类相关 -->
+        <dependency>
+            <groupId>com.cloud</groupId>
+            <artifactId>spring-boot-starter-excel</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
