@@ -78,8 +78,13 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
+    public List<ModelDO> getModelList() {
+        return modelMapper.selectSimpleList();
+    }
+
+    @Override
     public PageResult<ModelDO> getModelPage(ModelPageReqVO pageReqVO) {
         return modelMapper.selectPage(pageReqVO);
     }
 
-}
+}

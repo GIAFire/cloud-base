@@ -1,5 +1,4 @@
 import request from '@/config/axios'
-import type { Dayjs } from 'dayjs';
 
 /** Agent 定义表信息 */
 export interface Info {
@@ -58,4 +57,4 @@ export const InfoApi = {
   exportInfo: async (params) => {
     return await request.download({ url: `/agent/info/export-excel`, params })
   }
-}
+}

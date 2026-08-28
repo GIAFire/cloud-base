@@ -1,5 +1,4 @@
 import request from '@/config/axios'
-import type { Dayjs } from 'dayjs';
 
 /** 模型配置表信息 */
 export interface Model {
@@ -17,8 +16,19 @@ export interface Model {
           thinkingBudget: number; // 最大思考token
   }
 
+/** 模型配置精简信息 */
+export interface ModelSimple {
+  id: number
+  modelName: string
+}
+
 // 模型配置表 API
 export const ModelApi = {
+  // 查询模型配置精简列表
+  getModelSimpleList: async (): Promise<ModelSimple[]> => {
+    return await request.get({ url: `/agent/model/simple-list` })
+  },
+
   // 查询模型配置表分页
   getModelPage: async (params: any) => {
     return await request.get({ url: `/agent/model/page`, params })
@@ -53,4 +63,4 @@ export const ModelApi = {
   exportModel: async (params) => {
     return await request.download({ url: `/agent/model/export-excel`, params })
   }
-}
+}

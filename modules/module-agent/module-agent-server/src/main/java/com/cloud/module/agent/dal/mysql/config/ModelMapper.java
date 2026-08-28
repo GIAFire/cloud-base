@@ -17,6 +17,12 @@ import com.cloud.module.agent.controller.admin.config.vo.*;
 @Mapper
 public interface ModelMapper extends BaseMapperX<ModelDO> {
 
+    default List<ModelDO> selectSimpleList() {
+        return selectList(new LambdaQueryWrapperX<ModelDO>()
+                .select(ModelDO::getId, ModelDO::getModelName)
+                .orderByAsc(ModelDO::getModelName));
+    }
+
     default PageResult<ModelDO> selectPage(ModelPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<ModelDO>()
                 .eqIfPresent(ModelDO::getProtocol, reqVO.getProtocol())

@@ -7,14 +7,38 @@
       label-width="100px"
       v-loading="formLoading"
     >
-      <el-form-item label="model.id" prop="modelId">
-        <el-select v-model="formData.modelId" placeholder="请选择关联 ai_agent_model.id">
-          <el-option label="请选择字典生成" value="" />
+      <el-form-item label="模型名称" prop="modelId">
+        <el-select
+          v-model="formData.modelId"
+          clearable
+          filterable
+          placeholder="请选择模型"
+          no-data-text="暂无模型配置"
+          class="!w-100%"
+        >
+          <el-option
+            v-for="model in modelOptions"
+            :key="model.id"
+            :label="model.modelName"
+            :value="model.id"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="prompt.id" prop="sysPromptId">
-        <el-select v-model="formData.sysPromptId" placeholder="请选择关联 ai_agent_sys_prompt.id">
-          <el-option label="请选择字典生成" value="" />
+      <el-form-item label="提示词名称" prop="sysPromptId">
+        <el-select
+          v-model="formData.sysPromptId"
+          clearable
+          filterable
+          placeholder="请选择提示词"
+          no-data-text="暂无提示词配置"
+          class="!w-100%"
+        >
+          <el-option
+            v-for="prompt in sysPromptOptions"
+            :key="prompt.id"
+            :label="prompt.promptName"
+            :value="prompt.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="code" prop="agentCode">
@@ -44,7 +68,7 @@
         <el-radio-group v-model="formData.compactionEnabled">
           <el-radio
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
+            :key="String(dict.value)"
             :label="dict.value"
           >
             {{ dict.label }}
@@ -67,7 +91,7 @@
         <el-radio-group v-model="formData.toolResultEvictionEnabled">
           <el-radio
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
+            :key="String(dict.value)"
             :label="dict.value"
           >
             {{ dict.label }}
@@ -78,7 +102,7 @@
         <el-radio-group v-model="formData.memoryEnable">
           <el-radio
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
+            :key="String(dict.value)"
             :label="dict.value"
           >
             {{ dict.label }}
@@ -89,7 +113,7 @@
         <el-radio-group v-model="formData.planModeEnabled">
           <el-radio
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
+            :key="String(dict.value)"
             :label="dict.value"
           >
             {{ dict.label }}
@@ -100,7 +124,7 @@
         <el-radio-group v-model="formData.allowShellInPlanMode">
           <el-radio
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
-            :key="dict.value"
+            :key="String(dict.value)"
             :label="dict.value"
           >
             {{ dict.label }}
@@ -117,6 +141,8 @@
 <script setup lang="ts">
 import { getStrDictOptions, getBoolDictOptions, DICT_TYPE } from '@/utils/dict'
 import { InfoApi, Info } from '@/api/agent/agentInfo'
+import { ModelApi, type ModelSimple } from '@/api/agent/config/model'
+import { SysPromptApi, type SysPromptSimple } from '@/api/agent/config/sysprompt'
 
 /** Agent 定义表 表单 */
 defineOptions({ name: 'InfoForm' })
@@ -128,6 +154,8 @@ const dialogVisible = ref(false) // 弹窗的是否展示
 const dialogTitle = ref('') // 弹窗的标题
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
 const formType = ref('') // 表单的类型：create - 新增；update - 修改
+const modelOptions = ref<ModelSimple[]>([]) // 模型下拉选项
+const sysPromptOptions = ref<SysPromptSimple[]>([]) // 提示词下拉选项
 const formData = ref({
   id: undefined,
   modelId: undefined,
@@ -165,14 +193,22 @@ const open = async (type: string, id?: number) => {
   dialogTitle.value = t('action.' + type)
   formType.value = type
   resetForm()
-  // 修改时，设置数据
-  if (id) {
-    formLoading.value = true
-    try {
-      formData.value = await InfoApi.getInfo(id)
-    } finally {
-      formLoading.value = false
+  formLoading.value = true
+  try {
+    const infoPromise = id ? InfoApi.getInfo(id) : Promise.resolve(undefined)
+    const [models, sysPrompts, info] = await Promise.all([
+      ModelApi.getModelSimpleList(),
+      SysPromptApi.getSysPromptSimpleList(),
+      infoPromise
+    ])
+    modelOptions.value = models || []
+    sysPromptOptions.value = sysPrompts || []
+    // 修改时，设置数据
+    if (info) {
+      formData.value = info
     }
+  } finally {
+    formLoading.value = false
   }
 }
 defineExpose({ open }) // 提供 open 方法，用于打开弹窗

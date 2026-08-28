@@ -80,6 +80,12 @@ public class SysPromptController {
         return success(BeanUtils.toBean(sysPrompt, SysPromptRespVO.class));
     }
 
+    @GetMapping("/simple-list")
+    @Operation(summary = "获得系统提示词精简列表", description = "用于 Agent 配置的提示词下拉选项")
+    public CommonResult<List<SysPromptSimpleRespVO>> getSysPromptSimpleList() {
+        return success(BeanUtils.toBean(sysPromptService.getSysPromptList(), SysPromptSimpleRespVO.class));
+    }
+
     @GetMapping("/page")
     @Operation(summary = "获得系统提示词表分页")
     @PreAuthorize("@ss.hasPermission('agent:sys-prompt:query')")
@@ -101,4 +107,4 @@ public class SysPromptController {
                         BeanUtils.toBean(list, SysPromptRespVO.class));
     }
 
-}
+}

@@ -80,6 +80,12 @@ public class ModelController {
         return success(BeanUtils.toBean(model, ModelRespVO.class));
     }
 
+    @GetMapping("/simple-list")
+    @Operation(summary = "获得模型配置精简列表", description = "用于 Agent 配置的模型下拉选项")
+    public CommonResult<List<ModelSimpleRespVO>> getModelSimpleList() {
+        return success(BeanUtils.toBean(modelService.getModelList(), ModelSimpleRespVO.class));
+    }
+
     @GetMapping("/page")
     @Operation(summary = "获得模型配置表分页")
     @PreAuthorize("@ss.hasPermission('agent:model:query')")
@@ -101,4 +107,4 @@ public class ModelController {
                         BeanUtils.toBean(list, ModelRespVO.class));
     }
 
-}
+}

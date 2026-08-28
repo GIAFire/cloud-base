@@ -78,8 +78,13 @@ public class SysPromptServiceImpl implements SysPromptService {
     }
 
     @Override
+    public List<SysPromptDO> getSysPromptList() {
+        return sysPromptMapper.selectSimpleList();
+    }
+
+    @Override
     public PageResult<SysPromptDO> getSysPromptPage(SysPromptPageReqVO pageReqVO) {
         return sysPromptMapper.selectPage(pageReqVO);
     }
 
-}
+}

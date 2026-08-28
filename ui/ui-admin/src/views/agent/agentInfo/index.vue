@@ -163,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { getStrDictOptions, getBoolDictOptions, DICT_TYPE } from '@/utils/dict'
+import { DICT_TYPE } from '@/utils/dict'
 import { isEmpty } from '@/utils/is'
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'

@@ -52,6 +52,13 @@ public interface ModelService {
     ModelDO getModel(Long id);
 
     /**
+     * 获得模型配置精简列表
+     *
+     * @return 模型配置列表
+     */
+    List<ModelDO> getModelList();
+
+    /**
      * 获得模型配置表分页
      *
      * @param pageReqVO 分页查询
@@ -59,4 +66,4 @@ public interface ModelService {
      */
     PageResult<ModelDO> getModelPage(ModelPageReqVO pageReqVO);
 
-}
+}

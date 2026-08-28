@@ -1,5 +1,4 @@
 import request from '@/config/axios'
-import type { Dayjs } from 'dayjs';
 
 /** 系统提示词表信息 */
 export interface SysPrompt {
@@ -9,8 +8,19 @@ export interface SysPrompt {
           sysPrompt: string; // 提示词内容
   }
 
+/** 系统提示词精简信息 */
+export interface SysPromptSimple {
+  id: number
+  promptName: string
+}
+
 // 系统提示词表 API
 export const SysPromptApi = {
+  // 查询系统提示词精简列表
+  getSysPromptSimpleList: async (): Promise<SysPromptSimple[]> => {
+    return await request.get({ url: `/agent/sys-prompt/simple-list` })
+  },
+
   // 查询系统提示词表分页
   getSysPromptPage: async (params: any) => {
     return await request.get({ url: `/agent/sys-prompt/page`, params })
@@ -45,4 +55,4 @@ export const SysPromptApi = {
   exportSysPrompt: async (params) => {
     return await request.download({ url: `/agent/sys-prompt/export-excel`, params })
   }
-}
+}

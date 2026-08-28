@@ -17,6 +17,12 @@ import com.cloud.module.agent.controller.admin.config.vo.*;
 @Mapper
 public interface SysPromptMapper extends BaseMapperX<SysPromptDO> {
 
+    default List<SysPromptDO> selectSimpleList() {
+        return selectList(new LambdaQueryWrapperX<SysPromptDO>()
+                .select(SysPromptDO::getId, SysPromptDO::getPromptName)
+                .orderByAsc(SysPromptDO::getPromptName));
+    }
+
     default PageResult<SysPromptDO> selectPage(SysPromptPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<SysPromptDO>()
                 .likeIfPresent(SysPromptDO::getPromptName, reqVO.getPromptName())

@@ -52,6 +52,13 @@ public interface SysPromptService {
     SysPromptDO getSysPrompt(Long id);
 
     /**
+     * 获得系统提示词精简列表
+     *
+     * @return 系统提示词列表
+     */
+    List<SysPromptDO> getSysPromptList();
+
+    /**
      * 获得系统提示词表分页
      *
      * @param pageReqVO 分页查询
@@ -59,4 +66,4 @@ public interface SysPromptService {
      */
     PageResult<SysPromptDO> getSysPromptPage(SysPromptPageReqVO pageReqVO);
 
-}
+}

@@ -210,5 +210,6 @@ export enum DICT_TYPE {
   IM_CHANNEL_MATERIAL_TYPE = 'im_channel_material_type', // IM 频道素材内容类型：1=富文本 / 2=外链
 
   // ========== Agent - agent模块  ==========
-  AGENT_MODEL_PROTOCOL = 'protocol_type'
+  AGENT_MODEL_PROTOCOL = 'protocol_type',
+  AGENT_PERMISSION_TYPE = 'agent_permission_type'
 }
