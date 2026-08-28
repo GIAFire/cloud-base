@@ -7,32 +7,56 @@
       label-width="100px"
       v-loading="formLoading"
     >
-      <el-form-item label="模型接口协议：openaiCompatible、dashscope、anthropic、ollama" prop="protocol">
-        <el-input v-model="formData.protocol" placeholder="请输入模型接口协议：openaiCompatible、dashscope、anthropic、ollama" />
+      <el-form-item label="接口协议" prop="protocol">
+        <el-select
+          v-model="formData.protocol"
+          clearable
+          placeholder="请选择模型接口协议"
+          class="!w-100%"
+        >
+          <el-option
+            v-for="dict in getStrDictOptions(DICT_TYPE.AGENT_MODEL_PROTOCOL)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="兼容 OpenAI 协议时的自定义 baseUrl" prop="baseUrl">
-        <el-input v-model="formData.baseUrl" placeholder="请输入兼容 OpenAI 协议时的自定义 baseUrl" />
+      <el-form-item label="baseUrl" prop="baseUrl">
+        <el-input v-model="formData.baseUrl" placeholder="请输入 baseUrl" />
       </el-form-item>
-      <el-form-item label="API Key；当前阶段明文存储，仅模型详情接口允许返回" prop="apiKey">
-        <el-input v-model="formData.apiKey" placeholder="请输入API Key；当前阶段明文存储，仅模型详情接口允许返回" />
+      <el-form-item label="API Key" prop="apiKey">
+        <el-input v-model="formData.apiKey" placeholder="请输入API Key" />
       </el-form-item>
       <el-form-item label="模型说明" prop="description">
         <Editor v-model="formData.description" height="150px" />
       </el-form-item>
-      <el-form-item label="真实模型名称，例如 qwen-plus、gpt-4.1、claude-sonnet-4-5" prop="modelName">
-        <el-input v-model="formData.modelName" placeholder="请输入真实模型名称，例如 qwen-plus、gpt-4.1、claude-sonnet-4-5" />
+      <el-form-item label="模型名称" prop="modelName">
+        <el-input v-model="formData.modelName" placeholder="请输入模型名称" />
       </el-form-item>
-      <el-form-item label="是否支持流式" prop="streaming">
+      <el-form-item label="是否流式" prop="streaming">
         <el-radio-group v-model="formData.streaming">
-          <el-radio value="1">请选择字典生成</el-radio>
+          <el-radio
+              v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
+              :key="dict.value"
+              :label="dict.value"
+            >
+              {{ dict.label }}
+            </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="是否支持思考" prop="thinking">
+      <el-form-item label="是否思考" prop="thinking">
         <el-radio-group v-model="formData.thinking">
-          <el-radio value="1">请选择字典生成</el-radio>
+          <el-radio
+            v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
+            :key="dict.value"
+            :label="dict.value"
+          >
+            {{ dict.label }}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="采样温度，控制随机性" prop="temperature">
+      <el-form-item label="采样温度" prop="temperature">
         <el-input v-model="formData.temperature" placeholder="请输入采样温度，控制随机性" />
       </el-form-item>
       <el-form-item label="核采样参数" prop="topP">
@@ -52,7 +76,8 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import { ModelApi, Model } from '@/api/agent/config'
+import { getStrDictOptions, getBoolDictOptions, DICT_TYPE } from '@/utils/dict'
+import { ModelApi, Model } from '@/api/agent/config/model'
 
 /** 模型配置表 表单 */
 defineOptions({ name: 'ModelForm' })

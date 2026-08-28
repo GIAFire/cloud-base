@@ -24,7 +24,7 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import { SysPromptApi, SysPrompt } from '@/api/agent/config'
+import { SysPromptApi, SysPrompt } from '@/api/agent/config/sysprompt'
 
 /** 系统提示词表 表单 */
 defineOptions({ name: 'SysPromptForm' })

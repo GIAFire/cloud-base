@@ -1,5 +1,7 @@
 package com.cloud.module.agent.controller.admin.config.vo;
 
+import com.cloud.framework.common.validation.InEnum;
+import com.cloud.module.agent.enums.config.enums.ModelProtocolEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -13,11 +15,24 @@ public class ModelSaveReqVO {
     @Schema(description = "模型配置主键ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "25462")
     private Long id;
 
-    @Schema(description = "模型接口协议：openaiCompatible、dashscope、anthropic、ollama", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "模型接口协议：openaiCompatible、dashscope、anthropic、ollama不能为空")
+    @Schema(
+            description = "模型接口协议",
+            requiredMode = Schema.RequiredMode.REQUIRED,
+            allowableValues = {
+                    "openaiAI",
+                    "dashscope",
+                    "anthropic",
+                    "ollama"
+            }
+    )
+    @NotBlank(message = "模型接口协议不能为空")
+    @InEnum(
+            value = ModelProtocolEnum.class,
+            message = "模型接口协议必须是 {value}"
+    )
     private String protocol;
 
-    @Schema(description = "兼容 OpenAI 协议时的自定义 baseUrl", example = "https://www.iocoder.cn")
+    @Schema(description = "兼容 OpenAI 协议时的自定义 baseUrl", example = "https://www.baidu.cn")
     private String baseUrl;
 
     @Schema(description = "API Key；当前阶段明文存储，仅模型详情接口允许返回")

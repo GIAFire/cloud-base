@@ -8,93 +8,10 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="模型接口协议：openaiCompatible、dashscope、anthropic、ollama" prop="protocol">
-        <el-input
-          v-model="queryParams.protocol"
-          placeholder="请输入模型接口协议：openaiCompatible、dashscope、anthropic、ollama"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="兼容 OpenAI 协议时的自定义 baseUrl" prop="baseUrl">
-        <el-input
-          v-model="queryParams.baseUrl"
-          placeholder="请输入兼容 OpenAI 协议时的自定义 baseUrl"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="API Key；当前阶段明文存储，仅模型详情接口允许返回" prop="apiKey">
-        <el-input
-          v-model="queryParams.apiKey"
-          placeholder="请输入API Key；当前阶段明文存储，仅模型详情接口允许返回"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="真实模型名称，例如 qwen-plus、gpt-4.1、claude-sonnet-4-5" prop="modelName">
+      <el-form-item label="模型名称" prop="modelName">
         <el-input
           v-model="queryParams.modelName"
-          placeholder="请输入真实模型名称，例如 qwen-plus、gpt-4.1、claude-sonnet-4-5"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="是否支持流式" prop="streaming">
-        <el-select
-          v-model="queryParams.streaming"
-          placeholder="请选择是否支持流式"
-          clearable
-          class="!w-240px"
-        >
-          <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否支持思考" prop="thinking">
-        <el-select
-          v-model="queryParams.thinking"
-          placeholder="请选择是否支持思考"
-          clearable
-          class="!w-240px"
-        >
-          <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="采样温度，控制随机性" prop="temperature">
-        <el-input
-          v-model="queryParams.temperature"
-          placeholder="请输入采样温度，控制随机性"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="核采样参数" prop="topP">
-        <el-input
-          v-model="queryParams.topP"
-          placeholder="请输入核采样参数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="最大输出token" prop="maxTokens">
-        <el-input
-          v-model="queryParams.maxTokens"
-          placeholder="请输入最大输出token"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="最大思考token" prop="thinkingBudget">
-        <el-input
-          v-model="queryParams.thinkingBudget"
-          placeholder="请输入最大思考token"
+          placeholder="请输入模型名称"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
@@ -155,15 +72,15 @@
         @selection-change="handleRowCheckboxChange"
     >
     <el-table-column type="selection" width="55" />
-      <el-table-column label="模型配置主键ID" align="center" prop="id" />
-      <el-table-column label="模型接口协议：openaiCompatible、dashscope、anthropic、ollama" align="center" prop="protocol" />
-      <el-table-column label="兼容 OpenAI 协议时的自定义 baseUrl" align="center" prop="baseUrl" />
-      <el-table-column label="API Key；当前阶段明文存储，仅模型详情接口允许返回" align="center" prop="apiKey" />
+      <el-table-column label="ID" align="center" prop="id" />
+      <el-table-column label="接口协议" align="center" prop="protocol" />
+      <el-table-column label="baseUrl" align="center" prop="baseUrl" />
+      <el-table-column label="API Key" align="center" prop="apiKey" />
       <el-table-column label="模型说明" align="center" prop="description" />
-      <el-table-column label="真实模型名称，例如 qwen-plus、gpt-4.1、claude-sonnet-4-5" align="center" prop="modelName" />
-      <el-table-column label="是否支持流式" align="center" prop="streaming" />
-      <el-table-column label="是否支持思考" align="center" prop="thinking" />
-      <el-table-column label="采样温度，控制随机性" align="center" prop="temperature" />
+      <el-table-column label="模型名称" align="center" prop="modelName" />
+      <el-table-column label="流式输出" align="center" prop="streaming" />
+      <el-table-column label="思考模式" align="center" prop="thinking" />
+      <el-table-column label="采样温度" align="center" prop="temperature" />
       <el-table-column label="核采样参数" align="center" prop="topP" />
       <el-table-column label="最大输出token" align="center" prop="maxTokens" />
       <el-table-column label="最大思考token" align="center" prop="thinkingBudget" />
@@ -212,7 +129,7 @@
 import { isEmpty } from '@/utils/is'
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
-import { ModelApi, Model } from '@/api/agent/config'
+import { ModelApi, Model } from '@/api/agent/config/model'
 import ModelForm from './ModelForm.vue'
 
 /** 模型配置表 列表 */
@@ -322,4 +239,4 @@ const handleExport = async () => {
 onMounted(() => {
   getList()
 })
-</script>
+</script>
