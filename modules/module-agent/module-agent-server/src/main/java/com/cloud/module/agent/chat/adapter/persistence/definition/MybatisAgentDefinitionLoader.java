@@ -106,10 +106,7 @@ public final class MybatisAgentDefinitionLoader implements AgentDefinitionLoader
         if (protocol == null) {
             return false;
         }
-        String normalized = protocol.replace("-", "")
-                .replace("_", "")
-                .toLowerCase(Locale.ROOT);
-        return "openaicompatible".equals(normalized);
+        return "openAI".equals(protocol);
     }
 
     private <T> T executeInTenant(Long tenantId, Supplier<T> operation) {

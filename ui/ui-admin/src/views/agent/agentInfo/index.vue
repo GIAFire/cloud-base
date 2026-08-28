@@ -58,11 +58,11 @@
           <Icon icon="ep:download" class="mr-5px" /> 导出
         </el-button>
         <el-button
-            type="danger"
-            plain
-            :disabled="isEmpty(checkedIds)"
-            @click="handleDeleteBatch"
-            v-hasPermi="['agent:info:delete']"
+          type="danger"
+          plain
+          :disabled="isEmpty(checkedIds)"
+          @click="handleDeleteBatch"
+          v-hasPermi="['agent:info:delete']"
         >
           <Icon icon="ep:delete" class="mr-5px" /> 批量删除
         </el-button>
@@ -73,14 +73,14 @@
   <!-- 列表 -->
   <ContentWrap>
     <el-table
-        row-key="id"
-        v-loading="loading"
-        :data="list"
-        :stripe="true"
-        :show-overflow-tooltip="true"
-        @selection-change="handleRowCheckboxChange"
+      row-key="id"
+      v-loading="loading"
+      :data="list"
+      :stripe="true"
+      :show-overflow-tooltip="true"
+      @selection-change="handleRowCheckboxChange"
     >
-    <el-table-column type="selection" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column label="model.id" align="center" prop="modelId" />
       <el-table-column label="prompt.id" align="center" prop="sysPromptId" />
       <el-table-column label="code" align="center" prop="agentCode" />
@@ -103,7 +103,10 @@
       <el-table-column label="保留token数" align="center" prop="keepTokens" />
       <el-table-column label="工具结果卸载" align="center" prop="toolResultEvictionEnabled">
         <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.toolResultEvictionEnabled" />
+          <dict-tag
+            :type="DICT_TYPE.INFRA_BOOLEAN_STRING"
+            :value="scope.row.toolResultEvictionEnabled"
+          />
         </template>
       </el-table-column>
       <el-table-column label="长期记忆" align="center" prop="memoryEnable">
@@ -118,7 +121,10 @@
       </el-table-column>
       <el-table-column label="shell" align="center" prop="allowShellInPlanMode">
         <template #default="scope">
-          <dict-tag :type="DICT_TYPE.INFRA_BOOLEAN_STRING" :value="scope.row.allowShellInPlanMode" />
+          <dict-tag
+            :type="DICT_TYPE.INFRA_BOOLEAN_STRING"
+            :value="scope.row.allowShellInPlanMode"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -128,8 +134,16 @@
         :formatter="dateFormatter"
         width="180px"
       />
-      <el-table-column label="操作" align="center" min-width="120px">
+      <el-table-column label="操作" align="center" min-width="180px" fixed="right">
         <template #default="scope">
+          <el-button
+            link
+            type="success"
+            @click="openChat(scope.row.id)"
+            v-hasPermi="['agent:chat:use']"
+          >
+            对话
+          </el-button>
           <el-button
             link
             type="primary"
@@ -202,6 +216,12 @@ const queryParams = reactive({
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
+const router = useRouter()
+
+/** 打开 Agent 聊天工作区 */
+const openChat = (id: number | string) => {
+  router.push({ name: 'AgentChat', params: { agentId: String(id) } })
+}
 
 /** 查询列表 */
 const getList = async () => {
@@ -251,16 +271,16 @@ const handleDeleteBatch = async () => {
   try {
     // 删除的二次确认
     await message.delConfirm()
-    await InfoApi.deleteInfoList(checkedIds.value);
-    checkedIds.value = [];
+    await InfoApi.deleteInfoList(checkedIds.value)
+    checkedIds.value = []
     message.success(t('common.delSuccess'))
-    await getList();
+    await getList()
   } catch {}
 }
 
 const checkedIds = ref<number[]>([])
 const handleRowCheckboxChange = (records: Info[]) => {
-  checkedIds.value = records.map((item) => item.id!);
+  checkedIds.value = records.map((item) => item.id!)
 }
 
 /** 导出按钮操作 */

@@ -2,24 +2,24 @@ import request from '@/config/axios'
 
 /** Agent 定义表信息 */
 export interface Info {
-          id: number; // Agent 主键ID
-          modelId: number; // 关联 ai_agent_model.id
-          sysPromptId: number; // 关联 ai_agent_sys_prompt.id
-          agentCode?: string; // Agent唯一编码
-          agentName?: string; // Agent 显示名称
-          description: string; // Agent 描述
-          maxIters?: number; // 最大循环次数
-          permissionMode?: string; // 默认权限模式
-          compactionEnabled?: boolean; // 是否启用上下文压缩：1启用，0关闭
-          triggerMessages: number; // 触发压缩消息数
-          keepMessages: number; // 压缩后保留消息数
-          triggerTokens: number; // 触发压缩token数
-          keepTokens: number; // 压缩后保留token数
-          toolResultEvictionEnabled?: boolean; // 是否启用大工具结果卸载：1启用，0关闭
-          memoryEnable: boolean; // 是否启用长期记忆:1启用,0禁用
-          planModeEnabled?: boolean; // 是否启用Plan Mode：1启用，0关闭
-          allowShellInPlanMode?: boolean; // Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭
-  }
+  id: number // Agent 主键ID
+  modelId: number // 关联 ai_agent_model.id
+  sysPromptId: number // 关联 ai_agent_sys_prompt.id
+  agentCode?: string // Agent唯一编码
+  agentName?: string // Agent 显示名称
+  description: string // Agent 描述
+  maxIters?: number // 最大循环次数
+  permissionMode?: string // 默认权限模式
+  compactionEnabled?: boolean // 是否启用上下文压缩：1启用，0关闭
+  triggerMessages: number // 触发压缩消息数
+  keepMessages: number // 压缩后保留消息数
+  triggerTokens: number // 触发压缩token数
+  keepTokens: number // 压缩后保留token数
+  toolResultEvictionEnabled?: boolean // 是否启用大工具结果卸载：1启用，0关闭
+  memoryEnable: boolean // 是否启用长期记忆:1启用,0禁用
+  planModeEnabled?: boolean // 是否启用Plan Mode：1启用，0关闭
+  allowShellInPlanMode?: boolean // Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭
+}
 
 // Agent 定义表 API
 export const InfoApi = {
@@ -29,7 +29,7 @@ export const InfoApi = {
   },
 
   // 查询Agent 定义表详情
-  getInfo: async (id: number) => {
+  getInfo: async (id: number | string) => {
     return await request.get({ url: `/agent/info/get?id=` + id })
   },
 

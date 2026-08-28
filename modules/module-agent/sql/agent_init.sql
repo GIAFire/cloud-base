@@ -159,7 +159,7 @@ CREATE TABLE `agent_session`  (
   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_session_owner_updated`(`id` ASC, `user_id` ASC, `update_time` ASC, `deleted` ASC, `tenant_id` ASC) USING BTREE
+  INDEX `idx_session_owner_agent_recent`(`tenant_id` ASC, `user_id` ASC, `agent_id` ASC, `deleted` ASC, `last_message_at` DESC, `id` DESC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent会话表：保存用户和Agent之间的一段连续对话' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------

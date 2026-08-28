@@ -29,9 +29,6 @@ public final class HarnessAgentFactory {
         Objects.requireNonNull(actor, "actor must not be null");
 
         Model model = createModel(definition);
-        Path stateDirectory = properties.getStateRoot()
-                .resolve(String.valueOf(actor.getTenantId()))
-                .resolve(String.valueOf(definition.getAgentId()));
 
         return HarnessAgent.builder()
                 .agentId(String.valueOf(definition.getAgentId()))
@@ -40,20 +37,21 @@ public final class HarnessAgentFactory {
                 .model(model)
                 // 传输重试由 GenerateOptions 控制，避免 Harness 再嵌套重试。
                 .modelExecutionConfig(ExecutionConfig.builder().maxAttempts(1).build())
-                .maxIters(definition.getMaxIters())
-                .stateStore(new JsonFileAgentStateStore(stateDirectory))
-                .enableAgentTracingLog(false)
-                .disableFilesystemTools()
-                .disableShellTool()
-                .disableToolsConfig()
-                .disableDynamicSkills()
-                .disableDefaultWorkspaceSkills()
-                .disableSubagents()
-                .disableDynamicSubagents()
-                .disableMemoryHooks()
-                .disableAtPathExpansion()
-                .disableCompaction()
-                .disableToolResultEviction()
+                .maxIters(definition.getMaxIters())     // 最大循环次数
+
+                // .stateStore(new JsonFileAgentStateStore(stateDirectory))     // 会话存储配置
+                // .enableAgentTracingLog(false)        // AgentScope自带 trace 日志
+                // .disableFilesystemTools()        // 内置文件系统工具
+                // .disableShellTool()      // Shell/命令执行工具
+                // .disableToolsConfig()    // workspace/tools.json 自动工具配置
+                // .disableDynamicSkills()     //运行过程中动态加载 Skill
+                // .disableDefaultWorkspaceSkills()    // Harness 默认 Workspace Skill Repository
+                // .disableSubagents()     // 子 Agent 系统
+                // .disableDynamicSubagents()      // 动态发现/生成子 Agent
+                // .disableMemoryHooks()       // 自动长期记忆写入、整理、维护
+                // .disableAtPathExpansion()    // @路径 一类文件引用自动展开
+                // .disableCompaction()        // 上下文自动总结/压缩
+                // .disableToolResultEviction()        // 大工具结果卸载
                 .build();
     }
 
@@ -98,9 +96,6 @@ public final class HarnessAgentFactory {
     }
 
     private boolean isOpenAiCompatible(String protocol) {
-        String normalized = protocol.replace("-", "")
-                .replace("_", "")
-                .toLowerCase(Locale.ROOT);
-        return "openaicompatible".equals(normalized);
+        return "openAI".equals(protocol);
     }
 }

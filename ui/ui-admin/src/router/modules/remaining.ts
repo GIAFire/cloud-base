@@ -105,6 +105,29 @@ const remainingRouter: AppRouteRecordRaw[] = [
     ]
   },
   {
+    path: '/agent',
+    component: Layout,
+    name: 'AgentWorkspaceRoot',
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: 'chat/:agentId',
+        component: () => import('@/views/agent/chat/index.vue'),
+        name: 'AgentChat',
+        meta: {
+          title: 'Agent 对话',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: 'ep:chat-dot-round',
+          activeMenu: '/agent/agentInfo'
+        }
+      }
+    ]
+  },
+  {
     path: '/dict',
     component: Layout,
     name: 'dict',

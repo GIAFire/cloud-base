@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +51,7 @@ public class ChatController {
      */
     @Operation(summary = "发起流式聊天")
     @PostMapping(value = "/stream",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("@ss.hasPermission('agent:chat:use')")
     public Flux<ServerSentEvent<ChatStreamEventResponse>> stream(@Valid @RequestBody ChatStreamRequest request) {
         long requestStartedNanos = System.nanoTime();
         LoginUser loginUser = SecurityFrameworkUtils.getLoginUser();

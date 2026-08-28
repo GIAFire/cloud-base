@@ -121,7 +121,7 @@ public final class AgentScopeRuntime implements AgentRuntime {
          * AgentScope StateStore 使用 userId + sessionId 隔离上下文。
          */
         return RuntimeContext.builder()
-                .userId(actor.getTenantId() + "-" + actor.getUserId())
+                .userId(String.valueOf(actor.getUserId()))
                 .sessionId(String.valueOf(invocation.getSessionId()))
                 .build();
     }
