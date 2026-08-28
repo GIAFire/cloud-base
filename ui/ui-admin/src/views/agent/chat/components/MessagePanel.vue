@@ -302,6 +302,10 @@ defineExpose({ scrollToBottom })
   margin-bottom: 22px;
 }
 
+.chat-message.is-user {
+  flex-direction: row-reverse;
+}
+
 .chat-message__avatar {
   display: grid;
   flex: 0 0 32px;
@@ -315,6 +319,16 @@ defineExpose({ scrollToBottom })
 
 .chat-message.is-user .chat-message__avatar {
   background: var(--el-color-info);
+}
+
+.chat-message.is-user .chat-message__main {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.chat-message.is-user .chat-message__name {
+  text-align: right;
 }
 
 .chat-message__main {
@@ -342,6 +356,7 @@ defineExpose({ scrollToBottom })
 .chat-message.is-user .chat-message__bubble {
   background: var(--el-color-primary-light-9);
   border-color: var(--el-color-primary-light-7);
+  border-radius: 14px 4px 14px 14px;
 }
 
 .chat-message__plain,
