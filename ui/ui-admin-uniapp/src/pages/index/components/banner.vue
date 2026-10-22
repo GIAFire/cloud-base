@@ -29,7 +29,6 @@ const banners: string[] = [
 
 /** 处理点击 */
 function handleClick({ index }: { index: number }) {
-  // TODO @看看后续要不要支持跳转
   console.log('点击了第', index + 1, '张 Banner')
 }
 </script>

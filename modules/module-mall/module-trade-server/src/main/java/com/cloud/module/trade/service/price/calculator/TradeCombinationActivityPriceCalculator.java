@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
 
-// TODO @puhui999：单测可以后补下
 
 /**
  * 拼团活动的 {@link TradePriceCalculator} 实现类

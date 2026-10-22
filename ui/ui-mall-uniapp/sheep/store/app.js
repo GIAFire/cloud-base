@@ -68,7 +68,6 @@ const app = defineStore('app', {
       // 加载装修配置
       await adaptTemplate(this.template, templateId);
 
-      // TODO 芋艿：【初始化优化】未来支持管理后台可配；对应 https://api.shopro.sheepjs.com/shop/api/init
       if (true) {
         this.info = {
           name: '芋道商城',
@@ -194,7 +193,6 @@ const adaptTemplate = async (appTemplate, templateId) => {
   const tabBar = diyTemplate?.property?.tabBar;
   if (tabBar) {
     appTemplate.basic.tabbar = tabBar;
-    // TODO 商城装修没有对 tabBar 进行角标配置，测试角标需打开以下注释
     // appTemplate.basic.tabbar.items.forEach((tabBar) => {
     //   tabBar.dot = false
     //   tabBar.badge = 100

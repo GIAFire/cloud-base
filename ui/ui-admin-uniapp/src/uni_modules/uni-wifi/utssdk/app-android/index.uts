@@ -716,7 +716,6 @@ export function stopWifi(option : StopWifiOptions) {
 		UTSAndroid.getUniActivity()!.unregisterReceiver(Global.mReceiver)
 	} catch (e) {
 		// 多次调用
-		//TODO handle the exception
 	}
 
 	Global.onGetWifiListCallback = null

@@ -88,7 +88,6 @@ function Vf() {
 function Mt(e, t) {
   var n = {
     f: 0,
-    // TODO ideally we could skip this altogether, but it causes type errors
     v: e,
     reactions: null,
     equals: Wl,

@@ -107,7 +107,6 @@ const checkUpdate = (silence = false) => {
   // #endif
 
   // #ifdef APP-PLUS
-  // TODO: 热更新
   // #endif
 };
 

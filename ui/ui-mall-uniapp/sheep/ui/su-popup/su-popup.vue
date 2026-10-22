@@ -130,7 +130,6 @@
         type: Boolean,
         default: null,
       },
-      // TODO 2 个版本后废弃属性 ，使用 isMaskClick
       maskClick: {
         type: Boolean,
         default: null,
@@ -291,7 +290,6 @@
           sheep.$platform.device;
         this.popupWidth = windowWidth;
         this.popupHeight = windowHeight + (windowTop || 0);
-        // TODO fix by mehaotian 是否适配底部安全区 ,目前微信ios 、和 app ios 计算有差异，需要框架修复
         if (safeArea && this.safeArea) {
           // #ifdef MP-WEIXIN
           this.safeAreaInsets = screenHeight - safeArea.bottom;
@@ -312,13 +310,11 @@
       // #endif
     },
     // #ifndef VUE3
-    // TODO vue2
     destroyed() {
       this.setH5Visible();
     },
     // #endif
     // #ifdef VUE3
-    // TODO vue3
     unmounted() {
       this.setH5Visible();
     },
@@ -335,9 +331,7 @@
       } else {
         this.duration = 0;
       }
-      // TODO 处理 message 组件生命周期异常的问题
       this.messageChild = null;
-      // TODO 解决头条冒泡的问题
       this.clearPropagation = false;
       this.maskClass.backgroundColor = this.maskBackgroundColor;
     },
@@ -360,7 +354,6 @@
       disableMask() {
         this.mkclick = false;
       },
-      // TODO nvue 取消冒泡
       clear(e) {
         // #ifndef APP-NVUE
         e.stopPropagation();
@@ -402,7 +395,6 @@
           this.showPopup = false;
         }, 300);
       },
-      // TODO 处理冒泡事件，头条的冒泡事件有问题 ，先这样兼容
       touchstart() {
         this.clearPropagation = false;
       },
@@ -430,7 +422,6 @@
           top: this.space + 'px',
           backgroundColor: this.bg,
         };
-        // TODO 兼容 type 属性 ，后续会废弃
         if (type) return;
         this.showPopup = true;
         this.showTrans = true;
@@ -454,7 +445,6 @@
           paddingBottom: this.safeAreaInsets + this.space + 'px',
           backgroundColor: this.bg,
         };
-        // TODO 兼容 type 属性 ，后续会废弃
         if (type) return;
         this.showPopup = true;
         this.showTrans = true;
@@ -478,7 +468,6 @@
           justifyContent: 'center',
           alignItems: 'center',
         };
-        // TODO 兼容 type 属性 ，后续会废弃
         if (type) return;
         this.showPopup = true;
         this.showTrans = true;
@@ -497,7 +486,6 @@
           flexDirection: 'column',
           /* #endif */
         };
-        // TODO 兼容 type 属性 ，后续会废弃
         if (type) return;
         this.showPopup = true;
         this.showTrans = true;
@@ -516,7 +504,6 @@
           flexDirection: 'column',
           /* #endif */
         };
-        // TODO 兼容 type 属性 ，后续会废弃
         if (type) return;
         this.showPopup = true;
         this.showTrans = true;

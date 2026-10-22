@@ -183,7 +183,6 @@ export default {
 			this.transform = transform;
 			// 确保动态样式已经生效后，执行动画，如果不加 nextTick ，会导致 wx 动画执行异常
 			this.$nextTick(() => {
-				// TODO 定时器保证动画完全执行，目前有些问题，后面会取消定时器
 				this.timer = setTimeout(() => {
 					this.animation = createAnimation(this.config, this);
 					this.tranfromInit(false).step();

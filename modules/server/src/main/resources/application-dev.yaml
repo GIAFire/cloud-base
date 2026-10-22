@@ -7,7 +7,7 @@ spring:
   autoconfigure:
     # noinspection SpringBootApplicationYaml
     exclude:
-      - org.dromara.trans.config.TransServiceConfig # TODO easy-trans 兼容 Spring Boot 4 后移除（TransServiceConfig 引用了已移除的 RestTemplateBuilder）
+      - org.dromara.trans.config.TransServiceConfig
   # 数据源配置项
   datasource:
     druid: # Druid 【监控】相关的全局配置

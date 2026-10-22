@@ -355,7 +355,6 @@
           type: this.fileMediatype,
           compressed: false,
           sizeType: this.sizeType,
-          // TODO 如果为空，video 有问题
           extension: _extname.length > 0 ? _extname : undefined,
           count: this.limitLength - this.files.length, //默认9
           onChooseFile: this.chooseFileCallback,

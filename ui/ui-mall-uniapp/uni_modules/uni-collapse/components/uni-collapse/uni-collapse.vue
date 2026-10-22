@@ -34,7 +34,6 @@
 			return {}
 		},
 		computed: {
-			// TODO 兼容 vue2 和 vue3
 			dataValue() {
 				let value = (typeof this.value === 'string' && this.value === '') ||
 					(Array.isArray(this.value) && this.value.length === 0)

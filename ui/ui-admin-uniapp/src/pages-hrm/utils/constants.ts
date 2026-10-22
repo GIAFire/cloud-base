@@ -443,7 +443,6 @@ export const HrmEmployeeStatusTab = {
   LEFT: 15, // 已离职
 } as const
 
-/** 员工首页待办筛选类型（对齐后端 HrmEmployeeTodoTypeEnum） */
 export const HrmEmployeeTodoType = {
   PENDING_LEAVE: 2, // 待离职
   CONTRACT_EXPIRE: 3, // 合同到期

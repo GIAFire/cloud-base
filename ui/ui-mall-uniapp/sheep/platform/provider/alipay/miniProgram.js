@@ -51,7 +51,6 @@ const mobileLogin = async (e) =>{
       return resolve(false);
     }
 
-    // TODO 2. 一键登录
     // const loginResult = await AuthUtil.weixinMiniAppLogin(e.code, codeResult.code, 'default');
     // if (loginResult.code === 0) {
     //   setOpenid(loginResult.data.openid);
@@ -59,7 +58,6 @@ const mobileLogin = async (e) =>{
     // } else {
     //   return resolve(false);
     // }
-    // TODO 芋艿：shareInfo: uni.getStorageSync('shareLog') || {},
   });
 }
 
@@ -96,7 +94,6 @@ const unbind = async (openid) => {
 // 绑定用户手机号
 const bindUserPhoneNumber = (e) => {
   return new Promise(async (resolve, reject) => {
-    // todo 待完善
     // const { code } = await UserApi.updateUserMobileByWeixin(e.code);
     // if (code === 0) {
     //   resolve(true);

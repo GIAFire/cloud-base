@@ -32,7 +32,6 @@ public class ModelDO extends BaseDO {
     /**
      * 模型接口协议：openaiCompatible、dashscope、anthropic、ollama
      *
-     * 枚举 {@link TODO protocol_type 对应的类}
      */
     private String protocol;
     /**
@@ -54,13 +53,11 @@ public class ModelDO extends BaseDO {
     /**
      * 是否支持流式
      *
-     * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Boolean streaming;
     /**
      * 是否支持思考
      *
-     * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Boolean thinking;
     /**

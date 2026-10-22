@@ -101,7 +101,6 @@
 			}
 		},
 		data() {
-			// TODO 随机生生元素ID，解决百度小程序获取同一个元素位置信息的bug
 			const elId = `Uni_${Math.ceil(Math.random() * 10e5).toString(36)}`
 			return {
 				isOpen: false,
@@ -128,14 +127,12 @@
 			this.onClick(this.open, 'init')
 		},
 		// #ifndef VUE3
-		// TODO vue2
 		destroyed() {
 			if (this.__isUnmounted) return
 			this.uninstall()
 		},
 		// #endif
 		// #ifdef VUE3
-		// TODO vue3
 		unmounted() {
 			this.__isUnmounted = true
 			this.uninstall()
@@ -198,7 +195,6 @@
 					.fields({
 						size: true
 					}, data => {
-						// TODO 百度中可能获取不到节点信息 ，需要循环获取
 						if (index >= 10) return
 						if (!data) {
 							index++

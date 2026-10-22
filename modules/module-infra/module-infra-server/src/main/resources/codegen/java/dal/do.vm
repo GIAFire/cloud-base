@@ -56,7 +56,6 @@ public class ${table.className}DO extends BaseDO {
      * ${column.columnComment}
     #if ("$!column.dictType" != "")##处理枚举值
      *
-     * 枚举 {@link TODO ${column.dictType} 对应的类}
     #end
      */
     #if (${column.primaryKey})##处理主键
@@ -68,7 +67,7 @@ public class ${table.className}DO extends BaseDO {
 ## 2. 处理 Excel 导出
 #if ("$!column.dictType" != "")##处理枚举值
     @ExcelProperty(value = "${column.columnComment}", converter = DictConvert.class)
-    @DictFormat("${column.dictType}") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("${column.dictType}")
 #else
     @ExcelProperty("${column.columnComment}")
 #end

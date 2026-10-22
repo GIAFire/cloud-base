@@ -104,7 +104,6 @@ public class AppBargainRecordController {
         // 3. 如果是自己的订单，则查询订单信息
         TradeOrderRespDTO order = record != null && record.getOrderId() != null && record.getUserId().equals(getLoginUserId())
                 ? tradeOrderApi.getOrder(record.getOrderId()).getCheckedData() : null;
-        // TODO 继续查询别的字段
 
         // 拼接返回
         return success(BargainRecordConvert.INSTANCE.convert02(record, helpAction, order));

@@ -223,7 +223,6 @@
     // #endif
 
     // #ifdef MP-WEIXIN
-    // TODO puhui999: 小程序键盘弹起还有点问题，看看怎么适配
     // 微信小程序环境
     uni.onKeyboardHeightChange((res) => {
       setKeyboardHeight(res.height);

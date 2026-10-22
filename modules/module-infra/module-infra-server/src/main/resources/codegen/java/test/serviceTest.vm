@@ -139,7 +139,7 @@ public class ${table.className}ServiceImplTest extends BaseDbUnitTest {
 ## 特殊：树表专属逻辑（树不需要分页接口）
 #if ( $table.templateType != 2 )
     @Test
-    @Disabled  // TODO 请修改 null 为需要的值，然后删除 @Disabled 注解
+    @Disabled
     public void testGet${simpleClassName}Page() {
        #getPageCondition("PageReqVO")
 
@@ -152,7 +152,7 @@ public class ${table.className}ServiceImplTest extends BaseDbUnitTest {
     }
 #else
     @Test
-    @Disabled  // TODO 请修改 null 为需要的值，然后删除 @Disabled 注解
+    @Disabled
     public void testGet${simpleClassName}List() {
        #getPageCondition("ListReqVO")
 

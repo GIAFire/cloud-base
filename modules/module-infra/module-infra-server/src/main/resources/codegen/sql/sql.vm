@@ -164,7 +164,6 @@ VALUES (
 );
 
 -- 按钮父菜单ID
--- TODO: 请根据您的数据库类型，修改获取上一个插入 ID 的方式
 -- MySQL: SELECT @parentId := LAST_INSERT_ID();
 -- Oracle: SELECT system_menu_seq.CURRVAL INTO v_parent_id FROM DUAL;
 -- PostgreSQL: SELECT lastval() INTO v_parent_id;

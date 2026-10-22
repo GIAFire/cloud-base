@@ -7,7 +7,6 @@ import { useTokenStore } from '@/store/token'
 import { useUserStore } from '@/store/user'
 import { tabbarList as _tabbarList, customTabbarEnable, selectedTabbarStrategy, TABBAR_STRATEGY_MAP } from './config'
 
-// TODO 1/2: 中间的鼓包tabbarItem的开关
 const BULGE_ENABLE = false
 
 /** tabbarList 里面的 path 从 pages.config.ts 得到 */

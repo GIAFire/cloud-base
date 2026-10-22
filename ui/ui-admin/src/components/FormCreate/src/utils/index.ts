@@ -45,7 +45,6 @@ export const parseFormFields = (
       type,
       required
     })
-    // TODO 子表单 需要处理子表单字段
     // if (type === 'group' && rule.props?.rule && Array.isArray(rule.props.rule)) {
     //   // 解析子表单的字段
     //   rule.props.rule.forEach((item) => {

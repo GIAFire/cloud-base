@@ -20,7 +20,6 @@ import java.util.List;
 
 import static com.cloud.framework.common.pojo.CommonResult.success;
 
-// TODO url
 @Tag(name = "管理后台 - 签到规则")
 @RestController
 @RequestMapping("/member/sign-in/config")

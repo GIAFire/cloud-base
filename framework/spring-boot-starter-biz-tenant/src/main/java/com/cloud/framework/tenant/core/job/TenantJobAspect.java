@@ -48,7 +48,6 @@ public class TenantJobAspect {
         AtomicBoolean success = new AtomicBoolean(true); // 标记，是否存在失败的情况
         XxlJobContext xxlJobContext = XxlJobContext.getXxlJobContext(); // XXL-Job 上下文
         tenantIds.parallelStream().forEach(tenantId -> {
-            // TODO 先通过 parallel 实现并行；1）多个租户，是一条执行日志；2）异常的情况
             TenantUtils.execute(tenantId, () -> {
                 try {
                     XxlJobContext.setXxlJobContext(xxlJobContext);

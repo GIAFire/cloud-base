@@ -98,7 +98,6 @@ public class CouponServiceImpl implements CouponService {
             throw exception(COUPON_STATUS_NOT_USED);
         }
 
-        // TODO 增加优惠券变动记录？
     }
 
     @Override

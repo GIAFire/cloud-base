@@ -22,7 +22,7 @@ spring:
   autoconfigure:
     # noinspection SpringBootApplicationYaml
     exclude:
-      - org.dromara.trans.config.TransServiceConfig # TODO easy-trans 兼容 Spring Boot 4 后移除（TransServiceConfig 引用了已移除的 RestTemplateBuilder）
+      - org.dromara.trans.config.TransServiceConfig
   datasource:
     druid: # Druid 【监控】相关的全局配置
       web-stat-filter:
@@ -140,7 +140,7 @@ logging:
     com.cloud.module.infra.dal.mysql: debug
     com.cloud.module.infra.dal.mysql.logger.ApiErrorLogMapper: INFO # 配置 ApiErrorLogMapper 的日志级别为 info，避免和 GlobalExceptionHandler 重复打印
     com.cloud.module.infra.dal.mysql.file.FileConfigMapper: INFO # 配置 FileConfigMapper 的日志级别为 info
-    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
+    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
 
 --- #################### Cloud相关配置 ####################
 

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = ApiConstants.NAME) // TODO fallbackFactory =
+@FeignClient(name = ApiConstants.NAME)
 @Tag(name = "RPC 服务 - 邮件发送")
 public interface MailSendApi {
 

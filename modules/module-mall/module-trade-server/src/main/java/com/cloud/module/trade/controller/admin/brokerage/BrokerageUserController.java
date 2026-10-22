@@ -85,7 +85,6 @@ public class BrokerageUserController {
     @PreAuthorize("@ss.hasPermission('trade:brokerage-user:query')")
     public CommonResult<BrokerageUserRespVO> getBrokerageUser(@RequestParam("id") Long id) {
         BrokerageUserDO brokerageUser = brokerageUserService.getBrokerageUser(id);
-        // TODO @疯狂：是不是搞成一个统一的 convert？
         BrokerageUserRespVO respVO = BrokerageUserConvert.INSTANCE.convert(brokerageUser);
         return success(BrokerageUserConvert.INSTANCE.copyTo(memberUserApi.getUser(id).getCheckedData(), respVO));
     }
@@ -104,12 +103,10 @@ public class BrokerageUserController {
         Map<Long, UserBrokerageSummaryRespBO> brokerageOrderSummaryMap = brokerageRecordService.getUserBrokerageSummaryMapByUserId(
                 userIds, BrokerageRecordBizTypeEnum.ORDER.getType(), BrokerageRecordStatusEnum.SETTLEMENT.getStatus());
         // 合计分佣的推广用户
-        // TODO @疯狂：转成 map 批量读取
         Map<Long, Long> brokerageUserCountMap = convertMap(userIds,
                 userId -> userId,
                 userId -> brokerageUserService.getBrokerageUserCountByBindUserId(userId, null));
         // 合计分佣的提现
-        // TODO @疯狂：如果未来支持了打款这个动作，可能 status 会不对；
         Map<Long, BrokerageWithdrawSummaryRespBO> withdrawMap = brokerageWithdrawService.getWithdrawSummaryMapByUserId(
                 userIds, asList(BrokerageWithdrawStatusEnum.AUDIT_SUCCESS, BrokerageWithdrawStatusEnum.WITHDRAW_SUCCESS));
         // 拼接返回

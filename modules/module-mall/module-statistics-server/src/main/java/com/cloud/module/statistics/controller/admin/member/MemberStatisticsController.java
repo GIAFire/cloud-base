@@ -55,13 +55,11 @@ public class MemberStatisticsController {
         LocalDateTime endTime = ArrayUtil.get(reqVO.getTimes(), 1);
         // 1.1 查询分析对照数据
         DataComparisonRespVO<MemberAnalyseDataRespVO> comparisonData = memberStatisticsService.getMemberAnalyseComparisonData(beginTime, endTime);
-        // TODO @疯狂：这个可能有点特殊，要按照 create_time 来查询；不然它的漏斗就不统一；因为是访问数量 > 今日下单人 > 今日支付人；是一个统一的维度；
         // 1.2 查询成交用户数量
         Integer payUserCount = tradeOrderStatisticsService.getPayUserCount(beginTime, endTime);
         // 1.3 计算客单价
         int atv = 0;
         if (payUserCount != null && payUserCount > 0) {
-            // TODO @疯狂：类似上面的 payUserCount
             Integer payPrice = tradeOrderStatisticsService.getOrderPayPrice(beginTime, endTime);
             atv = NumberUtil.div(payPrice, payUserCount).intValue();
         }
@@ -95,7 +93,6 @@ public class MemberStatisticsController {
         return success(memberStatisticsService.getMemberTerminalStatisticsList());
     }
 
-    // TODO @疯狂：要注意 date 的排序；
     @GetMapping("/user-count-comparison")
     @Operation(summary = "获得用户数量对照")
     @PreAuthorize("@ss.hasPermission('statistics:member:query')")

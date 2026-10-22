@@ -292,7 +292,6 @@ public class MemberLevelServiceImpl implements MemberLevelService {
     }
 
     private void notifyMemberLevelChange(Long userId, MemberLevelDO level) {
-        //todo: 给会员发消息
     }
 
 }

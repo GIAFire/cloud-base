@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * 文档：<a href="https://opendocs.alipay.com/open/02e7gq">App 支付</a>
  *
- * // TODO 未详细测试，因为手头没 App
  *
  * @author Cloud
  */

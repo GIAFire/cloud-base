@@ -40,7 +40,6 @@ import static com.cloud.framework.web.core.util.WebFrameworkUtils.HEADER_TENANT_
  * {@link HandlerMethodArgumentResolver}.
  *
  * 针对 rabbitmq-spring 和 kafka-spring，不存在合适的拓展点，可以实现 Consumer 消费前，读取 Header 中的 tenant-id 设置到 {@link TenantContextHolder} 中
- * TODO 持续跟进，看看有没新的拓展点
  *
  * @author Rossen Stoyanchev
  * @author Juergen Hoeller

@@ -35,7 +35,6 @@ import java.util.List;
 import static com.cloud.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.cloud.module.pay.enums.ErrorCodeConstants.*;
 
-// TODO @jason：等彻底实现完，单测写写；
 
 /**
  * 转账 Service 实现类

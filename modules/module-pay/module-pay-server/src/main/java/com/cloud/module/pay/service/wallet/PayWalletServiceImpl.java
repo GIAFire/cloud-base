@@ -165,7 +165,6 @@ public class PayWalletServiceImpl implements PayWalletService {
                     break;
                 }
                 default: {
-                    // TODO 其它类型待实现
                     throw new UnsupportedOperationException("待实现");
                 }
             }

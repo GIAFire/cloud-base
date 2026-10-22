@@ -77,7 +77,6 @@ export const component = {
     btnBuy: {
       type: 'text',
       text: '立即购买',
-      // todo: @owen 根据主题色配置
       bgBeginColor: '#FF6000',
       bgEndColor: '#FE832A',
       imgUrl: ''

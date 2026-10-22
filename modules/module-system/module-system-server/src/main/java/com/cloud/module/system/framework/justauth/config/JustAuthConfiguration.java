@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 
 /**
- * JustAuth 配置类 TODO 等 justauth 1.4.1 版本发布！！！
  *
  * @author Cloud
  */

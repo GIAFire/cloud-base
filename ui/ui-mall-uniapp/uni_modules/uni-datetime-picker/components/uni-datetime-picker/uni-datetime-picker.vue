@@ -333,7 +333,6 @@
 				}
 			},
 			datePopupWidth() {
-				// todo
 				return this.isRange ? 653 : 301
 			},
 
@@ -964,7 +963,6 @@
 		margin-right: 50px;
 	}
 
-	/* picker 弹出层通用的指示小三角, todo：扩展至上下左右方向定位 */
 	.uni-popper__arrow,
 	.uni-popper__arrow::after {
 		position: absolute;

@@ -91,7 +91,6 @@
 
       <!-- 详情tabbar -->
       <detail-tabbar v-model="state.goodsInfo">
-        <!-- TODO: 缺货中 已售罄 判断 设计-->
         <view class="buy-box ss-flex ss-col-center ss-p-r-20">
           <button
             class="ss-reset-button origin-price-btn ss-flex-col"

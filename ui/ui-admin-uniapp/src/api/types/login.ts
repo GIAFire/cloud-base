@@ -43,7 +43,6 @@ export interface AuthPermissionInfo {
 }
 
 // 认证存储数据结构
-// TODO @可以考虑删除
 export interface AuthStorage {
   mode: AuthMode
   tokens: ISingleTokenRes | IDoubleTokenRes

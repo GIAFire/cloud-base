@@ -506,7 +506,6 @@
 
 	/* #endif */
 
-	/* picker 弹出层通用的指示小三角, todo：扩展至上下左右方向定位 */
 	/* #ifndef APP-NVUE */
 	.uni-popper__arrow,
 	.uni-popper__arrow::after {

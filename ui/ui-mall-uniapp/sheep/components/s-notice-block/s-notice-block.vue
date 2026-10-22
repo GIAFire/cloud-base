@@ -1,7 +1,6 @@
 <template>
   <view class="ss-flex ss-col-center notice-wrap">
     <image class="icon-img" :src="sheep.$url.cdn(data.iconUrl)" mode="heightFix"></image>
-    <!-- todo：@owen 暂时只支持一个公告   -->
     <su-notice-bar
       style="flex: 1"
       :showIcon="false"

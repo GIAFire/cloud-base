@@ -276,7 +276,6 @@
 						node: this.node
 					});
 				}catch(e){
-					//TODO handle the exception
 				}
 				
 			},

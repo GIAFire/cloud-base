@@ -41,7 +41,6 @@
 
 	export default {
 		name: "UniFav",
-		// TODO 兼容 vue3，需要注册事件
 		emits: ['click'],
 		props: {
 			star: {

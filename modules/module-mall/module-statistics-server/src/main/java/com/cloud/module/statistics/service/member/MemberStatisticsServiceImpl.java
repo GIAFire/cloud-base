@@ -52,7 +52,6 @@ public class MemberStatisticsServiceImpl implements MemberStatisticsService {
     @Override
     public MemberSummaryRespVO getMemberSummary() {
         RechargeSummaryRespBO rechargeSummary = payWalletStatisticsService.getUserRechargeSummary(null, null);
-        // TODO @疯狂：1）这里是实时统计，不好走走 TradeStatistics 表；2）因为这个放在商城下，所以只考虑订单数据，即按照 trade_order 的 pay_price 并且已支付来计算；
         Integer expensePrice = tradeStatisticsService.getExpensePrice(null, null);
         Integer userCount = memberStatisticsMapper.selectUserCount(null, null);
         return MemberStatisticsConvert.INSTANCE.convert(rechargeSummary, expensePrice, userCount);
@@ -61,7 +60,6 @@ public class MemberStatisticsServiceImpl implements MemberStatisticsService {
     @Override
     public List<MemberAreaStatisticsRespVO> getMemberAreaStatisticsList() {
         // 统计用户
-        // TODO @疯狂：可能得把每个省的用户，都查询出来，然后去 order 那边 in；因为要按照这些人为基础来计算；；用户规模量大可能不太好，但是暂时就先这样搞吧 = =
         Map<Integer, Integer> userCountMap = convertMap(memberStatisticsMapper.selectSummaryListByAreaId(),
                 vo -> AreaUtils.getParentIdByType(vo.getAreaId(), AreaTypeEnum.PROVINCE),
                 MemberAreaStatisticsRespBO::getUserCount, Integer::sum);

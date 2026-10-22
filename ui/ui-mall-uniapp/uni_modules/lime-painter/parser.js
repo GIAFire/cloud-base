@@ -71,11 +71,8 @@
  * HTMLtoXML(htmlString);
  *
  * // or to get an XML DOM Document
- * HTMLtoDOM(htmlString);
  *
  * // or to inject into an existing document/DOM node
- * HTMLtoDOM(htmlString, document);
- * HTMLtoDOM(htmlString, document.body);
  *
  */
 // Regular Expressions for parsing tags and attributes

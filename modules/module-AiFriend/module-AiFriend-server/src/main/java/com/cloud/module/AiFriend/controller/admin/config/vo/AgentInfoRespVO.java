@@ -44,12 +44,12 @@ public class AgentInfoRespVO {
 
     @Schema(description = "默认权限模式", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "默认权限模式", converter = DictConvert.class)
-    @DictFormat("agent_permission_type") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("agent_permission_type")
     private String permissionMode;
 
     @Schema(description = "是否启用上下文压缩：1启用，0关闭", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "是否启用上下文压缩：1启用，0关闭", converter = DictConvert.class)
-    @DictFormat("infra_boolean_string") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("infra_boolean_string")
     private Boolean compactionEnabled;
 
     @Schema(description = "触发压缩消息数")
@@ -70,26 +70,26 @@ public class AgentInfoRespVO {
 
     @Schema(description = "是否启用大工具结果卸载：1启用，0关闭", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "是否启用大工具结果卸载：1启用，0关闭", converter = DictConvert.class)
-    @DictFormat("infra_boolean_string") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("infra_boolean_string")
     private Boolean toolResultEvictionEnabled;
 
     @Schema(description = "是否启用长期记忆:1启用,0禁用")
     @ExcelProperty(value = "是否启用长期记忆:1启用,0禁用", converter = DictConvert.class)
-    @DictFormat("infra_boolean_string") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("infra_boolean_string")
     private Boolean memoryEnable;
 
     @Schema(description = "是否启用Plan Mode：1启用，0关闭", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "是否启用Plan Mode：1启用，0关闭", converter = DictConvert.class)
-    @DictFormat("infra_boolean_string") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("infra_boolean_string")
     private Boolean planModeEnabled;
 
     @Schema(description = "Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭", converter = DictConvert.class)
-    @DictFormat("infra_boolean_string") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
+    @DictFormat("infra_boolean_string")
     private Boolean allowShellInPlanMode;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
-}
+}

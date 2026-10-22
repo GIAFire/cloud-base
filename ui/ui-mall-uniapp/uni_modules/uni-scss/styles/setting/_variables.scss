@@ -9,7 +9,6 @@ $uni-radius: () !default;
 $uni-radius: map-deep-merge(
   (
     0: 0,
-		// TODO 当前版本暂时不支持 sm 属性
     // 'sm': math.div($uni-radius-root, 2),
     null: $uni-radius-root,
     'lg': $uni-radius-root * 2,

@@ -181,7 +181,6 @@
 					clientX,
 					screenX
 				} = e.changedTouches[0]
-				// TODO 做一下兼容，只有 Nvue 下才有 screenX，其他平台式 clientX
 				this._getRateCount(clientX || screenX)
 			},
 			touchmove(e) {

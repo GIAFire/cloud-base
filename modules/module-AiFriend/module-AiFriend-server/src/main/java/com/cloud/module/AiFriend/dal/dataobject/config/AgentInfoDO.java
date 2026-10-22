@@ -54,13 +54,11 @@ public class AgentInfoDO extends BaseDO {
     /**
      * 默认权限模式
      *
-     * 枚举 {@link TODO agent_permission_type 对应的类}
      */
     private String permissionMode;
     /**
      * 是否启用上下文压缩：1启用，0关闭
      *
-     * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Boolean compactionEnabled;
     /**
@@ -82,27 +80,23 @@ public class AgentInfoDO extends BaseDO {
     /**
      * 是否启用大工具结果卸载：1启用，0关闭
      *
-     * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Boolean toolResultEvictionEnabled;
     /**
      * 是否启用长期记忆:1启用,0禁用
      *
-     * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Boolean memoryEnable;
     /**
      * 是否启用Plan Mode：1启用，0关闭
      *
-     * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Boolean planModeEnabled;
     /**
      * Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭
      *
-     * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Boolean allowShellInPlanMode;
 
 
-}
+}

@@ -85,7 +85,6 @@
 					return ''
 				}
 			},
-			// TODO vue3
 			modelValue: {
 				type: [Array, String, Number],
 				default() {
@@ -274,7 +273,6 @@
 					}
 				}
 				this.formItem && this.formItem.setValue(detail.value)
-				// TODO 兼容 vue2
 				this.$emit('input', detail.value);
 				// // TOTO 兼容 vue3
 				this.$emit('update:modelValue', detail.value);

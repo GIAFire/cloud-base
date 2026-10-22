@@ -102,7 +102,6 @@ public class TradeStatisticsController {
         // 订单统计
         Long undeliveredCount = tradeOrderStatisticsService.getCountByStatusAndDeliveryType(
                 TradeOrderStatusEnum.UNDELIVERED.getStatus(), DeliveryTypeEnum.EXPRESS.getType());
-        // TODO @疯狂：订单支付后，如果是门店自提的，需要 update 成 DELIVERED；；目前还没搞~~突然反应过来
         Long pickUpCount = tradeOrderStatisticsService.getCountByStatusAndDeliveryType(
                 TradeOrderStatusEnum.DELIVERED.getStatus(), DeliveryTypeEnum.PICK_UP.getType());
         // 售后统计
@@ -123,7 +122,6 @@ public class TradeStatisticsController {
     @Operation(summary = "获得订单量趋势统计")
     @PreAuthorize("@ss.hasPermission('statistics:trade:query')")
     public CommonResult<List<DataComparisonRespVO<TradeOrderTrendRespVO>>> getOrderCountTrendComparison(@Valid TradeOrderTrendReqVO reqVO) {
-        // TODO @疯狂：要注意 date 的排序；
         return success(tradeOrderStatisticsService.getOrderCountTrendComparison(reqVO));
     }
 

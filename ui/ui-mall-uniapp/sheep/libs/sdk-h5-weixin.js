@@ -48,8 +48,7 @@ export default {
           'updateAppMessageShareData',
           'updateTimelineShareData',
           'scanQRCode',
-          // 'requestMerchantTransfer', // TODO @使用者：如果需要微信商家转账功能，请打开该注释；
-        ], // TODO 芋艿：后续可以设置更多权限；
+        ],
         openTagList: data.openTagList,
       });
       configAppId = data.appId;
@@ -80,7 +79,6 @@ export default {
     }
   },
 
-  //在需要定位页面调用 TODO 芋艿：未测试
   getLocation(callback) {
     this.isReady(() => {
       jweixin.getLocation({
@@ -111,7 +109,6 @@ export default {
     });
   },
 
-  // 微信扫码 TODO 芋艿：未测试
   scanQRCode(callback) {
     this.isReady(() => {
       jweixin.scanQRCode({
@@ -151,7 +148,6 @@ export default {
     });
   },
 
-  // 打开坐标位置 TODO 芋艿：未测试
   openLocation(data, callback) {
     this.isReady(() => {
       jweixin.openLocation({
@@ -163,7 +159,6 @@ export default {
     });
   },
 
-  // 选择图片 TODO 芋艿：未测试
   chooseImage(callback) {
     this.isReady(() => {
       jweixin.chooseImage({

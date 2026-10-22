@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static com.cloud.framework.common.util.collection.CollectionUtils.convertMap;
 
-@FeignClient(name = ApiConstants.NAME) // TODO fallbackFactory =
+@FeignClient(name = ApiConstants.NAME)
 @Tag(name = "RPC 服务 - 会员用户")
 public interface MemberUserApi {
 

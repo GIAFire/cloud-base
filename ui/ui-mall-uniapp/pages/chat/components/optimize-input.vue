@@ -346,9 +346,7 @@
         }
         if (this.errMsg) this.errMsg = '';
         this.val = value;
-        // TODO 兼容 vue2
         this.$emit('input', value);
-        // TODO　兼容　vue3
         this.$emit('update:modelValue', value);
       },
       onFocus(event) {
@@ -363,10 +361,7 @@
       },
       onClear(event) {
         this.val = '';
-        // TODO 兼容 vue2
         this.$emit('input', '');
-        // TODO 兼容 vue2
-        // TODO　兼容　vue3
         this.$emit('update:modelValue', '');
       },
       fieldClick() {

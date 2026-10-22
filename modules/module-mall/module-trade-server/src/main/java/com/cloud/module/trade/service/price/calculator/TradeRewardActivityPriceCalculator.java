@@ -21,7 +21,6 @@ import static com.cloud.framework.common.util.collection.CollectionUtils.convert
 import static com.cloud.framework.common.util.collection.CollectionUtils.filterList;
 import static com.cloud.module.trade.service.price.calculator.TradePriceCalculatorHelper.formatPrice;
 
-// TODO @puhui999：相关的单测，建议改一改
 
 /**
  * 满减送活动的 {@link TradePriceCalculator} 实现类

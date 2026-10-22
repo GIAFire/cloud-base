@@ -97,7 +97,7 @@
             <artifactId>spring-boot-starter-mq</artifactId>
         </dependency>
 
-        <!-- 服务保障相关 TODO 暂时去掉 -->
+        <!-- 服务保障相关 暂时去掉 -->
 <!--        <dependency>-->
 <!--            <groupId>com.cloud</groupId>-->
 <!--            <artifactId>spring-boot-starter-protection</artifactId>-->
