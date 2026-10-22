@@ -11,11 +11,25 @@
  Target Server Version : 80410 (8.4.10)
  File Encoding         : 65001
 
- Date: 21/10/2026 20:25:46
+ Date: 22/10/2026 16:52:31
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for agent_category
+-- ----------------------------
+DROP TABLE IF EXISTS `agent_category`;
+CREATE TABLE `agent_category`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类ID',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '分类名称',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'agent分类表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for agent_http_header
@@ -58,6 +72,7 @@ CREATE TABLE `agent_info`  (
   `memory_enable` bit(1) NULL DEFAULT b'1' COMMENT '是否启用长期记忆:1启用,0禁用',
   `plan_mode_enabled` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否启用Plan Mode：1启用，0关闭',
   `allow_shell_in_plan_mode` bit(1) NOT NULL DEFAULT b'0' COMMENT 'Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭',
+  `personality` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '人格设定',
   `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
@@ -189,6 +204,34 @@ CREATE TABLE `agent_sys_prompt`  (
   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2093144009750646786 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent 定义表：保存一个可视化 Agent 的基础身份信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2113186261867335682 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent 定义表：保存一个可视化 Agent 的基础身份信息' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for agent_tag
+-- ----------------------------
+DROP TABLE IF EXISTS `agent_tag`;
+CREATE TABLE `agent_tag`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '标签ID',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '标签名称',
+  `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标签编码',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_name`(`name` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'agent标签表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for agent_tag_agent
+-- ----------------------------
+DROP TABLE IF EXISTS `agent_tag_agent`;
+CREATE TABLE `agent_tag_agent`  (
+  `agent_id` bigint NOT NULL COMMENT 'agentID',
+  `tag_id` bigint NOT NULL COMMENT '标签ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`agent_id`, `tag_id`) USING BTREE,
+  INDEX `idx_tag_id`(`tag_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'agent标签关联表' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
