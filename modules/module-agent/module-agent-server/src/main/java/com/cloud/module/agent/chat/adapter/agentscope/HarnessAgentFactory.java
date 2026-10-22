@@ -54,8 +54,9 @@ public final class HarnessAgentFactory {
                  .disableDefaultWorkspaceSkills()    // Harness 默认 Workspace Skill Repository
                  .disableSubagents()     // 子 Agent 系统
                  .disableDynamicSubagents()      // 动态发现/生成子 Agent
-                 .disableMemoryHooks()       // 自动长期记忆写入、整理、维护
                  .disableAtPathExpansion()    // @路径 一类文件引用自动展开
+                // TODO 上下文自动总结和记忆整理会二次调用大模型,影响响应速度,后期要改造
+                 .disableMemoryHooks()       // 自动长期记忆写入、整理、维护
                  .disableCompaction()        // 上下文自动总结/压缩
                  .disableToolResultEviction()        // 大工具结果卸载
                 .build();

@@ -6,12 +6,17 @@ import com.cloud.module.agent.chat.application.model.ChatMessageSlice;
 import com.cloud.module.agent.chat.application.model.ChatSessionSummary;
 import com.cloud.module.agent.chat.domain.ChatActor;
 import com.cloud.module.agent.chat.store.ChatHistoryStore;
+import com.cloud.module.agent.chat.store.ChatStoreException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-/** 默认聊天历史查询用例实现。 */
+import static com.cloud.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static com.cloud.module.agent.enums.ErrorCodeConstants.CHAT_SESSION_BUSY;
+import static com.cloud.module.agent.enums.ErrorCodeConstants.CHAT_SESSION_NOT_FOUND_OR_DENIED;
+
+/** 默认聊天历史管理用例实现。 */
 @Component
 @RequiredArgsConstructor
 public class DefaultChatHistoryApplication implements ChatHistoryApplication {
@@ -43,5 +48,36 @@ public class DefaultChatHistoryApplication implements ChatHistoryApplication {
             throw new IllegalArgumentException("pageSize must be between 1 and 100");
         }
         return chatHistoryStore.findMessages(sessionId, beforeSeq, pageSize, actor);
+    }
+
+    @Override
+    public void deleteSession(Long sessionId, ChatActor actor) {
+        requirePositive(sessionId, "sessionId");
+        Objects.requireNonNull(actor, "actor must not be null");
+        try {
+            chatHistoryStore.deleteSession(sessionId, actor);
+        } catch (ChatStoreException storeException) {
+            throw mapDeleteException(storeException);
+        }
+    }
+
+    /**
+     * 不区分“不存在”和“非所有者”，避免调用方枚举其他用户的 Session ID。
+     */
+    private RuntimeException mapDeleteException(ChatStoreException storeException) {
+        return switch (storeException.getReason()) {
+            case SESSION_NOT_FOUND, SESSION_ACCESS_DENIED ->
+                    exception(CHAT_SESSION_NOT_FOUND_OR_DENIED);
+            case SESSION_BUSY -> exception(CHAT_SESSION_BUSY);
+            default -> storeException;
+        };
+    }
+
+    private static Long requirePositive(Long value, String fieldName) {
+        Objects.requireNonNull(value, fieldName + " must not be null");
+        if (value <= 0) {
+            throw new IllegalArgumentException(fieldName + " must be greater than 0");
+        }
+        return value;
     }
 }

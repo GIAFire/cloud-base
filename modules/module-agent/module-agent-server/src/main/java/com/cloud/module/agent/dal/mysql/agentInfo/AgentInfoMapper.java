@@ -35,6 +35,7 @@ public interface AgentInfoMapper extends BaseMapperX<AgentInfoDO> {
                 .eqIfPresent(AgentInfoDO::getMemoryEnable, reqVO.getMemoryEnable())
                 .eqIfPresent(AgentInfoDO::getPlanModeEnabled, reqVO.getPlanModeEnabled())
                 .eqIfPresent(AgentInfoDO::getAllowShellInPlanMode, reqVO.getAllowShellInPlanMode())
+                .eqIfPresent(AgentInfoDO::getPersonality, reqVO.getPersonality())
                 .betweenIfPresent(AgentInfoDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(AgentInfoDO::getId));
     }

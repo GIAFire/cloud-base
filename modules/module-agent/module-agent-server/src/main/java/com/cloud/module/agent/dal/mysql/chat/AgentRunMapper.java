@@ -35,4 +35,9 @@ public interface AgentRunMapper extends BaseMapperX<AgentRunDO> {
                         .eq(AgentRunDO::getStatus, AgentRunStatus.RUNNING.name())
         );
     }
+
+    /** 按 Session 软删全部 Run。 */
+    default int deleteBySessionId(Long sessionId) {
+        return delete(AgentRunDO::getSessionId, sessionId);
+    }
 }

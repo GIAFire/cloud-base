@@ -23,6 +23,9 @@ export interface Info {
 
 // Agent 定义表 API
 export const InfoApi = {
+  getPersonality: async (id: number | string) => {
+    return await request.get({ url: `/agent/info/getPersonality?id=` + id })
+  },
   // 查询Agent 定义表分页
   getInfoPage: async (params: any) => {
     return await request.get({ url: `/agent/info/page`, params })

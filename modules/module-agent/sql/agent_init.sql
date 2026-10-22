@@ -1,7 +1,17 @@
 /*
- Navicat Premium Dump SQL
+ Navicat Premium Data Transfer
 
- Date: 27/08/2026 14:27:30
+ Source Server         : WSL
+ Source Server Type    : MySQL
+ Source Server Version : 80410 (8.4.10)
+ Source Host           : localhost:3306
+ Source Schema         : cloud_base
+
+ Target Server Type    : MySQL
+ Target Server Version : 80410 (8.4.10)
+ File Encoding         : 65001
+
+ Date: 21/10/2026 20:25:46
 */
 
 SET NAMES utf8mb4;
@@ -32,8 +42,8 @@ CREATE TABLE `agent_http_header`  (
 DROP TABLE IF EXISTS `agent_info`;
 CREATE TABLE `agent_info`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'Agent 主键ID',
-  `model_id` bigint NULL DEFAULT NULL COMMENT '关联 agent_model.id',
-  `sys_prompt_id` bigint NULL DEFAULT NULL COMMENT '关联 agent_sys_prompt.id',
+  `model_id` bigint NULL DEFAULT NULL COMMENT '关联 ai_agent_model.id',
+  `sys_prompt_id` bigint NULL DEFAULT NULL COMMENT '关联 ai_agent_sys_prompt.id',
   `agent_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Agent唯一编码',
   `agent_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Agent 显示名称',
   `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'Agent 描述',
@@ -55,9 +65,9 @@ CREATE TABLE `agent_info`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_ai_agent_tenant_code`(`tenant_id` ASC, `agent_code` ASC) USING BTREE,
+  UNIQUE INDEX `uk_ai_agent_tenant_code`(`agent_code` ASC) USING BTREE,
   INDEX `idx_ai_agent_tenant_updated`(`deleted` ASC, `update_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2089391837043691522 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent 定义表：保存一个可视化 Agent 的基础身份信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2093151477717348355 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent 定义表：保存一个可视化 Agent 的基础身份信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for agent_message
@@ -89,7 +99,7 @@ DROP TABLE IF EXISTS `agent_model`;
 CREATE TABLE `agent_model`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '模型配置主键ID',
   `protocol` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '模型接口协议：openaiCompatible、dashscope、anthropic、ollama',
-  `base_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '兼容 OpenAI 协议时的自定义 baseUrl',
+  `base_URL` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '兼容 OpenAI 协议时的自定义 baseUrl',
   `api_key` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT 'API Key；当前阶段明文存储，仅模型详情接口允许返回',
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '模型说明',
   `model_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '真实模型名称，例如 qwen-plus、gpt-4.1、claude-sonnet-4-5',
@@ -108,7 +118,7 @@ CREATE TABLE `agent_model`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_ai_agent_model_tenant_status`(`update_time` ASC) USING BTREE,
   INDEX `idx_ai_agent_model_tenant_protocol`(`protocol` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2085819039268368387 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '模型配置表：把凭证、模型名、生成参数组合成可被 Agent 选择的模型' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2093246396150616067 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '模型配置表：把凭证、模型名、生成参数组合成可被 Agent 选择的模型' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for agent_run
@@ -159,6 +169,7 @@ CREATE TABLE `agent_session`  (
   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_session_owner_updated`(`id` ASC, `user_id` ASC, `update_time` ASC, `deleted` ASC, `tenant_id` ASC) USING BTREE,
   INDEX `idx_session_owner_agent_recent`(`tenant_id` ASC, `user_id` ASC, `agent_id` ASC, `deleted` ASC, `last_message_at` DESC, `id` DESC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent会话表：保存用户和Agent之间的一段连续对话' ROW_FORMAT = DYNAMIC;
 
@@ -178,6 +189,6 @@ CREATE TABLE `agent_sys_prompt`  (
   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2089396085953335298 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent 定义表：保存一个可视化 Agent 的基础身份信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2093144009750646786 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent 定义表：保存一个可视化 Agent 的基础身份信息' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;

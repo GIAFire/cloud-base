@@ -86,6 +86,7 @@
       <el-table-column label="code" align="center" prop="agentCode" />
       <el-table-column label="名称" align="center" prop="agentName" />
       <el-table-column label="描述" align="center" prop="description" />
+      <el-table-column label="人格设定" align="personality" prop="personality" />
       <el-table-column label="最大循环" align="center" prop="maxIters" />
       <el-table-column label="权限模式" align="center" prop="permissionMode">
         <template #default="scope">
@@ -219,7 +220,8 @@ const exportLoading = ref(false) // 导出的加载中
 const router = useRouter()
 
 /** 打开 Agent 聊天工作区 */
-const openChat = (id: number | string) => {
+const openChat = async (id: number | string) => {
+  const data = await InfoApi.getPersonality(id)
   router.push({ name: 'AgentChat', params: { agentId: String(id) } })
 }
 

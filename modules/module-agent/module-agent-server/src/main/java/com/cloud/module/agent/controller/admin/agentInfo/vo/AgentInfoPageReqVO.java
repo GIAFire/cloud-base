@@ -61,6 +61,9 @@ public class AgentInfoPageReqVO extends PageParam {
     @Schema(description = "Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭")
     private Boolean allowShellInPlanMode;
 
+    @Schema(description = "人格设定")
+    private String personality;
+
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;

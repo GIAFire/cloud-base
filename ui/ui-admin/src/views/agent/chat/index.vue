@@ -9,8 +9,10 @@
         :loading="sessionLoading"
         :loading-more="sessionLoadingMore"
         :has-more="sessionHasMore"
+        :deleting-session-id="deletingSessionId"
         @new-session="createDraftSession"
         @select-session="selectSession"
+        @delete-session="deleteSession"
         @load-more="loadMoreSessions"
       />
     </aside>
@@ -51,8 +53,10 @@
         :loading="sessionLoading"
         :loading-more="sessionLoadingMore"
         :has-more="sessionHasMore"
+        :deleting-session-id="deletingSessionId"
         @new-session="createDraftFromDrawer"
         @select-session="selectSessionFromDrawer"
+        @delete-session="deleteSession"
         @load-more="loadMoreSessions"
       />
     </el-drawer>
@@ -68,6 +72,7 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { InfoApi, type Info } from '@/api/agent/agentInfo'
 import {
   createChatRequestId,
+  deleteChatSession,
   getChatMessagePage,
   getChatSessionPage,
   streamChat,
@@ -84,6 +89,7 @@ defineOptions({ name: 'AgentChat' })
 
 const route = useRoute()
 const message = useMessage()
+const { t } = useI18n()
 const agentId = computed(() => String(route.params.agentId || ''))
 
 const agentInfo = ref<Info>()
@@ -93,6 +99,7 @@ const sessionTotal = ref(0)
 const sessionPageNo = ref(1)
 const sessionLoading = ref(false)
 const sessionLoadingMore = ref(false)
+const deletingSessionId = ref<string>()
 const sessionHasMore = computed(() => sessions.value.length < sessionTotal.value)
 
 const activeSessionId = ref<string>()
@@ -107,6 +114,7 @@ const messagePanelRef = ref<InstanceType<typeof MessagePanel>>()
 const streaming = ref(false)
 let activeAbortController: AbortController | undefined
 let activeStreamTask: Promise<void> | undefined
+let sessionLoadGeneration = 0
 
 const compact = ref(false)
 const conversationDrawer = ref(false)
@@ -138,31 +146,44 @@ const loadSessions = async (reset = false) => {
   if (reset) {
     sessionPageNo.value = 1
     sessionLoading.value = true
+    sessionLoadingMore.value = false
   } else {
     if (sessionLoadingMore.value || !sessionHasMore.value) return
     sessionLoadingMore.value = true
   }
+
+  const loadGeneration = reset ? ++sessionLoadGeneration : sessionLoadGeneration
+  const requestedAgentId = agentId.value
+  const requestedPageNo = sessionPageNo.value
+
   try {
     const page = await getChatSessionPage({
-      agentId: agentId.value,
-      pageNo: sessionPageNo.value,
+      agentId: requestedAgentId,
+      pageNo: requestedPageNo,
       pageSize: 20
     })
+    if (loadGeneration !== sessionLoadGeneration || requestedAgentId !== agentId.value) return
     sessionTotal.value = page.total
     sessions.value = reset ? page.list : mergeSessions(sessions.value, page.list)
   } finally {
-    sessionLoading.value = false
-    sessionLoadingMore.value = false
+    if (loadGeneration === sessionLoadGeneration && requestedAgentId === agentId.value) {
+      sessionLoading.value = false
+      sessionLoadingMore.value = false
+    }
   }
 }
 
 const loadMoreSessions = async () => {
-  if (!sessionHasMore.value || sessionLoadingMore.value) return
-  sessionPageNo.value += 1
+  if (sessionLoading.value || !sessionHasMore.value || sessionLoadingMore.value) return
+  const loadGeneration = sessionLoadGeneration
+  const requestedPageNo = sessionPageNo.value + 1
+  sessionPageNo.value = requestedPageNo
   try {
     await loadSessions(false)
   } catch {
-    sessionPageNo.value -= 1
+    if (sessionLoadGeneration === loadGeneration && sessionPageNo.value === requestedPageNo) {
+      sessionPageNo.value = Math.max(1, requestedPageNo - 1)
+    }
   }
 }
 
@@ -179,6 +200,7 @@ const loadMessages = async (sessionId: string) => {
   messageHasMore.value = false
   try {
     const page = await getChatMessagePage({ sessionId, pageSize: 50 })
+    if (draftSelected.value || activeSessionId.value !== sessionId) return
     messages.value = page.list.map(toViewMessage)
     messageBeforeSeq.value = page.nextBeforeSeq
     messageHasMore.value = page.hasMore
@@ -190,13 +212,15 @@ const loadMessages = async (sessionId: string) => {
 
 const loadOlderMessages = async () => {
   if (!activeSessionId.value || !messageHasMore.value || messageLoadingOlder.value) return
+  const requestedSessionId = activeSessionId.value
   messageLoadingOlder.value = true
   try {
     const page = await getChatMessagePage({
-      sessionId: activeSessionId.value,
+      sessionId: requestedSessionId,
       beforeSeq: messageBeforeSeq.value,
       pageSize: 50
     })
+    if (draftSelected.value || activeSessionId.value !== requestedSessionId) return
     const known = new Set(messages.value.map((item) => item.id).filter(Boolean))
     const older = page.list.filter((item) => !known.has(item.id)).map(toViewMessage)
     messages.value = [...older, ...messages.value]
@@ -218,13 +242,17 @@ const toViewMessage = (item: ChatMessage): ChatViewMessage => ({
   createTime: item.createTime
 })
 
-const createDraftSession = async () => {
-  if (!(await confirmAndAbortActiveRun())) return
+const resetToDraftSession = () => {
   activeSessionId.value = undefined
   draftSelected.value = true
   messages.value = []
   messageBeforeSeq.value = undefined
   messageHasMore.value = false
+}
+
+const createDraftSession = async () => {
+  if (!(await confirmAndAbortActiveRun())) return
+  resetToDraftSession()
 }
 
 const selectSession = async (sessionId: string) => {
@@ -243,6 +271,42 @@ const createDraftFromDrawer = async () => {
 const selectSessionFromDrawer = async (sessionId: string) => {
   await selectSession(sessionId)
   if (activeSessionId.value === sessionId) conversationDrawer.value = false
+}
+
+const deleteSession = async (sessionId: string) => {
+  if (deletingSessionId.value) return
+
+  try {
+    await message.delConfirm()
+  } catch {
+    return
+  }
+
+  deletingSessionId.value = sessionId
+  const deletingActiveSession = !draftSelected.value && activeSessionId.value === sessionId
+
+  try {
+    if (deletingActiveSession && activeAbortController) {
+      activeAbortController.abort()
+      await activeStreamTask?.catch(() => undefined)
+    }
+
+    await deleteChatSession(sessionId)
+    sessions.value = sessions.value.filter((session) => session.id !== sessionId)
+    sessionTotal.value = Math.max(0, sessionTotal.value - 1)
+
+    if (!draftSelected.value && activeSessionId.value === sessionId) {
+      resetToDraftSession()
+      conversationDrawer.value = false
+    }
+
+    message.success(t('common.delSuccess'))
+    await loadSessions(true).catch(() => undefined)
+  } catch {
+    // 请求层统一展示错误信息；保留当前列表和选择状态。
+  } finally {
+    deletingSessionId.value = undefined
+  }
 }
 
 const sendMessage = async (content: string) => {

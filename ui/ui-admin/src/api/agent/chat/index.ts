@@ -60,6 +60,9 @@ export interface ChatStreamEvent {
 export const getChatSessionPage = (params: { agentId: string; pageNo: number; pageSize: number }) =>
   request.get<ChatSessionPage>({ url: '/agent/chat/session/page', params })
 
+export const deleteChatSession = (id: string) =>
+  request.delete({ url: '/agent/chat/session/delete', params: { id } })
+
 export const getChatMessagePage = (params: {
   sessionId: string
   beforeSeq?: string

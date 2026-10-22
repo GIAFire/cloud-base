@@ -1,5 +1,7 @@
 package com.cloud.module.agent.controller.admin.agentInfo;
 
+import com.cloud.framework.security.core.LoginUser;
+import com.cloud.framework.security.core.util.SecurityFrameworkUtils;
 import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +13,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.*;
 import jakarta.validation.*;
 import jakarta.servlet.http.*;
+
+import java.nio.file.*;
+import java.nio.file.Path;
 import java.util.*;
 import java.io.IOException;
 
@@ -37,6 +42,41 @@ public class AgentInfoController {
 
     @Resource
     private AgentInfoService infoService;
+
+    @GetMapping("/getPersonality")
+    @Operation(summary = "创建Agent 人格")
+    public CommonResult<Long> getPersonality(@RequestParam("id") Long id) throws IOException {
+
+        AgentInfoDO info = infoService.getInfo(id);
+
+        Long agentId = info.getId();
+        LoginUser loginUser = SecurityFrameworkUtils.getLoginUser();
+        String personality = info.getPersonality();
+
+        Path filePath = Paths.get(
+                ".agentOS",
+                "workspace",
+                "agents",
+                String.valueOf(agentId),
+                "users",
+                String.valueOf(loginUser.getId()),
+                "AGENTS.md"
+        );
+
+        Files.createDirectories(filePath.getParent());
+
+        try {
+            Files.writeString(
+                    filePath,
+                    personality,
+                    StandardOpenOption.CREATE_NEW
+            );
+        } catch (FileAlreadyExistsException ignored) {
+            // AGENTS.md 已经存在，不覆盖
+        }
+
+        return success(agentId);
+    }
 
     @PostMapping("/create")
     @Operation(summary = "创建Agent 定义表")
@@ -101,4 +141,4 @@ public class AgentInfoController {
                         BeanUtils.toBean(list, AgentInfoRespVO.class));
     }
 
-}
+}

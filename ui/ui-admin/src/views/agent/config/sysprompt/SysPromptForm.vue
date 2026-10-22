@@ -7,14 +7,14 @@
       label-width="100px"
       v-loading="formLoading"
     >
-      <el-form-item label="提示词模板名称" prop="promptName">
+      <el-form-item label="名称" prop="promptName">
         <el-input v-model="formData.promptName" placeholder="请输入提示词模板名称" />
       </el-form-item>
       <el-form-item label="描述" prop="description">
-        <Editor v-model="formData.description" height="150px" />
+        <el-input v-model="formData.description" placeholder="请输入简介描述" />
       </el-form-item>
       <el-form-item label="提示词内容" prop="sysPrompt">
-        <el-input v-model="formData.sysPrompt" placeholder="请输入提示词内容" />
+        <Editor v-model="formData.sysPrompt" height="150px" />
       </el-form-item>
     </el-form>
     <template #footer>

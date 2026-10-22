@@ -41,4 +41,9 @@ public interface AgentMessageMapper extends BaseMapperX<AgentMessageDO> {
                         .eq(AgentMessageDO::getMessageType, AgentMessageType.ASSISTANT_TEXT.name())
         );
     }
+
+    /** 按 Session 软删全部消息。 */
+    default int deleteBySessionId(Long sessionId) {
+        return delete(AgentMessageDO::getSessionId, sessionId);
+    }
 }

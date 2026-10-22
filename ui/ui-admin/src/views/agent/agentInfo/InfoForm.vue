@@ -50,6 +50,9 @@
       <el-form-item label="描述" prop="description">
         <el-input v-model="formData.description" type="textarea" placeholder="请输入Agent 描述" />
       </el-form-item>
+      <el-form-item label="人格" prop="personality">
+        <el-input v-model="formData.personality" type="textarea" placeholder="请输入Agent 人格" />
+      </el-form-item>
       <el-form-item label="最大循环" prop="maxIters">
         <el-input v-model="formData.maxIters" placeholder="请输入最大循环次数" />
       </el-form-item>
@@ -163,6 +166,7 @@ const formData = ref({
   agentCode: undefined,
   agentName: undefined,
   description: undefined,
+  personality: undefined,
   maxIters: undefined,
   permissionMode: undefined,
   compactionEnabled: undefined,
@@ -178,6 +182,7 @@ const formData = ref({
 const formRules = reactive({
   agentCode: [{ required: true, message: 'Agent唯一编码不能为空', trigger: 'blur' }],
   agentName: [{ required: true, message: 'Agent 显示名称不能为空', trigger: 'blur' }],
+  personality: [{ required: true, message: 'Agent 人格不能为空', trigger: 'blur' }],
   maxIters: [{ required: true, message: '最大循环次数不能为空', trigger: 'blur' }],
   permissionMode: [{ required: true, message: '默认权限模式不能为空', trigger: 'blur' }],
   compactionEnabled: [{ required: true, message: '是否启用上下文压缩：1启用，0关闭不能为空', trigger: 'blur' }],

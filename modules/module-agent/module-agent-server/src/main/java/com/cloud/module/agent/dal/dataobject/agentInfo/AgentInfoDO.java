@@ -95,6 +95,10 @@ public class AgentInfoDO extends TenantBaseDO {
      * Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭
      */
     private Boolean allowShellInPlanMode;
+    /**
+     * 人格设定
+     */
+    private String personality;
 
 
 }

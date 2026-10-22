@@ -80,8 +80,12 @@ public class AgentInfoRespVO {
     @ExcelProperty("Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭")
     private Boolean allowShellInPlanMode;
 
+    @Schema(description = "人格设定", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("人格设定")
+    private String personality;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
-}
+}
