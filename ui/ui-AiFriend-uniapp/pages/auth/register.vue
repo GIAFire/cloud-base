@@ -2,17 +2,17 @@
   <view class="register-page">
     <view class="register-page__header">
       <text class="register-page__back" @click="back">‹</text>
-      <text class="register-page__title">短信登录/注册</text>
-      <text class="register-page__subtitle">未注册的手机号验证成功后会自动创建会员账号</text>
+      <text class="register-page__title">邮箱注册</text>
+      <text class="register-page__subtitle">验证邮箱并设置登录密码</text>
     </view>
 
     <view class="register-page__form">
       <af-form-field
-        v-model="form.mobile"
-        label="手机号"
-        placeholder="请输入手机号"
-        type="number"
-        :maxlength="11"
+        v-model="form.email"
+        label="邮箱"
+        placeholder="请输入邮箱"
+        type="text"
+        :maxlength="100"
       />
       <button class="code-button" :disabled="countdown > 0 || sending" @click="sendCode">
         {{ countdown > 0 ? `${countdown} 秒后重试` : '获取验证码' }}
@@ -24,6 +24,13 @@
         type="number"
         :maxlength="6"
       />
+      <af-form-field
+        v-model="form.password"
+        label="密码"
+        placeholder="请输入 8-32 位密码"
+        :password="true"
+        :maxlength="32"
+      />
 
       <view class="agreement" @click="agreed = !agreed">
         <view class="agreement__checkbox" :class="{ 'agreement__checkbox--checked': agreed }">
@@ -32,7 +39,7 @@
         <text>我已阅读并同意用户协议与隐私政策</text>
       </view>
 
-      <af-primary-button :loading="submitting" @click="submit">登录/注册</af-primary-button>
+      <af-primary-button :loading="submitting" @click="submit">注册并登录</af-primary-button>
     </view>
   </view>
 </template>
@@ -40,13 +47,14 @@
 <script setup>
 import { onUnmounted, reactive, ref } from 'vue';
 import AuthApi from '@/aifriend/api/auth';
-import { isMobile, isSmsCode } from '@/aifriend/helper/test';
+import { isEmail, isEmailCode, isPassword } from '@/aifriend/helper/test';
 import router from '@/aifriend/router';
 import store from '@/aifriend/store';
 
 const form = reactive({
-  mobile: '',
+  email: '',
   code: '',
+  password: '',
 });
 const agreed = ref(false);
 const sending = ref(false);
@@ -72,8 +80,8 @@ function startCountdown() {
 }
 
 async function sendCode() {
-  if (!isMobile(form.mobile)) {
-    uni.showToast({ title: '手机号码格式不正确', icon: 'none' });
+  if (!isEmail(form.email)) {
+    uni.showToast({ title: '邮箱格式不正确', icon: 'none' });
     return;
   }
   if (!agreed.value) {
@@ -83,7 +91,7 @@ async function sendCode() {
 
   sending.value = true;
   try {
-    const response = await AuthApi.sendSmsCode(form.mobile, 1);
+    const response = await AuthApi.sendEmailCode(form.email.trim().toLowerCase(), 1);
     if (response.code === 0) {
       startCountdown();
     }
@@ -95,12 +103,16 @@ async function sendCode() {
 }
 
 async function submit() {
-  if (!isMobile(form.mobile)) {
-    uni.showToast({ title: '手机号码格式不正确', icon: 'none' });
+  if (!isEmail(form.email)) {
+    uni.showToast({ title: '邮箱格式不正确', icon: 'none' });
     return;
   }
-  if (!isSmsCode(form.code)) {
-    uni.showToast({ title: '请输入 4-6 位数字验证码', icon: 'none' });
+  if (!isEmailCode(form.code)) {
+    uni.showToast({ title: '请输入 6 位数字验证码', icon: 'none' });
+    return;
+  }
+  if (!isPassword(form.password)) {
+    uni.showToast({ title: '密码长度需为 8-32 位', icon: 'none' });
     return;
   }
   if (!agreed.value) {
@@ -110,7 +122,7 @@ async function submit() {
 
   submitting.value = true;
   try {
-    const response = await AuthApi.smsLogin(form);
+    const response = await AuthApi.emailRegister({ ...form, email: form.email.trim().toLowerCase() });
     if (response.code === 0) {
       const userStore = store('user');
       userStore.syncLoginState();

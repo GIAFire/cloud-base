@@ -3,6 +3,7 @@
 ## Contexts
 
 - [Agent Runtime](./modules/module-agent/CONTEXT.md) — owns configured Agents, conversations, runs, and durable chat history
+- [Member](./modules/module-member/CONTEXT.md) — owns member identities and authentication credentials
 - [Admin UI](./ui/ui-admin/CONTEXT.md) — provides authenticated operators with management and Agent conversation workspaces
 
 ## Relationships

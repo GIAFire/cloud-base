@@ -7,7 +7,7 @@
       </text>
     </view>
 
-    <text class="api-result__endpoint">GET /app-api/AiFriend/test/get</text>
+    <text class="api-result__endpoint">GET /app-api/agent/test/get</text>
 
     <view v-if="status === 'loading'" class="api-result__message">正在连接后端...</view>
     <view v-else-if="status === 'error'" class="api-result__message api-result__message--error">

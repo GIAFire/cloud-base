@@ -49,6 +49,36 @@ public class AppAuthController {
         return success(authService.login(reqVO));
     }
 
+    @PostMapping("/email-login")
+    @Operation(summary = "使用邮箱 + 密码登录")
+    @PermitAll
+    public CommonResult<AppAuthLoginRespVO> emailLogin(@RequestBody @Valid AppAuthEmailLoginReqVO reqVO) {
+        return success(authService.emailLogin(reqVO));
+    }
+
+    @PostMapping("/email-code/send")
+    @Operation(summary = "发送邮箱验证码")
+    @PermitAll
+    public CommonResult<Boolean> sendEmailCode(@RequestBody @Valid AppAuthEmailCodeSendReqVO reqVO) {
+        authService.sendEmailCode(reqVO);
+        return success(true);
+    }
+
+    @PostMapping("/email-register")
+    @Operation(summary = "使用邮箱验证码注册并登录")
+    @PermitAll
+    public CommonResult<AppAuthLoginRespVO> emailRegister(@RequestBody @Valid AppAuthEmailRegisterReqVO reqVO) {
+        return success(authService.emailRegister(reqVO));
+    }
+
+    @PostMapping("/email-reset-password")
+    @Operation(summary = "使用邮箱验证码重置密码")
+    @PermitAll
+    public CommonResult<Boolean> resetPasswordByEmail(@RequestBody @Valid AppAuthEmailResetPasswordReqVO reqVO) {
+        authService.resetPasswordByEmail(reqVO);
+        return success(true);
+    }
+
     @PostMapping("/logout")
     @Operation(summary = "登出系统")
     @PermitAll

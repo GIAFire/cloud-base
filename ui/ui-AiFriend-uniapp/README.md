@@ -16,7 +16,7 @@ pnpm dev:h5
 默认通过统一网关 `http://localhost:8081` 请求，App 接口前缀为 `/app-api`。首页登录后会自动请求：
 
 ```text
-GET http://localhost:8081/app-api/AiFriend/test/get
+GET http://localhost:8081/app-api/agent/test/get
 ```
 
 接口地址在 `.env` 中配置。H5 开发环境会将浏览器发出的 `/app-api/**` 原路径代理到网关，不会添加额外前缀；真机运行时请将 `AIFRIEND_BASE_URL` 改为网关所在电脑的局域网地址。
@@ -28,5 +28,19 @@ GET http://localhost:8081/app-api/AiFriend/test/get
 - 短信登录/自动注册：`POST /app-api/member/auth/sms-login`
 - 刷新令牌：`POST /app-api/member/auth/refresh-token`
 - 登出：`POST /app-api/member/auth/logout`
+
+AI Friend 使用邮箱账号：
+
+- 邮箱密码登录：`POST /app-api/member/auth/email-login`
+- 发送邮件验证码：`POST /app-api/member/auth/email-code/send`
+- 邮箱注册：`POST /app-api/member/auth/email-register`
+- 邮箱重置密码：`POST /app-api/member/auth/email-reset-password`
+
+邮件验证码依赖系统邮件账户以及两个启用的邮件模板：
+
+- `member-email-register-code`
+- `member-email-reset-password-code`
+
+两个模板都需要声明 `code` 参数。服务端不会在响应或日志中输出验证码。
 
 登录成功后保存 `accessToken` 和 `refreshToken`；访问令牌失效时请求层会自动刷新并重放原请求。

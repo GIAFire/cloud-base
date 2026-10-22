@@ -27,6 +27,12 @@ public interface MemberUserService {
      */
     MemberUserDO getUserByMobile(String mobile);
 
+    MemberUserDO getUserByEmail(String email);
+
+    MemberUserDO createUserByEmail(String email, String password, String registerIp, Integer terminal);
+
+    void resetUserPasswordByEmail(Long userId, String password);
+
     /**
      * 基于用户昵称，模糊匹配用户列表
      *

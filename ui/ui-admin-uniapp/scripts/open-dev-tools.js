@@ -69,7 +69,7 @@ function _openDevTools(env = 'dev', options = {}) {
       console.log(`❌ 打开${uniPlatformText}开发者工具失败:`, error.message)
       if (UNI_PLATFORM === 'mp-weixin') {
         console.log('💡 当前使用的微信开发者工具 CLI 命令:', command)
-        console.log('💡 如果安装位置不同，可以在 env/.env 配置 WECHAT_DEVTOOLS_CLI_PATH 为本机实际 CLI 路径')
+        console.log('💡 如果安装位置不同，可以在 env/.env.development 配置 WECHAT_DEVTOOLS_CLI_PATH 为本机实际 CLI 路径')
       }
       console.log(`💡 请确保${uniPlatformText}开发者工具服务端口已启用`)
       console.log(`💡 可以手动打开${uniPlatformText}开发者工具并导入项目:`, projectPath)

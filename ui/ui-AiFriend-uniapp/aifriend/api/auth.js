@@ -1,6 +1,38 @@
 import request from '@/aifriend/request';
 
 const AuthApi = {
+  emailLogin: (data) =>
+    request({
+      url: '/member/auth/email-login',
+      method: 'POST',
+      data,
+      custom: { showSuccess: true, loadingMsg: '登录中', successMsg: '登录成功' },
+    }),
+
+  sendEmailCode: (email, scene) =>
+    request({
+      url: '/member/auth/email-code/send',
+      method: 'POST',
+      data: { email, scene },
+      custom: { showSuccess: true, loadingMsg: '发送中', successMsg: '验证码已发送' },
+    }),
+
+  emailRegister: (data) =>
+    request({
+      url: '/member/auth/email-register',
+      method: 'POST',
+      data,
+      custom: { showSuccess: true, loadingMsg: '注册中', successMsg: '注册成功' },
+    }),
+
+  resetPasswordByEmail: (data) =>
+    request({
+      url: '/member/auth/email-reset-password',
+      method: 'POST',
+      data,
+      custom: { showSuccess: true, loadingMsg: '重置中', successMsg: '密码已重置' },
+    }),
+
   // 使用手机号 + 密码登录
   login: (data) =>
     request({

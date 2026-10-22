@@ -1,6 +1,7 @@
 const routes = {
   login: '/pages/auth/login',
   register: '/pages/auth/register',
+  forgotPassword: '/pages/auth/forgot-password',
   home: '/pages/home/index',
   card: '/pages/card/index',
   chat: '/pages/chat/index',
@@ -35,5 +36,6 @@ export default {
   ensureLogin,
   login: () => uni.reLaunch({ url: routes.login }),
   register: () => go(routes.register),
+  forgotPassword: () => go(routes.forgotPassword),
   home: () => go(routes.home),
 };

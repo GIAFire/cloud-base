@@ -21,6 +21,14 @@ public interface MemberAuthService {
      */
     AppAuthLoginRespVO login(@Valid AppAuthLoginReqVO reqVO);
 
+    AppAuthLoginRespVO emailLogin(@Valid AppAuthEmailLoginReqVO reqVO);
+
+    AppAuthLoginRespVO emailRegister(@Valid AppAuthEmailRegisterReqVO reqVO);
+
+    void sendEmailCode(@Valid AppAuthEmailCodeSendReqVO reqVO);
+
+    void resetPasswordByEmail(@Valid AppAuthEmailResetPasswordReqVO reqVO);
+
     /**
      * 基于 token 退出登录
      *

@@ -43,7 +43,7 @@ function parseEnvContent(content) {
 function loadEnvFile(mode = 'production') {
   const env = {}
   const envFiles = [
-    path.resolve(ROOT_DIR, 'env', '.env'),
+    path.resolve(ROOT_DIR, 'env', '.env.development'),
     path.resolve(ROOT_DIR, 'env', `.env.${mode}`),
   ]
 
@@ -156,7 +156,7 @@ async function main() {
   const appid = env.VITE_WX_APPID
 
   if (!appid) {
-    throw new Error('未找到 VITE_WX_APPID，请检查 env/.env 或 env/.env.production')
+    throw new Error('未找到 VITE_WX_APPID，请检查 env/.env.development 或 env/.env.development.production')
   }
 
   const version = params.version || env.WECHAT_UPLOAD_VERSION || readPackageVersion()

@@ -9,6 +9,7 @@ import com.cloud.framework.common.util.servlet.ServletUtils;
 import com.cloud.module.member.controller.app.auth.vo.*;
 import com.cloud.module.member.convert.auth.AuthConvert;
 import com.cloud.module.member.dal.dataobject.user.MemberUserDO;
+import com.cloud.module.member.enums.EmailCodeSceneEnum;
 import com.cloud.module.member.service.user.MemberUserService;
 import com.cloud.module.system.api.logger.LoginLogApi;
 import com.cloud.module.system.api.logger.dto.LoginLogCreateReqDTO;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Locale;
 
 import static com.cloud.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static com.cloud.framework.common.util.servlet.ServletUtils.getClientIP;
@@ -49,6 +51,8 @@ public class MemberAuthServiceImpl implements MemberAuthService {
 
     @Resource
     private MemberUserService userService;
+    @Resource
+    private MemberEmailCodeService emailCodeService;
     @Resource
     private SmsCodeApi smsCodeApi;
     @Resource
@@ -74,6 +78,52 @@ public class MemberAuthServiceImpl implements MemberAuthService {
 
         // 创建 Token 令牌，记录登录日志
         return createTokenAfterLoginSuccess(user, reqVO.getMobile(), LoginLogTypeEnum.LOGIN_MOBILE, openid);
+    }
+
+    @Override
+    public AppAuthLoginRespVO emailLogin(AppAuthEmailLoginReqVO reqVO) {
+        String email = normalizeEmail(reqVO.getEmail());
+        MemberUserDO user = userService.getUserByEmail(email);
+        if (user == null || !userService.isPasswordMatch(reqVO.getPassword(), user.getPassword())) {
+            createLoginLog(user != null ? user.getId() : null, email,
+                    LoginLogTypeEnum.LOGIN_EMAIL, LoginResultEnum.BAD_CREDENTIALS);
+            throw exception(AUTH_LOGIN_BAD_CREDENTIALS);
+        }
+        return createTokenAfterLoginSuccess(user, email, LoginLogTypeEnum.LOGIN_EMAIL, null);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AppAuthLoginRespVO emailRegister(AppAuthEmailRegisterReqVO reqVO) {
+        String email = normalizeEmail(reqVO.getEmail());
+        emailCodeService.useCode(email, reqVO.getCode(), EmailCodeSceneEnum.REGISTER.getScene(), getClientIP());
+        MemberUserDO user = userService.createUserByEmail(email, reqVO.getPassword(), getClientIP(), getTerminal());
+        return createTokenAfterLoginSuccess(user, email, LoginLogTypeEnum.LOGIN_EMAIL, null);
+    }
+
+    @Override
+    public void sendEmailCode(AppAuthEmailCodeSendReqVO reqVO) {
+        String email = normalizeEmail(reqVO.getEmail());
+        MemberUserDO user = userService.getUserByEmail(email);
+        if (Objects.equals(reqVO.getScene(), EmailCodeSceneEnum.REGISTER.getScene()) && user != null) {
+            return;
+        }
+        if (Objects.equals(reqVO.getScene(), EmailCodeSceneEnum.RESET_PASSWORD.getScene()) && user == null) {
+            return;
+        }
+        emailCodeService.sendCode(email, reqVO.getScene(), getClientIP());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void resetPasswordByEmail(AppAuthEmailResetPasswordReqVO reqVO) {
+        String email = normalizeEmail(reqVO.getEmail());
+        MemberUserDO user = userService.getUserByEmail(email);
+        if (user == null) {
+            throw exception(AUTH_EMAIL_CODE_INVALID);
+        }
+        emailCodeService.useCode(email, reqVO.getCode(), EmailCodeSceneEnum.RESET_PASSWORD.getScene(), getClientIP());
+        userService.resetUserPasswordByEmail(user.getId(), reqVO.getPassword());
     }
 
     @Override
@@ -271,23 +321,30 @@ public class MemberAuthServiceImpl implements MemberAuthService {
         reqDTO.setTraceId(TracerUtils.getTraceId());
         reqDTO.setUserId(userId);
         reqDTO.setUserType(getUserType().getValue());
-        reqDTO.setUsername(getMobile(userId));
+        reqDTO.setUsername(getLoginIdentifier(userId));
         reqDTO.setUserAgent(ServletUtils.getUserAgent());
         reqDTO.setUserIp(getClientIP());
         reqDTO.setResult(LoginResultEnum.SUCCESS.getResult());
         loginLogApi.createLoginLog(reqDTO).checkError();
     }
 
-    private String getMobile(Long userId) {
+    private String getLoginIdentifier(Long userId) {
         if (userId == null) {
             return null;
         }
         MemberUserDO user = userService.getUser(userId);
-        return user != null ? user.getMobile() : null;
+        if (user == null) {
+            return null;
+        }
+        return user.getEmail() != null ? user.getEmail() : user.getMobile();
     }
 
     private UserTypeEnum getUserType() {
         return UserTypeEnum.MEMBER;
+    }
+
+    private static String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 
 }

@@ -16,7 +16,14 @@
     {
       "path": "pages/auth/register",
       "style": {
-        "navigationBarTitleText": "短信登录/注册",
+        "navigationBarTitleText": "邮箱注册",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/auth/forgot-password",
+      "style": {
+        "navigationBarTitleText": "忘记密码",
         "navigationStyle": "custom"
       }
     },

@@ -60,7 +60,7 @@ export default defineConfig(({ command, mode }) => {
   // pnpm build:mp-weixin 时得到 => build production
   // pnpm dev:app 时得到 => build development (注意区别，command为build)
   // pnpm build:app 时得到 => build production
-  // dev 和 build 命令可以分别使用 .env.development 和 .env.production 的环境变量
+  // dev 和 build 命令可以分别使用 .env.development.development 和 .env.development.production 的环境变量
   // 非 H5 端 dev 也是 build command，最终加载哪个 env 文件以实际 mode 为准。
 
   const { UNI_PLATFORM, SKIP_OPEN_DEVTOOLS } = process.env
@@ -180,7 +180,7 @@ export default defineConfig(({ command, mode }) => {
       vitePluginEruda({
         open: UNI_PLATFORM === 'h5' && mode === 'development',
       }),
-      // 自动打开开发者工具插件 (必须修改 .env 文件中的 VITE_WX_APPID)
+      // 自动打开开发者工具插件 (必须修改 .env.development 文件中的 VITE_WX_APPID)
       // 上传或 CI 场景可通过 SKIP_OPEN_DEVTOOLS=true 跳过
       SKIP_OPEN_DEVTOOLS !== 'true' && openDevTools({
         mode,

@@ -3,23 +3,23 @@
     <view class="auth-page__hero">
       <text class="auth-page__brand">AI Friend</text>
       <text class="auth-page__title">账号登录</text>
-      <text class="auth-page__subtitle">使用商城会员体系的手机号和密码登录</text>
+      <text class="auth-page__subtitle">使用邮箱和密码登录</text>
     </view>
 
     <view class="auth-page__form">
       <af-form-field
-        v-model="form.mobile"
-        label="账号"
-        placeholder="请输入手机号"
-        type="number"
-        :maxlength="11"
+        v-model="form.email"
+        label="邮箱"
+        placeholder="请输入邮箱"
+        type="text"
+        :maxlength="100"
       />
       <af-form-field
         v-model="form.password"
         label="密码"
         placeholder="请输入密码"
         :password="true"
-        :maxlength="16"
+        :maxlength="32"
       />
 
       <view class="agreement" @click="agreed = !agreed">
@@ -31,9 +31,11 @@
 
       <af-primary-button :loading="submitting" @click="submit">登录</af-primary-button>
 
+      <view class="auth-page__forgot" @click="router.forgotPassword">忘记密码？</view>
+
       <view class="auth-page__link" @click="router.register">
         <text>还没有账号？</text>
-        <text class="auth-page__link-text">短信登录/注册</text>
+        <text class="auth-page__link-text">邮箱注册</text>
       </view>
     </view>
   </view>
@@ -43,12 +45,12 @@
 import { onShow } from '@dcloudio/uni-app';
 import { reactive, ref } from 'vue';
 import AuthApi from '@/aifriend/api/auth';
-import { isMobile, isPassword } from '@/aifriend/helper/test';
+import { isEmail } from '@/aifriend/helper/test';
 import router from '@/aifriend/router';
 import store from '@/aifriend/store';
 
 const form = reactive({
-  mobile: '',
+  email: '',
   password: '',
 });
 const agreed = ref(false);
@@ -61,12 +63,12 @@ onShow(() => {
 });
 
 async function submit() {
-  if (!isMobile(form.mobile)) {
-    uni.showToast({ title: '手机号码格式不正确', icon: 'none' });
+  if (!isEmail(form.email)) {
+    uni.showToast({ title: '邮箱格式不正确', icon: 'none' });
     return;
   }
-  if (!isPassword(form.password)) {
-    uni.showToast({ title: '密码需包含字母和数字，长度为 6-12 位', icon: 'none' });
+  if (!form.password || form.password.length > 32) {
+    uni.showToast({ title: '请输入密码', icon: 'none' });
     return;
   }
   if (!agreed.value) {
@@ -76,7 +78,7 @@ async function submit() {
 
   submitting.value = true;
   try {
-    const response = await AuthApi.login(form);
+    const response = await AuthApi.emailLogin({ ...form, email: form.email.trim().toLowerCase() });
     if (response.code === 0) {
       const userStore = store('user');
       userStore.syncLoginState();
@@ -140,6 +142,13 @@ async function submit() {
     margin-top: 32rpx;
     color: #737784;
     font-size: 26rpx;
+  }
+
+  &__forgot {
+    margin-top: 24rpx;
+    color: #665cf6;
+    font-size: 25rpx;
+    text-align: right;
   }
 
   &__link-text {

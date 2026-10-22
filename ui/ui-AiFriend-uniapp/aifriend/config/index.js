@@ -14,7 +14,7 @@ if (import.meta.env.DEV && import.meta.env.AIFRIEND_H5_PROXY_ENABLED === 'true')
 export const requestConfig = {
   baseUrl,
   apiPath,
-  timeout: 10000,
+  timeout: 30000,
   tenantId: 1,
 };
 

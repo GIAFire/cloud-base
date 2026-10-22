@@ -124,7 +124,7 @@ const http = new Request({
   },
   custom: defaultCustom,
   // #ifdef APP-PLUS
-  sslVerify: false,
+  // sslVerify: false,
   // #endif
   // #ifdef H5
   withCredentials: false,

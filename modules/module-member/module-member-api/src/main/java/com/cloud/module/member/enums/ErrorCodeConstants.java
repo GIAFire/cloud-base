@@ -21,6 +21,10 @@ public interface ErrorCodeConstants {
     ErrorCode AUTH_LOGIN_USER_DISABLED = new ErrorCode(1_004_003_001, "登录失败，账号被禁用");
     ErrorCode AUTH_SOCIAL_USER_NOT_FOUND = new ErrorCode(1_004_003_005, "登录失败，解析不到三方登录信息");
     ErrorCode AUTH_MOBILE_USED = new ErrorCode(1_004_003_007, "手机号已经被使用");
+    ErrorCode AUTH_EMAIL_CODE_SEND_TOO_FAST = new ErrorCode(1_004_003_008, "邮箱验证码发送过于频繁");
+    ErrorCode AUTH_EMAIL_CODE_SEND_LIMIT = new ErrorCode(1_004_003_009, "邮箱验证码发送次数已达上限");
+    ErrorCode AUTH_EMAIL_CODE_INVALID = new ErrorCode(1_004_003_010, "邮箱验证码无效或已过期");
+    ErrorCode AUTH_EMAIL_CODE_ATTEMPTS_EXCEEDED = new ErrorCode(1_004_003_011, "邮箱验证码错误次数过多，请重新获取");
 
     // ========== 用户收件地址 1-004-004-000 ==========
     ErrorCode ADDRESS_NOT_EXISTS = new ErrorCode(1_004_004_000, "用户收件地址不存在");

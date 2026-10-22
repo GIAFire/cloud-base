@@ -7,7 +7,7 @@ const uni = uniModule.default || uniModule;
 const projectDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  // HBuilderX 的工作目录不一定是项目目录，必须按配置文件位置读取 .env。
+  // HBuilderX 的工作目录不一定是项目目录，必须按配置文件位置读取 .env.development。
   const env = loadEnv(mode, projectDir, 'AIFRIEND_');
   const apiPath = env.AIFRIEND_API_PATH || '/app-api';
   const proxyEnabled = env.AIFRIEND_H5_PROXY_ENABLED === 'true';

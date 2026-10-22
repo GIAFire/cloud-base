@@ -72,6 +72,37 @@ public class MemberUserServiceImpl implements MemberUserService {
     }
 
     @Override
+    public MemberUserDO getUserByEmail(String email) {
+        return memberUserMapper.selectByEmail(normalizeEmail(email));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public MemberUserDO createUserByEmail(String email, String password, String registerIp, Integer terminal) {
+        String normalizedEmail = normalizeEmail(email);
+        validateEmailUnique(null, normalizedEmail);
+        MemberUserDO user = new MemberUserDO().setEmail(normalizedEmail)
+                .setPassword(encodePassword(password)).setStatus(CommonStatusEnum.ENABLE.getStatus())
+                .setRegisterIp(registerIp).setRegisterTerminal(terminal)
+                .setNickname("用户" + RandomUtil.randomNumbers(6));
+        memberUserMapper.insert(user);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                memberUserProducer.sendUserCreateMessage(user.getId());
+            }
+        });
+        return user;
+    }
+
+    @Override
+    public void resetUserPasswordByEmail(Long userId, String password) {
+        memberUserMapper.updateById(MemberUserDO.builder().id(userId)
+                .password(encodePassword(password)).build());
+        oauth2TokenApi.removeAccessToken(userId, UserTypeEnum.MEMBER.getValue()).checkError();
+    }
+
+    @Override
     public List<MemberUserDO> getUserListByNickname(String nickname) {
         return memberUserMapper.selectListByNicknameLike(nickname);
     }
@@ -148,6 +179,9 @@ public class MemberUserServiceImpl implements MemberUserService {
         validateUserExists(userId);
         // 1.2 校验手机是否已经被绑定
         validateEmailUnique(userId, reqVO.getEmail());
+        if (StrUtil.isNotBlank(reqVO.getEmail())) {
+            reqVO.setEmail(normalizeEmail(reqVO.getEmail()));
+        }
 
         // 2. 更新用户
         MemberUserDO updateObj = BeanUtils.toBean(reqVO, MemberUserDO.class).setId(userId);
@@ -248,6 +282,9 @@ public class MemberUserServiceImpl implements MemberUserService {
         validateMobileUnique(updateReqVO.getId(), updateReqVO.getMobile());
         // 校验邮箱唯一
         validateEmailUnique(updateReqVO.getId(), updateReqVO.getEmail());
+        if (StrUtil.isNotBlank(updateReqVO.getEmail())) {
+            updateReqVO.setEmail(normalizeEmail(updateReqVO.getEmail()));
+        }
 
         // 更新
         MemberUserDO updateObj = MemberUserConvert.INSTANCE.convert(updateReqVO);
@@ -294,6 +331,7 @@ public class MemberUserServiceImpl implements MemberUserService {
         if (StrUtil.isBlank(email)) {
             return;
         }
+        email = normalizeEmail(email);
         MemberUserDO user = memberUserMapper.selectByEmail(email);
         if (user == null) {
             return;
@@ -305,6 +343,10 @@ public class MemberUserServiceImpl implements MemberUserService {
         if (!user.getId().equals(id)) {
             throw exception(USER_EMAIL_USED, email);
         }
+    }
+
+    private static String normalizeEmail(String email) {
+        return StrUtil.trim(email).toLowerCase(java.util.Locale.ROOT);
     }
 
     @Override
