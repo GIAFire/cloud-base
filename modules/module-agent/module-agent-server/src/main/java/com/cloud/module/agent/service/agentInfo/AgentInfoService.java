@@ -1,11 +1,13 @@
 package com.cloud.module.agent.service.agentInfo;
 
-import java.util.*;
-import jakarta.validation.*;
-import com.cloud.module.agent.controller.admin.agentInfo.vo.*;
-import com.cloud.module.agent.dal.dataobject.agentInfo.AgentInfoDO;
 import com.cloud.framework.common.pojo.PageResult;
-import com.cloud.framework.common.pojo.PageParam;
+import com.cloud.module.agent.controller.admin.agentInfo.vo.AgentInfoPageReqVO;
+import com.cloud.module.agent.controller.admin.agentInfo.vo.AgentInfoRespVO;
+import com.cloud.module.agent.controller.admin.agentInfo.vo.AgentInfoSaveReqVO;
+import com.cloud.module.agent.dal.dataobject.agentInfo.AgentInfoDO;
+import jakarta.validation.Valid;
+
+import java.util.List;
 
 /**
  * Agent 定义表 Service 接口
@@ -57,6 +59,14 @@ public interface AgentInfoService {
      * @param pageReqVO 分页查询
      * @return Agent 定义表分页
      */
-    PageResult<AgentInfoDO> getInfoPage(AgentInfoPageReqVO pageReqVO);
+    PageResult<AgentInfoRespVO> getInfoPage(AgentInfoPageReqVO pageReqVO);
 
-}
+    /**
+     * 获得包含分类和标签的 Agent 详情。
+     *
+     * @param id Agent 编号
+     * @return Agent 详情
+     */
+    AgentInfoRespVO getInfoDetail(Long id);
+
+}

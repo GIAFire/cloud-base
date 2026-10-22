@@ -25,11 +25,33 @@ CREATE TABLE `agent_category`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '分类名称',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态：0启用 1禁用',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  `active_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci GENERATED ALWAYS AS (CASE WHEN (`deleted` = b'0') THEN `name` ELSE NULL END) STORED COMMENT '未删除分类的唯一名称',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_agent_category_tenant_active_name`(`tenant_id` ASC, `active_name` ASC) USING BTREE,
+  INDEX `idx_agent_category_tenant_list`(`tenant_id` ASC, `deleted` ASC, `status` ASC, `sort` ASC, `id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'agent分类表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for agent_category_agent
+-- ----------------------------
+DROP TABLE IF EXISTS `agent_category_agent`;
+CREATE TABLE `agent_category_agent`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `agent_id` bigint NOT NULL COMMENT 'Agent ID',
+  `category_id` bigint NOT NULL COMMENT '分类ID',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_agent_category_agent_binding`(`tenant_id` ASC, `agent_id` ASC, `category_id` ASC) USING BTREE,
+  INDEX `idx_agent_category_agent_category`(`tenant_id` ASC, `category_id` ASC, `agent_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Agent与分类关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for agent_http_header
@@ -213,13 +235,18 @@ DROP TABLE IF EXISTS `agent_tag`;
 CREATE TABLE `agent_tag`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '标签ID',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '标签名称',
-  `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标签编码',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态：0启用 1禁用',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  `active_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci GENERATED ALWAYS AS (CASE WHEN (`deleted` = b'0') THEN `name` ELSE NULL END) STORED COMMENT '未删除标签的唯一名称',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_name`(`name` ASC) USING BTREE
+  UNIQUE INDEX `uk_agent_tag_tenant_active_name`(`tenant_id` ASC, `active_name` ASC) USING BTREE,
+  INDEX `idx_agent_tag_tenant_list`(`tenant_id` ASC, `deleted` ASC, `status` ASC, `sort` ASC, `id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'agent标签表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -227,11 +254,14 @@ CREATE TABLE `agent_tag`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `agent_tag_agent`;
 CREATE TABLE `agent_tag_agent`  (
-  `agent_id` bigint NOT NULL COMMENT 'agentID',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `agent_id` bigint NOT NULL COMMENT 'Agent ID',
   `tag_id` bigint NOT NULL COMMENT '标签ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`agent_id`, `tag_id`) USING BTREE,
-  INDEX `idx_tag_id`(`tag_id` ASC) USING BTREE
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_agent_tag_agent_binding`(`tenant_id` ASC, `agent_id` ASC, `tag_id` ASC) USING BTREE,
+  INDEX `idx_agent_tag_agent_tag`(`tenant_id` ASC, `tag_id` ASC, `agent_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'agent标签关联表' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

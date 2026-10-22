@@ -47,6 +47,16 @@
       <el-form-item label="名称" prop="agentName">
         <el-input v-model="formData.agentName" placeholder="请输入Agent 显示名称" />
       </el-form-item>
+      <el-form-item label="分类" prop="categoryIds">
+        <AgentCategorySelect
+          v-model="formData.categoryIds"
+          class="!w-100%"
+          :selected-items="formData.categories"
+        />
+      </el-form-item>
+      <el-form-item label="标签" prop="tagIds">
+        <AgentTagSelect v-model="formData.tagIds" :selected-items="formData.tags" show-add />
+      </el-form-item>
       <el-form-item label="描述" prop="description">
         <el-input v-model="formData.description" type="textarea" placeholder="请输入Agent 描述" />
       </el-form-item>
@@ -146,6 +156,8 @@ import { getStrDictOptions, getBoolDictOptions, DICT_TYPE } from '@/utils/dict'
 import { InfoApi, Info } from '@/api/agent/agentInfo'
 import { ModelApi, type ModelSimple } from '@/api/agent/config/model'
 import { SysPromptApi, type SysPromptSimple } from '@/api/agent/config/sysprompt'
+import AgentCategorySelect from '@/views/agent/category/components/AgentCategorySelect.vue'
+import AgentTagSelect from '@/views/agent/tag/components/AgentTagSelect.vue'
 
 /** Agent 定义表 表单 */
 defineOptions({ name: 'InfoForm' })
@@ -159,7 +171,11 @@ const formLoading = ref(false) // 表单的加载中：1）修改时的数据加
 const formType = ref('') // 表单的类型：create - 新增；update - 修改
 const modelOptions = ref<ModelSimple[]>([]) // 模型下拉选项
 const sysPromptOptions = ref<SysPromptSimple[]>([]) // 提示词下拉选项
-const formData = ref({
+type InfoFormData = Partial<Info> & {
+  categoryIds: number[]
+  tagIds: number[]
+}
+const createDefaultData = (): InfoFormData => ({
   id: undefined,
   modelId: undefined,
   sysPromptId: undefined,
@@ -177,18 +193,35 @@ const formData = ref({
   toolResultEvictionEnabled: undefined,
   memoryEnable: undefined,
   planModeEnabled: undefined,
-  allowShellInPlanMode: undefined
+  allowShellInPlanMode: undefined,
+  categoryIds: [],
+  tagIds: [],
+  categories: [],
+  tags: []
 })
+const formData = ref<InfoFormData>(createDefaultData())
 const formRules = reactive({
   agentCode: [{ required: true, message: 'Agent唯一编码不能为空', trigger: 'blur' }],
   agentName: [{ required: true, message: 'Agent 显示名称不能为空', trigger: 'blur' }],
   personality: [{ required: true, message: 'Agent 人格不能为空', trigger: 'blur' }],
   maxIters: [{ required: true, message: '最大循环次数不能为空', trigger: 'blur' }],
   permissionMode: [{ required: true, message: '默认权限模式不能为空', trigger: 'blur' }],
-  compactionEnabled: [{ required: true, message: '是否启用上下文压缩：1启用，0关闭不能为空', trigger: 'blur' }],
-  toolResultEvictionEnabled: [{ required: true, message: '是否启用大工具结果卸载：1启用，0关闭不能为空', trigger: 'blur' }],
-  planModeEnabled: [{ required: true, message: '是否启用Plan Mode：1启用，0关闭不能为空', trigger: 'blur' }],
-  allowShellInPlanMode: [{ required: true, message: 'Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭不能为空', trigger: 'blur' }]
+  compactionEnabled: [
+    { required: true, message: '是否启用上下文压缩：1启用，0关闭不能为空', trigger: 'blur' }
+  ],
+  toolResultEvictionEnabled: [
+    { required: true, message: '是否启用大工具结果卸载：1启用，0关闭不能为空', trigger: 'blur' }
+  ],
+  planModeEnabled: [
+    { required: true, message: '是否启用Plan Mode：1启用，0关闭不能为空', trigger: 'blur' }
+  ],
+  allowShellInPlanMode: [
+    {
+      required: true,
+      message: 'Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭不能为空',
+      trigger: 'blur'
+    }
+  ]
 })
 const formRef = ref() // 表单 Ref
 
@@ -210,7 +243,12 @@ const open = async (type: string, id?: number) => {
     sysPromptOptions.value = sysPrompts || []
     // 修改时，设置数据
     if (info) {
-      formData.value = info
+      formData.value = {
+        ...createDefaultData(),
+        ...info,
+        categoryIds: info.categoryIds ?? info.categories?.map((item) => item.id) ?? [],
+        tagIds: info.tagIds ?? info.tags?.map((item) => item.id) ?? []
+      }
     }
   } finally {
     formLoading.value = false
@@ -226,12 +264,14 @@ const submitForm = async () => {
   // 提交请求
   formLoading.value = true
   try {
-    const data = formData.value as unknown as Info
+    const data = { ...formData.value }
+    delete data.categories
+    delete data.tags
     if (formType.value === 'create') {
-      await InfoApi.createInfo(data)
+      await InfoApi.createInfo(data as Info)
       message.success(t('common.createSuccess'))
     } else {
-      await InfoApi.updateInfo(data)
+      await InfoApi.updateInfo(data as Info)
       message.success(t('common.updateSuccess'))
     }
     dialogVisible.value = false
@@ -244,25 +284,7 @@ const submitForm = async () => {
 
 /** 重置表单 */
 const resetForm = () => {
-  formData.value = {
-    id: undefined,
-    modelId: undefined,
-    sysPromptId: undefined,
-    agentCode: undefined,
-    agentName: undefined,
-    description: undefined,
-    maxIters: undefined,
-    permissionMode: undefined,
-    compactionEnabled: undefined,
-    triggerMessages: undefined,
-    keepMessages: undefined,
-    triggerTokens: undefined,
-    keepTokens: undefined,
-    toolResultEvictionEnabled: undefined,
-    memoryEnable: undefined,
-    planModeEnabled: undefined,
-    allowShellInPlanMode: undefined
-  }
+  formData.value = createDefaultData()
   formRef.value?.resetFields()
 }
 </script>

@@ -68,4 +68,13 @@ public class AgentInfoSaveReqVO {
     @NotNull(message = "Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭不能为空")
     private Boolean allowShellInPlanMode;
 
+    @Schema(description = "人格设定")
+    private String personality;
+
+    @Schema(description = "Agent 分类编号集合")
+    private List<@NotNull(message = "分类编号不能为空") Long> categoryIds;
+
+    @Schema(description = "Agent 标签编号集合")
+    private List<@NotNull(message = "标签编号不能为空") Long> tagIds;
+
 }

@@ -84,6 +84,18 @@ public class AgentInfoRespVO {
     @ExcelProperty("人格设定")
     private String personality;
 
+    @Schema(description = "Agent 分类编号集合")
+    private List<Long> categoryIds;
+
+    @Schema(description = "Agent 分类摘要")
+    private List<AgentTaxonomyItemRespVO> categories;
+
+    @Schema(description = "Agent 标签编号集合")
+    private List<Long> tagIds;
+
+    @Schema(description = "Agent 标签摘要")
+    private List<AgentTaxonomyItemRespVO> tags;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;

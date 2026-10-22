@@ -64,6 +64,12 @@ public class AgentInfoPageReqVO extends PageParam {
     @Schema(description = "人格设定")
     private String personality;
 
+    @Schema(description = "分类编号集合；多个分类之间按任一匹配")
+    private List<Long> categoryIds;
+
+    @Schema(description = "标签编号集合；多个标签之间按任一匹配")
+    private List<Long> tagIds;
+
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;

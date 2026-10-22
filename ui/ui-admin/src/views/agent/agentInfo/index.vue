@@ -26,6 +26,12 @@
           class="!w-240px"
         />
       </el-form-item>
+      <el-form-item label="分类" prop="categoryIds">
+        <AgentCategorySelect v-model="queryParams.categoryIds" class="!w-240px" />
+      </el-form-item>
+      <el-form-item label="标签" prop="tagIds">
+        <AgentTagSelect v-model="queryParams.tagIds" class="!w-240px" />
+      </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
@@ -47,6 +53,17 @@
           v-hasPermi="['agent:info:create']"
         >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
+        </el-button>
+        <el-button
+          v-hasPermi="['agent:category:query']"
+          plain
+          type="primary"
+          @click="openCategoryManagement"
+        >
+          <Icon icon="ep:folder" class="mr-5px" /> 分类管理
+        </el-button>
+        <el-button v-hasPermi="['agent:tag:query']" plain type="primary" @click="openTagManagement">
+          <Icon icon="ep:collection-tag" class="mr-5px" /> 标签管理
         </el-button>
         <el-button
           type="success"
@@ -85,6 +102,37 @@
       <el-table-column label="prompt.id" align="center" prop="sysPromptId" />
       <el-table-column label="code" align="center" prop="agentCode" />
       <el-table-column label="名称" align="center" prop="agentName" />
+      <el-table-column label="分类" align="center" min-width="160">
+        <template #default="scope">
+          <div v-if="scope.row.categories?.length" class="taxonomy-tags">
+            <el-tag
+              v-for="category in scope.row.categories"
+              :key="category.id"
+              effect="plain"
+              :type="category.status === CommonStatusEnum.DISABLE ? 'warning' : 'primary'"
+            >
+              {{ category.name
+              }}{{ category.status === CommonStatusEnum.DISABLE ? '（已禁用）' : '' }}
+            </el-tag>
+          </div>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="标签" align="center" min-width="160">
+        <template #default="scope">
+          <div v-if="scope.row.tags?.length" class="taxonomy-tags">
+            <el-tag
+              v-for="tag in scope.row.tags"
+              :key="tag.id"
+              effect="plain"
+              :type="tag.status === CommonStatusEnum.DISABLE ? 'warning' : 'info'"
+            >
+              {{ tag.name }}{{ tag.status === CommonStatusEnum.DISABLE ? '（已禁用）' : '' }}
+            </el-tag>
+          </div>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
       <el-table-column label="描述" align="center" prop="description" />
       <el-table-column label="人格设定" align="personality" prop="personality" />
       <el-table-column label="最大循环" align="center" prop="maxIters" />
@@ -181,9 +229,12 @@
 import { DICT_TYPE } from '@/utils/dict'
 import { isEmpty } from '@/utils/is'
 import { dateFormatter } from '@/utils/formatTime'
+import { CommonStatusEnum } from '@/utils/constants'
 import download from '@/utils/download'
 import { InfoApi, Info } from '@/api/agent/agentInfo'
 import InfoForm from './InfoForm.vue'
+import AgentCategorySelect from '@/views/agent/category/components/AgentCategorySelect.vue'
+import AgentTagSelect from '@/views/agent/tag/components/AgentTagSelect.vue'
 
 /** Agent 定义表 列表 */
 defineOptions({ name: 'AgentInfo' })
@@ -201,6 +252,8 @@ const queryParams = reactive({
   sysPromptId: undefined,
   agentCode: undefined,
   agentName: undefined,
+  categoryIds: [],
+  tagIds: [],
   description: undefined,
   maxIters: undefined,
   permissionMode: undefined,
@@ -221,9 +274,12 @@ const router = useRouter()
 
 /** 打开 Agent 聊天工作区 */
 const openChat = async (id: number | string) => {
-  const data = await InfoApi.getPersonality(id)
+  await InfoApi.getPersonality(id)
   router.push({ name: 'AgentChat', params: { agentId: String(id) } })
 }
+
+const openCategoryManagement = () => router.push({ name: 'AgentCategory' })
+const openTagManagement = () => router.push({ name: 'AgentTag' })
 
 /** 查询列表 */
 const getList = async () => {
@@ -305,3 +361,12 @@ onMounted(() => {
   getList()
 })
 </script>
+
+<style scoped lang="scss">
+.taxonomy-tags {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+</style>

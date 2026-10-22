@@ -1,5 +1,13 @@
 import request from '@/config/axios'
 
+/** Agent 绑定的分类或标签摘要 */
+export interface InfoTaxonomy {
+  id: number
+  name: string
+  sort?: number
+  status?: number
+}
+
 /** Agent 定义表信息 */
 export interface Info {
   id: number // Agent 主键ID
@@ -8,6 +16,7 @@ export interface Info {
   agentCode?: string // Agent唯一编码
   agentName?: string // Agent 显示名称
   description: string // Agent 描述
+  personality?: string // Agent 人格设定
   maxIters?: number // 最大循环次数
   permissionMode?: string // 默认权限模式
   compactionEnabled?: boolean // 是否启用上下文压缩：1启用，0关闭
@@ -19,6 +28,11 @@ export interface Info {
   memoryEnable: boolean // 是否启用长期记忆:1启用,0禁用
   planModeEnabled?: boolean // 是否启用Plan Mode：1启用，0关闭
   allowShellInPlanMode?: boolean // Plan阶段是否允许shell工具：1允许，0禁止；生产环境建议关闭
+  categoryIds?: number[] // 绑定的分类 ID
+  tagIds?: number[] // 绑定的标签 ID
+  categories?: InfoTaxonomy[] // 分类摘要，包含已禁用但仍绑定的分类
+  tags?: InfoTaxonomy[] // 标签摘要，包含已禁用但仍绑定的标签
+  createTime?: string // 创建时间
 }
 
 // Agent 定义表 API
@@ -28,12 +42,12 @@ export const InfoApi = {
   },
   // 查询Agent 定义表分页
   getInfoPage: async (params: any) => {
-    return await request.get({ url: `/agent/info/page`, params })
+    return await request.get<PageResult<Info[]>>({ url: `/agent/info/page`, params })
   },
 
   // 查询Agent 定义表详情
   getInfo: async (id: number | string) => {
-    return await request.get({ url: `/agent/info/get?id=` + id })
+    return await request.get<Info>({ url: `/agent/info/get?id=` + id })
   },
 
   // 新增Agent 定义表

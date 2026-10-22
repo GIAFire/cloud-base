@@ -124,6 +124,32 @@ const remainingRouter: AppRouteRecordRaw[] = [
           icon: 'ep:chat-dot-round',
           activeMenu: '/agent/agentInfo'
         }
+      },
+      {
+        path: 'category',
+        component: () => import('@/views/agent/category/index.vue'),
+        name: 'AgentCategory',
+        meta: {
+          title: 'Agent 分类管理',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: 'ep:folder',
+          activeMenu: '/agent/agentInfo'
+        }
+      },
+      {
+        path: 'tag',
+        component: () => import('@/views/agent/tag/index.vue'),
+        name: 'AgentTag',
+        meta: {
+          title: 'Agent 标签管理',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: 'ep:collection-tag',
+          activeMenu: '/agent/agentInfo'
+        }
       }
     ]
   },

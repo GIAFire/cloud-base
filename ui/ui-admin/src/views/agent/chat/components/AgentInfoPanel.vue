@@ -20,6 +20,56 @@
         <el-descriptions-item label="提示词 ID">{{
           agent?.sysPromptId || '-'
         }}</el-descriptions-item>
+        <el-descriptions-item label="分类">
+          <div v-if="agent?.categories?.length" class="agent-panel__taxonomy">
+            <el-tag
+              v-for="category in agent.categories"
+              :key="category.id"
+              effect="plain"
+              size="small"
+              :type="category.status === CommonStatusEnum.DISABLE ? 'warning' : 'primary'"
+            >
+              {{ category.name
+              }}{{ category.status === CommonStatusEnum.DISABLE ? '（已禁用）' : '' }}
+            </el-tag>
+          </div>
+          <div v-else-if="agent?.categoryIds?.length" class="agent-panel__taxonomy">
+            <el-tag
+              v-for="categoryId in agent.categoryIds"
+              :key="categoryId"
+              effect="plain"
+              size="small"
+            >
+              #{{ categoryId }}
+            </el-tag>
+          </div>
+          <span v-else>-</span>
+        </el-descriptions-item>
+        <el-descriptions-item label="标签">
+          <div v-if="agent?.tags?.length" class="agent-panel__taxonomy">
+            <el-tag
+              v-for="tag in agent.tags"
+              :key="tag.id"
+              effect="plain"
+              size="small"
+              :type="tag.status === CommonStatusEnum.DISABLE ? 'warning' : 'info'"
+            >
+              {{ tag.name }}{{ tag.status === CommonStatusEnum.DISABLE ? '（已禁用）' : '' }}
+            </el-tag>
+          </div>
+          <div v-else-if="agent?.tagIds?.length" class="agent-panel__taxonomy">
+            <el-tag
+              v-for="tagId in agent.tagIds"
+              :key="tagId"
+              effect="plain"
+              size="small"
+              type="info"
+            >
+              #{{ tagId }}
+            </el-tag>
+          </div>
+          <span v-else>-</span>
+        </el-descriptions-item>
         <el-descriptions-item label="最大循环">{{ agent?.maxIters ?? '-' }}</el-descriptions-item>
         <el-descriptions-item label="权限模式">
           {{ agent?.permissionMode || '-' }}
@@ -40,6 +90,7 @@
 
 <script setup lang="ts">
 import type { Info } from '@/api/agent/agentInfo'
+import { CommonStatusEnum } from '@/utils/constants'
 
 defineOptions({ name: 'AgentInfoPanel' })
 
@@ -112,5 +163,11 @@ const yesOrNo = (value?: boolean) => (value === undefined ? '-' : value ? '是' 
   color: var(--el-text-color-regular);
   background: var(--el-fill-color-light);
   border-radius: 8px;
+}
+
+.agent-panel__taxonomy {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 </style>
