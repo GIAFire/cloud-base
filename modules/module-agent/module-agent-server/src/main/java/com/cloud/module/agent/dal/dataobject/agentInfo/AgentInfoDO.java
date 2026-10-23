@@ -99,6 +99,22 @@ public class AgentInfoDO extends TenantBaseDO {
      * 人格设定
      */
     private String personality;
+    /**
+     * 热度
+     */
+    private Long score;
+    /**
+     * 点赞
+     */
+    private Long likeCount;
+    /**
+     * 收藏
+     */
+    private Long star;
+    /**
+     * 封面
+     */
+    private String cover;
 
 
 }

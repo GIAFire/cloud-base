@@ -84,6 +84,18 @@ public class AgentInfoRespVO {
     @ExcelProperty("人格设定")
     private String personality;
 
+    @Schema(description = "热度")
+    private Long score;
+
+    @Schema(description = "点赞")
+    private Long likeCount;
+
+    @Schema(description = "收藏")
+    private Long star;
+
+    @Schema(description = "封面")
+    private String cover;
+
     @Schema(description = "Agent 分类编号集合")
     private List<Long> categoryIds;
 

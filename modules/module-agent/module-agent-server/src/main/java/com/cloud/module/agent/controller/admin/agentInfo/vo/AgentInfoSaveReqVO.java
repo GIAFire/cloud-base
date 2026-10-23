@@ -71,6 +71,9 @@ public class AgentInfoSaveReqVO {
     @Schema(description = "人格设定")
     private String personality;
 
+    @Schema(description = "封面")
+    private String cover;
+
     @Schema(description = "Agent 分类编号集合")
     private List<@NotNull(message = "分类编号不能为空") Long> categoryIds;
 
