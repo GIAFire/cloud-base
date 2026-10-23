@@ -7,79 +7,65 @@
   },
   "pages": [
     {
-      "path": "pages/auth/login",
-      "style": {
-        "navigationBarTitleText": "登录",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/auth/register",
-      "style": {
-        "navigationBarTitleText": "邮箱注册",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/auth/forgot-password",
-      "style": {
-        "navigationBarTitleText": "忘记密码",
-        "navigationStyle": "custom"
-      }
-    },
-    {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "心屿 · 发现"
       }
     },
     {
-      "path": "pages/card/index",
+      "path": "pages/conversations/index",
       "style": {
-        "navigationBarTitleText": "卡片"
+        "navigationBarTitleText": "心屿 · 对话"
       }
     },
     {
-      "path": "pages/chat/index",
+      "path": "pages/video/index",
       "style": {
-        "navigationBarTitleText": "聊天"
+        "navigationBarTitleText": "心屿 · 视频"
       }
     },
     {
       "path": "pages/profile/index",
       "style": {
-        "navigationBarTitleText": "我的"
+        "navigationBarTitleText": "心屿 · 我的小宇宙"
+      }
+    },
+    {
+      "path": "pages/chat/index",
+      "style": {
+        "navigationBarTitleText": "心屿 · 专属陪伴"
+      }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationBarTitleText": "心屿 · 登录"
+      }
+    },
+    {
+      "path": "pages/auth/register",
+      "style": {
+        "navigationBarTitleText": "心屿 · 注册"
+      }
+    },
+    {
+      "path": "pages/auth/forgot-password",
+      "style": {
+        "navigationBarTitleText": "心屿 · 找回密码"
+      }
+    },
+    {
+      "path": "pages/card/index",
+      "style": {
+        "navigationBarTitleText": "心屿 · 发现"
       }
     }
   ],
-  "tabBar": {
-    "color": "#8b8f9c",
-    "selectedColor": "#665cf6",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "black",
-    "list": [
-      {
-        "pagePath": "pages/home/index",
-        "text": "首页"
-      },
-      {
-        "pagePath": "pages/card/index",
-        "text": "卡片"
-      },
-      {
-        "pagePath": "pages/chat/index",
-        "text": "聊天"
-      },
-      {
-        "pagePath": "pages/profile/index",
-        "text": "我的"
-      }
-    ]
-  },
   "globalStyle": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "AI Friend",
-    "navigationBarBackgroundColor": "#ffffff",
-    "backgroundColor": "#f6f7fb"
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "white",
+    "navigationBarBackgroundColor": "#100f15",
+    "backgroundColor": "#100f15",
+    "navigationBarTitleText": "心屿"
   }
 }

@@ -1,10 +1,10 @@
 <template>
-  <af-page title="卡片" center />
+  <view/>
 </template>
-
 <script setup>
-import { onShow } from '@dcloudio/uni-app';
+// Compatibility entry for old card links; discovery now lives on the home page.
+import {onLoad} from '@dcloudio/uni-app';
 import router from '@/aifriend/router';
 
-onShow(() => router.ensureLogin());
+onLoad(() => router.home());
 </script>

@@ -1,7 +1,7 @@
 {
-  "name": "AI Friend",
+  "name": "心屿",
   "appid": "__UNI__A1F2E3D",
-  "description": "AI Friend 移动端基础项目",
+  "description": "心屿 · AI 陪伴前端",
   "versionName": "1.0.0",
   "versionCode": "100",
   "transformPx": false,
@@ -21,7 +21,9 @@
         ],
         "minSdkVersion": 21
       },
-      "orientation": ["portrait-primary"]
+      "orientation": [
+        "portrait-primary"
+      ]
     }
   },
   "mp-weixin": {
@@ -34,7 +36,7 @@
     "usingComponents": {}
   },
   "h5": {
-    "title": "AI Friend",
+    "title": "心屿 · 每一种心动，都有回应",
     "router": {
       "mode": "history",
       "base": "/"

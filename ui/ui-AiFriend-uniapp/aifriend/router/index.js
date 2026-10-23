@@ -1,41 +1,23 @@
 const routes = {
-  login: '/pages/auth/login',
-  register: '/pages/auth/register',
-  forgotPassword: '/pages/auth/forgot-password',
-  home: '/pages/home/index',
-  card: '/pages/card/index',
-  chat: '/pages/chat/index',
-  profile: '/pages/profile/index',
+    home: '/pages/home/index', conversations: '/pages/conversations/index',
+    video: '/pages/video/index', profile: '/pages/profile/index',
+    chat: '/pages/chat/index', login: '/pages/auth/login',
+    register: '/pages/auth/register', forgotPassword: '/pages/auth/forgot-password',
 };
 
-const tabPages = new Set([routes.home, routes.card, routes.chat, routes.profile]);
+export function currentRoute() {
+    const pages = getCurrentPages();
+    const current = pages[pages.length - 1];
+    if (!current) return routes.home;
+    const query = Object.entries(current.options || {}).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    return `/${current.route}${query ? `?${query}` : ''}`;
+}
 
 function go(url, options = {}) {
-  if (tabPages.has(url)) {
-    uni.switchTab({ url });
-    return;
-  }
-
-  if (options.replace) {
-    uni.redirectTo({ url });
-    return;
-  }
-
-  uni.navigateTo({ url });
+    if (currentRoute() === url) return;
+    if (options.reset) uni.reLaunch({url});
+    else if (options.replace) uni.redirectTo({url});
+    else uni.navigateTo({url});
 }
 
-function ensureLogin() {
-  if (uni.getStorageSync('token')) return true;
-  uni.reLaunch({ url: routes.login });
-  return false;
-}
-
-export default {
-  routes,
-  go,
-  ensureLogin,
-  login: () => uni.reLaunch({ url: routes.login }),
-  register: () => go(routes.register),
-  forgotPassword: () => go(routes.forgotPassword),
-  home: () => go(routes.home),
-};
+export default {routes, go, home: () => go(routes.home, {reset: true})};
