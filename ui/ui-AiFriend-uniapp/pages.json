@@ -9,55 +9,55 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": "心屿 · 发现"
+        "navigationBarTitleText": "织梦 · 发现"
       }
     },
     {
       "path": "pages/conversations/index",
       "style": {
-        "navigationBarTitleText": "心屿 · 对话"
+        "navigationBarTitleText": "织梦 · 对话"
       }
     },
     {
       "path": "pages/video/index",
       "style": {
-        "navigationBarTitleText": "心屿 · 视频"
+        "navigationBarTitleText": "织梦 · 视频"
       }
     },
     {
       "path": "pages/profile/index",
       "style": {
-        "navigationBarTitleText": "心屿 · 我的小宇宙"
+        "navigationBarTitleText": "织梦 · 我的小宇宙"
       }
     },
     {
       "path": "pages/chat/index",
       "style": {
-        "navigationBarTitleText": "心屿 · 专属陪伴"
+        "navigationBarTitleText": "织梦 · 专属陪伴"
       }
     },
     {
       "path": "pages/auth/login",
       "style": {
-        "navigationBarTitleText": "心屿 · 登录"
+        "navigationBarTitleText": "织梦 · 登录"
       }
     },
     {
       "path": "pages/auth/register",
       "style": {
-        "navigationBarTitleText": "心屿 · 注册"
+        "navigationBarTitleText": "织梦 · 注册"
       }
     },
     {
       "path": "pages/auth/forgot-password",
       "style": {
-        "navigationBarTitleText": "心屿 · 找回密码"
+        "navigationBarTitleText": "织梦 · 找回密码"
       }
     },
     {
       "path": "pages/card/index",
       "style": {
-        "navigationBarTitleText": "心屿 · 发现"
+        "navigationBarTitleText": "织梦 · 发现"
       }
     }
   ],
@@ -66,6 +66,6 @@
     "navigationBarTextStyle": "white",
     "navigationBarBackgroundColor": "#100f15",
     "backgroundColor": "#100f15",
-    "navigationBarTitleText": "心屿"
+    "navigationBarTitleText": "织梦"
   }
 }

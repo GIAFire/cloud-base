@@ -69,6 +69,7 @@ public class MemberEmailCodeServiceImpl implements MemberEmailCodeService {
         mailReq.setToMails(List.of(email));
         mailReq.setTemplateCode(sceneEnum.getTemplateCode());
         mailReq.setTemplateParams(MapUtil.of("code", code));
+        // TODO 生产环境需要打开
 //        mailSendApi.sendSingleMailToMember(mailReq).checkError();
     }
 

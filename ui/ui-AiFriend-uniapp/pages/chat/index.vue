@@ -7,16 +7,14 @@
         <af-button class="auth-link" @click="invite">▷ 视频邀请</af-button>
       </view>
       <view v-if="store.loggedIn" class="chatbox">
-        <p class="chat-notice">✧ AI 陪伴演示 · {{
-            store.pending[person.id] ? '她正在组织回复…' : '她正在认真听你说'
-          }}</p>
+        <p class="chat-notice">专属对话空间</p>
         <scroll-view class="messages" scroll-y :scroll-into-view="lastMessageId" :scroll-with-animation="true">
           <view v-for="row in messages" :id="'message-' + row.id" :key="row.id" class="message-line"
                 :class="{ 'message-line--me': row.me }">
             <img v-if="!row.me" class="message-avatar" :src="portrait(person, 100)" :alt="person.name"/>
             <view class="bubble" :class="{ me: row.me }">{{ row.text }}</view>
           </view>
-          <view v-if="store.pending[person.id]" class="typing">她正在输入 · · ·</view>
+          <view v-if="store.pending[person.id]" class="typing">正在发送…</view>
           <view id="messages-end" class="messages-end"/>
         </scroll-view>
         <view class="composer">
@@ -28,8 +26,6 @@
           </af-button>
         </view>
       </view>
-      <p class="hint">预设回复 · 对话保存在当前浏览器 · 尚未连接大模型与长期记忆</p>
-      <af-call :person="callOpen ? person : null" @close="callOpen = false"/>
     </template>
     <view v-else class="empty"><h2>这位角色还没有来到小岛</h2>
       <af-button class="primary" @click="router.home()">返回发现</af-button>
@@ -39,21 +35,21 @@
 <script setup>
 import {computed, nextTick, ref, watch} from 'vue';
 import {onLoad, onShow} from '@dcloudio/uni-app';
-import {characterById, portrait} from '@/aifriend/domain/catalog';
-import {useExperienceStore} from '@/aifriend/store/experience';
+import {portrait} from '@/aifriend/domain/catalog';
+import {useExperienceStore, notify} from '@/aifriend/store/experience';
 import router from '@/aifriend/router';
 
 const store = useExperienceStore();
 const id = ref('');
-const person = computed(() => characterById(id.value));
+const person = computed(() => store.characterById(id.value));
 const messages = computed(() => store.data.conversations[id.value] || []);
 const draft = computed(() => store.data.drafts[id.value] || '');
-const callOpen = ref(false), lastMessageId = ref('');
+const lastMessageId = ref('');
 onLoad((options) => {
   id.value = options.id || '';
 });
 onShow(() => {
-  if (person.value && store.requireIdentity()) store.startConversation(id.value);
+  if (person.value) store.requireIdentity();
 });
 watch(() => [messages.value.length, Boolean(store.pending[id.value])], async () => {
   lastMessageId.value = '';
@@ -62,6 +58,6 @@ watch(() => [messages.value.length, Boolean(store.pending[id.value])], async () 
 }, {immediate: true});
 
 function invite() {
-  if (store.requireIdentity()) callOpen.value = true;
+  notify('视频邀请暂不可用，请稍后再试');
 }
 </script>

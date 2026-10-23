@@ -17,6 +17,7 @@ const defaultCustom = {
   loadingMsg: '加载中',
   successMsg: '',
   skipRefresh: false,
+  redirectOnAuthFailure: true,
 };
 
 let loadingCount = 0;
@@ -71,13 +72,14 @@ function createRequestError(message, detail, config) {
 }
 
 function saveAuthToken(url, body) {
-  if (url.includes('/member/auth/') && body?.data?.accessToken) {
+  if (body?.code === 0 && url.includes('/member/auth/') && body?.data?.accessToken && body?.data?.refreshToken) {
     setToken(body.data.accessToken, body.data.refreshToken);
   }
 }
 
-function redirectToLogin() {
+function redirectToLogin(config) {
   clearToken();
+  if (config?.custom?.redirectOnAuthFailure === false) return;
 
   const pages = getCurrentPages();
   const currentRoute = pages[pages.length - 1]?.route;
@@ -147,6 +149,7 @@ function refreshAccessToken() {
         showLoading: false,
         showError: false,
         skipRefresh: true,
+        redirectOnAuthFailure: false,
       },
     })
     .then((body) => body?.code === 0 && Boolean(body?.data?.accessToken))
@@ -161,7 +164,7 @@ function refreshAccessToken() {
 async function retryAfterRefresh(config) {
   const refreshed = await refreshAccessToken();
   if (!refreshed) {
-    redirectToLogin();
+    redirectToLogin(config);
     throw createRequestError('登录已过期，请重新登录', null, config);
   }
 
@@ -171,7 +174,7 @@ async function retryAfterRefresh(config) {
 http.interceptors.request.use(
   (config) => {
     if (config.custom.auth && !getAccessToken()) {
-      redirectToLogin();
+      redirectToLogin(config);
       return Promise.reject(createRequestError('请先登录', null, config));
     }
 
@@ -199,9 +202,9 @@ http.interceptors.response.use(
     stopLoading(config);
     saveAuthToken(config.url, body);
 
-    if (body?.code === 401) {
+    if (body?.code === 401 && !config.custom.publicAuth) {
       if (config.custom.skipRefresh) {
-        redirectToLogin();
+        redirectToLogin(config);
         throw createRequestError(body.msg || '登录已过期，请重新登录', body, config);
       }
       return retryAfterRefresh(config);

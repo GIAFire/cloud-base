@@ -1,4 +1,3 @@
-// Visual tokens and responsive rules ported from demo.html.
 @charset "UTF-8";
 :root {
   --bg:#100f15;
@@ -620,50 +619,6 @@ button:focus-visible, input:focus-visible {
   margin-top: 18px;
 }
 
-.call {
-  height: 65vh;
-  position: relative;
-  background: #201925;
-  border-radius: 24px;
-  overflow: hidden;
-  text-align: center;
-}
-
-.call img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.65;
-}
-
-.call-info {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(rgba(21, 16, 28, 0.3333333333), transparent, #15101c);
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.call-controls {
-  margin-top: auto;
-  display: flex;
-  gap: 25px;
-}
-
-.call-controls button {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1450980392);
-  font-size: 22px;
-}
-
-.call-controls .end {
-  background: #e56c8f;
-}
-
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -740,7 +695,7 @@ button:focus-visible, input:focus-visible {
     display: none;
   }
   .workspace-header:before {
-    content: "♡ 心屿";
+    content: "♡ 织梦";
     color: #f3b0cc;
     font-size: 24px;
     font-weight: 650;
@@ -1104,28 +1059,6 @@ button:focus-visible, input:focus-visible {
   min-height: 19px;
 }
 
-.auth-demo {
-  border-top: 1px solid #302637;
-  padding-top: 18px;
-  margin-top: 24px;
-  color: #81718c;
-  font-size: 10px;
-  line-height: 1.9;
-  text-align: center;
-}
-
-.auth-success {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: #493045;
-  color: #fac5dc;
-  font-size: 32px;
-  display: grid;
-  place-items: center;
-  margin-bottom: 30px;
-}
-
 .auth-mobile-brand {
   display: none;
 }
@@ -1225,60 +1158,12 @@ button:focus-visible, input:focus-visible {
   height: 100%;
   object-fit: cover;
   object-position: 50% 35%;
-  animation: cover-drift 12s ease-in-out infinite alternate;
-  animation-play-state: paused;
-}
-
-.short-clip.is-active:not(.is-paused) .clip-cover {
-  animation-play-state: running;
-}
-
-@keyframes cover-drift {
-  from {
-    transform: scale(1.02) translateY(0);
-  }
-  to {
-    transform: scale(1.14) translateY(-1.2%);
-  }
 }
 .clip-shade {
   pointer-events: none;
   position: absolute;
   inset: 0;
   background: linear-gradient(rgba(19, 13, 33, 0.3607843137), transparent 27%, transparent 40%, rgba(15, 9, 28, 0.5333333333) 67%, rgba(15, 9, 28, 0.9607843137));
-}
-
-.clip-toggle {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  z-index: 1;
-}
-
-.clip-toggle .pause-indicator {
-  display: none;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1254901961);
-  backdrop-filter: blur(5px);
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.pause-indicator svg {
-  width: 33px;
-  height: 33px;
-  fill: currentColor;
-  stroke-width: 0;
-}
-
-.is-paused .clip-toggle .pause-indicator {
-  display: flex;
 }
 
 .feed-top {
@@ -1330,15 +1215,6 @@ button:focus-visible, input:focus-visible {
   bottom: 1px;
   left: 20%;
   right: 20%;
-}
-
-.feed-demo-label {
-  color: rgba(243, 218, 233, 0.6666666667);
-  font-size: 9px;
-  letter-spacing: 1px;
-  border: 1px solid rgba(255, 255, 255, 0.1882352941);
-  border-radius: 5px;
-  padding: 4px 6px;
 }
 
 .feed-exit {
@@ -1522,38 +1398,6 @@ button:focus-visible, input:focus-visible {
   font-size: 16px;
   color: #f0d3e5;
   font-weight: 400;
-}
-
-.clip-progress {
-  height: 2px;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.1254901961);
-  z-index: 2;
-}
-
-.clip-progress span {
-  height: 100%;
-  width: 0;
-  display: block;
-  background: #f6c8df;
-}
-
-.short-clip.is-active .clip-progress span {
-  animation: clip-progress 12s linear infinite;
-  animation-play-state: running;
-}
-
-.short-clip.is-paused .clip-progress span {
-  animation-play-state: paused;
-}
-
-@keyframes clip-progress {
-  to {
-    width: 100%;
-  }
 }
 .feed-side {
   position: static;
@@ -1770,33 +1614,6 @@ button:focus-visible, input:focus-visible {
   padding: 0 24px 15px;
   margin: 0;
 }
-
-.feed-like-burst {
-  position: absolute;
-  z-index: 4;
-  left: 40%;
-  top: 40%;
-  font-size: 75px;
-  color: #f6a8ca;
-  pointer-events: none;
-  animation: like-burst 0.7s ease-out forwards;
-  text-shadow: 0 0 20px #b83b76;
-}
-
-@keyframes like-burst {
-  0% {
-    transform: scale(0.3) rotate(-20deg);
-    opacity: 0;
-  }
-  30% {
-    opacity: 1;
-    transform: scale(1.2) rotate(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-50px) scale(1.1);
-  }
-}
 @media (max-width: 1100px) {
   .feed-layout {
     gap: 25px;
@@ -1841,12 +1658,6 @@ button:focus-visible, input:focus-visible {
   }
   .feed-tabs {
     gap: 32px;
-  }
-  .feed-demo-label {
-    position: absolute;
-    right: 16px;
-    top: 24px;
-    font-size: 8px;
   }
   .feed-exit {
     position: absolute;
@@ -1896,9 +1707,6 @@ button:focus-visible, input:focus-visible {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .clip-cover, .clip-progress span {
-    animation: none !important;
-  }
   .feed-stream {
     scroll-behavior: auto;
   }

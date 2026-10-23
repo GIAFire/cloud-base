@@ -21,7 +21,6 @@
         <module>module-member</module>
         <module>server</module>
         <module>module-agent</module>
-        <module>module-AiFriend</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -2,7 +2,7 @@ import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { createPinia, setActivePinia } from 'pinia';
 import { createExperienceRepository, STORAGE_KEY, emptyExperience } from '../aifriend/repositories/experience.js';
-import { discoverCharacters, validateAuth, safeReturnRoute } from '../aifriend/services/experience.js';
+import { experienceService, discoverCharacters, validateAuth, safeReturnRoute } from '../aifriend/services/experience.js';
 
 let storage, navigation;
 beforeEach(() => {
@@ -11,98 +11,72 @@ beforeEach(() => {
   globalThis.getCurrentPages = () => [{ route: current.pathname.slice(1), options: Object.fromEntries(current.searchParams) }];
   const navigate = ({ url }) => { navigation.push(url); current = new URL(url, 'http://localhost'); };
   globalThis.uni = {
-    getStorageSync: (key) => storage.get(key),
-    setStorageSync: (key, value) => storage.set(key, value),
+    getStorageSync: (key) => storage.get(key), setStorageSync: (key, value) => storage.set(key, value),
     removeStorageSync: (key) => storage.delete(key),
     navigateTo: navigate, redirectTo: navigate, reLaunch: navigate, showToast() {},
   };
   setActivePinia(createPinia());
 });
-
-test('corrupt storage recovers; saved contract drops credentials, invalid IDs and malformed rows', () => {
+test('only local drafts and preferences are restored, excluding credentials and business records', () => {
   const repository = createExperienceRepository(uni);
-  storage.set(STORAGE_KEY, '{bad-json');
-  assert.deepEqual(repository.load().favorites, []);
-  repository.save({ ...emptyExperience(), identity: { email: 'demo@example.com', password: 'secret' }, password: 'secret', token: 'real-token', favorites: ['linwan', 'linwan', 'missing'], conversations: { linwan: [null, { text: '你好', me: true }], missing: [{ text: 'bad' }] } });
-  const serialized = storage.get(STORAGE_KEY);
-  assert.ok(!serialized.includes('secret') && !serialized.includes('real-token'));
-  const restored = repository.load();
-  assert.deepEqual(restored.favorites, ['linwan']);
-  assert.equal(restored.conversations.linwan.length, 1);
-  assert.equal(restored.conversations.missing, undefined);
+  storage.set(STORAGE_KEY, '{invalid');
+  assert.deepEqual(repository.load(), emptyExperience());
+  repository.save({ identity: { id: 1 }, password: 'secret', conversations: { a: [{ text: 'not local' }] },
+    drafts: { a: 'draft', b: null }, commentDrafts: { c: 'comment' }, preference: '安静陪伴' });
+  assert.deepEqual(repository.load(), { drafts: { a: 'draft' }, commentDrafts: { c: 'comment' }, preference: '安静陪伴' });
+  assert.ok(!storage.get(STORAGE_KEY).includes('secret'));
 });
-
-test('clear removes only this application experience namespace', () => {
+test('legacy simulated storage does not seed accounts, characters, clips or conversations', async () => {
+  storage.set('aifriend:experience:v1', JSON.stringify({ identity: { email: 'unit@example.invalid' }, conversations: { a: ['old'] } }));
+  const { useExperienceStore } = await import('../aifriend/store/experience.js');
+  const store = useExperienceStore();
+  assert.equal(store.loggedIn, false);
+  assert.equal(storage.has('aifriend:experience:v1'), false);
+  assert.deepEqual(store.characters, []); assert.deepEqual(store.clips, []);
+  assert.deepEqual(store.data.conversations, {}); assert.deepEqual(store.data.comments, {});
+});
+test('clear affects the local settings namespace only', () => {
   const repository = createExperienceRepository(uni);
-  repository.save(emptyExperience()); storage.set('other-app', 'keep'); storage.set('token', 'keep-real-auth');
+  repository.save(emptyExperience());
+  storage.set('token', 'existing-token'); storage.set('other-app', 'keep');
   repository.clear();
   assert.equal(storage.has(STORAGE_KEY), false);
-  assert.equal(storage.get('other-app'), 'keep');
-  assert.equal(storage.get('token'), 'keep-real-auth');
+  assert.equal(storage.get('token'), 'existing-token'); assert.equal(storage.get('other-app'), 'keep');
 });
-
-test('search intersects query, tag and favorites rather than widening the result', () => {
-  assert.deepEqual(discoverCharacters({ query: '倾听', tag: '温柔治愈', category: '我的收藏', favorites: ['linwan', 'jiangyue'] }).map((person) => person.id), ['linwan']);
-  assert.deepEqual(discoverCharacters({ query: '不存在' }), []);
+test('discovery has no seed records and filters explicitly supplied data', () => {
+  assert.deepEqual(discoverCharacters(), []);
+  const characters = [{ id: 'a', name: 'Alpha', type: '倾听', tags: [] }, { id: 'b', name: 'Beta', type: '倾听', tags: [] }];
+  assert.deepEqual(discoverCharacters({ characters, query: 'Alpha', tag: '倾听', category: '我的收藏', favorites: ['a', 'b'] }).map((row) => row.id), ['a']);
 });
-
-test('registration binds verification to the current email and requires consent', () => {
-  const form = { email: 'Demo@example.com', password: 'Xinyu1234', confirm: 'Xinyu1234', code: '123456', agreed: true };
-  assert.equal(validateAuth(form, 'register', 'demo@example.com'), '');
-  assert.match(validateAuth(form, 'register', 'old@example.com'), /当前邮箱/);
-  assert.match(validateAuth({ ...form, agreed: false }, 'register', 'demo@example.com'), /18/);
-  assert.match(validateAuth({ ...form, code: '000000' }, 'reset', 'demo@example.com'), /验证码不正确/);
+test('authentication validates formats without recognizing a local verification code', async () => {
+  const form = { email: 'unit@example.invalid', password: 'TestPass42', confirm: 'TestPass42', code: '654321', agreed: true };
+  assert.equal(validateAuth(form, 'register'), '');
+  assert.match(validateAuth({ ...form, code: 'bad' }, 'register'), /验证码/);
+  assert.match(validateAuth({ ...form, agreed: false }, 'register'), /18/);
   assert.equal(safeReturnRoute('https://example.com'), '/pages/home/index');
 });
-
-test('guest intent resumes after authentication; cancellation returns to the browsing origin', async () => {
+test('failed login cannot create a local identity or report success', async () => {
   const { useExperienceStore } = await import('../aifriend/store/experience.js');
   const store = useExperienceStore();
-  store.interact('favorites', 'linwan', 'favorite');
-  assert.equal(store.data.favorites.length, 0);
-  assert.match(navigation.at(-1), /auth\/login/);
-  store.authenticate('traveler@example.com');
-  assert.deepEqual(store.data.favorites, ['linwan']);
-  store.logout();
-  store.openChat('linwan'); store.cancelAuth();
-  assert.equal(navigation.at(-1), '/pages/home/index');
-  assert.deepEqual(store.data.favorites, ['linwan']);
+  const original = experienceService.login;
+  experienceService.login = async () => { throw new Error('账号或密码不正确'); };
+  try {
+    await assert.rejects(store.authenticate({ email: 'unit@example.invalid', password: 'TestPass42' }), /账号或密码不正确/);
+  } finally { experienceService.login = original; }
+  assert.equal(store.loggedIn, false); assert.equal(store.identity, null); assert.deepEqual(navigation, []);
 });
-
-test('reply follows the chosen preference and survives reload; clear cancels queued replies', async () => {
+test('unconfigured sending preserves the draft and adds no messages or comments', async () => {
   const { useExperienceStore } = await import('../aifriend/store/experience.js');
   const store = useExperienceStore();
-  store.authenticate('traveler@example.com');
-  store.setPreference('安静陪伴');
-  store.saveDraft('drafts', 'linwan', '你好'); store.send('linwan');
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  const repository = createExperienceRepository(uni);
-  assert.match(repository.load().conversations.linwan.at(-1).text, /安静/);
-  store.saveDraft('commentDrafts', 'late-night', '<script>只是文字</script>');
-  store.addComment('late-night');
-  assert.equal(repository.load().comments['late-night'][0].text, '<script>只是文字</script>');
-  store.saveDraft('drafts', 'linwan', '再见'); store.send('linwan'); store.clear();
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  assert.equal(storage.has(STORAGE_KEY), false);
+  uni.setStorageSync('token', 'test-access');
+  store.identity = { id: 'member-1' }; store.characters = [{ id: 'agent-1' }];
+  store.saveDraft('drafts', 'agent-1', '待发送消息');
+  await store.send('agent-1');
+  assert.equal(store.data.drafts['agent-1'], '待发送消息');
   assert.deepEqual(store.data.conversations, {});
-  assert.equal(store.loggedIn, false);
-});
-
-test('authentication preserves message and comment drafts without automatically publishing them', async () => {
-  const { useExperienceStore } = await import('../aifriend/store/experience.js');
-  const store = useExperienceStore();
-  store.saveDraft('drafts', 'linwan', '尚未发送的消息');
-  store.send('linwan');
-  assert.equal(store.data.conversations.linwan, undefined);
-  store.authenticate('demo@example.com');
-  assert.equal(store.data.drafts.linwan, '尚未发送的消息');
-  assert.equal(store.data.conversations.linwan, undefined);
-  store.logout();
-  store.commentClip = 'late-night';
-  store.saveDraft('commentDrafts', 'late-night', '尚未发送的留言');
-  store.addComment('late-night');
-  store.authenticate('demo@example.com');
-  assert.equal(store.commentClip, 'late-night');
-  assert.equal(store.data.commentDrafts['late-night'], '尚未发送的留言');
-  assert.equal(store.data.comments['late-night'], undefined);
+  assert.deepEqual(store.pending, {});
+  store.saveDraft('commentDrafts', 'clip-1', '待发送留言');
+  await store.addComment('clip-1');
+  assert.deepEqual(store.data.comments, {});
+  assert.equal(store.data.commentDrafts['clip-1'], '待发送留言');
 });

@@ -3,6 +3,7 @@ package com.cloud.module.member.controller.app.auth.vo;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
+import com.cloud.module.system.api.logger.dto.LoginLogCreateReqDTO;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,5 +48,17 @@ class EmailAuthRequestValidationTest {
         request.setScene(3);
 
         assertThat(validator.validate(request)).hasSize(1);
+    }
+
+    @Test
+    void accepts_full_length_email_in_login_audit() {
+        LoginLogCreateReqDTO request = new LoginLogCreateReqDTO();
+        request.setLogType(104);
+        request.setUserType(1);
+        request.setResult(10);
+        request.setUserIp("127.0.0.1");
+        request.setUsername("a".repeat(88) + "@example.com");
+
+        assertThat(validator.validate(request)).isEmpty();
     }
 }

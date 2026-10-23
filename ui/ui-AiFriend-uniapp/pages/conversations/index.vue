@@ -6,29 +6,25 @@
       <af-button v-for="person in people" :key="person.id" class="row conversation-row"
                  @click="store.openChat(person.id)">
         <img :src="portrait(person, 150)" :alt="person.name"/>
-        <view class="conversation-copy"><h3>{{ person.name }} <small class="online-dot">● 在线</small></h3>
+        <view class="conversation-copy"><h3>{{ person.name }} </h3>
           <p>{{ preview(person) }}</p></view>
         <time>{{ store.data.conversations[person.id] ? '继续故事 ›' : '开始相遇 ›' }}</time>
       </af-button>
     </view>
     <view v-if="!Object.keys(store.data.conversations).length" class="gentle-note"><span>✧</span>
-      <p>从一句你好开始，<br/>把平凡的日常说给她听。</p>
+      <p>暂无对话<br/>发现喜欢的角色，开启新的故事。</p>
       <af-button class="auth-link" @click="router.home()">发现更多心动角色 ↗</af-button>
     </view>
-    <p class="hint">你的专属对话空间 · AI 回复为本地模拟</p>
   </af-shell>
 </template>
 <script setup>
 import {computed} from 'vue';
-import {characters, portrait} from '@/aifriend/domain/catalog';
+import {portrait} from '@/aifriend/domain/catalog';
 import {useExperienceStore} from '@/aifriend/store/experience';
 import router from '@/aifriend/router';
 
 const store = useExperienceStore();
-const people = computed(() => [
-  ...characters.filter((person) => store.data.conversations[person.id]),
-  ...characters.slice(0, 3).filter((person) => !store.data.conversations[person.id]),
-]);
+const people = computed(() => store.characters.filter((person) => store.data.conversations[person.id]?.length));
 
 function preview(person) {
   const messages = store.data.conversations[person.id];

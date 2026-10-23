@@ -1,8 +1,9 @@
 <script setup>
 import { onLaunch } from '@dcloudio/uni-app';
+import { useExperienceStore } from '@/aifriend/store/experience';
 
 onLaunch(() => {
-  console.info('AI Friend 已启动');
+  useExperienceStore().initializeAuth();
 });
 </script>
 
