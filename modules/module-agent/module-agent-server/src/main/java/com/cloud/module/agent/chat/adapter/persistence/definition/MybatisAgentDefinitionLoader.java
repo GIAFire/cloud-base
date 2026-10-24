@@ -1,6 +1,7 @@
 package com.cloud.module.agent.chat.adapter.persistence.definition;
 
 import com.cloud.framework.tenant.core.util.TenantUtils;
+import com.cloud.module.agent.chat.domain.AgentKind;
 import com.cloud.module.agent.chat.domain.ChatActor;
 import com.cloud.module.agent.chat.runtime.definition.AgentDefinition;
 import com.cloud.module.agent.chat.runtime.definition.AgentDefinitionException;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -93,6 +93,7 @@ public final class MybatisAgentDefinitionLoader implements AgentDefinitionLoader
             return new AgentDefinition(
                     agent.getId(),
                     agent.getAgentName(),
+                    AgentKind.valueOf(agent.getAgentKind() == null ? "CHAT" : agent.getAgentKind()),
                     prompt.getSysPrompt(),
                     agent.getMaxIters(),
                     modelDefinition

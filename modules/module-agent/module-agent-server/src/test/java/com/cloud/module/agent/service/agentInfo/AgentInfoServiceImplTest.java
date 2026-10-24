@@ -74,6 +74,7 @@ class AgentInfoServiceImplTest {
         Long id = infoService.createInfo(request);
 
         assertThat(id).isEqualTo(1L);
+        verify(infoMapper).insert(argThat((AgentInfoDO info) -> "CHAT".equals(info.getAgentKind())));
         verify(categoryService).validateCategoriesEnabled(Set.of(101L, 102L));
         verify(tagService).validateTagsEnabled(Set.of(201L, 202L));
         verify(categoryRelationMapper).insertBatch(argThat(relations ->
@@ -82,6 +83,30 @@ class AgentInfoServiceImplTest {
                 hasTagBindings(relations, 1L, List.of(201L, 202L))));
         verify(categoryRelationMapper, never()).deleteByAgentIdAndCategoryIds(any(), anyCollection());
         verify(tagRelationMapper, never()).deleteByAgentIdAndTagIds(any(), anyCollection());
+    }
+
+    @Test
+    void saves_customer_service_kind_on_creation() {
+        AgentInfoSaveReqVO request = request(null, List.of(), List.of());
+        request.setAgentKind("CUSTOMER_SERVICE");
+
+        infoService.createInfo(request);
+
+        verify(infoMapper).insert(argThat((AgentInfoDO info) ->
+                "CUSTOMER_SERVICE".equals(info.getAgentKind())));
+    }
+
+    @Test
+    void preserves_customer_service_kind_when_older_client_omits_it_on_update() {
+        AgentInfoDO existing = info(1L, "support");
+        existing.setAgentKind("CUSTOMER_SERVICE");
+        when(infoMapper.selectById(1L)).thenReturn(existing);
+        when(categoryRelationMapper.selectCategoryIdsByAgentId(1L)).thenReturn(List.of());
+        when(tagRelationMapper.selectTagIdsByAgentId(1L)).thenReturn(List.of());
+
+        infoService.updateInfo(request(1L, List.of(), List.of()));
+
+        verify(infoMapper).updateById(argThat((AgentInfoDO info) -> "CUSTOMER_SERVICE".equals(info.getAgentKind())));
     }
 
     @Test
@@ -105,7 +130,7 @@ class AgentInfoServiceImplTest {
                 argThat(ids -> ids.equals(Set.of(102L))));
         verify(tagRelationMapper).deleteByAgentIdAndTagIds(eq(1L),
                 argThat(ids -> ids.equals(Set.of(201L))));
-        verify(infoMapper).updateById(argThat(info -> info.getId().equals(1L)));
+        verify(infoMapper).updateById(argThat((AgentInfoDO info) -> info.getId().equals(1L)));
     }
 
     @Test
@@ -124,6 +149,7 @@ class AgentInfoServiceImplTest {
     @Test
     void assembles_detail_with_category_and_tag_summaries() {
         AgentInfoDO info = info(1L, "writer");
+        info.setAgentKind("CUSTOMER_SERVICE");
         when(infoMapper.selectById(1L)).thenReturn(info);
         when(categoryRelationMapper.selectCategoryIdsMapByAgentIds(List.of(1L)))
                 .thenReturn(Map.of(1L, List.of(101L)));
@@ -137,6 +163,7 @@ class AgentInfoServiceImplTest {
         AgentInfoRespVO response = infoService.getInfoDetail(1L);
 
         assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getAgentKind()).isEqualTo("CUSTOMER_SERVICE");
         assertThat(response.getCategoryIds()).containsExactly(101L);
         assertThat(response.getCategories()).singleElement().satisfies(item -> {
             assertThat(item.getName()).isEqualTo("内容创作");

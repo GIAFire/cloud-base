@@ -372,11 +372,10 @@ public final class DefaultChatApplication implements ChatApplication {
     /** 记录最小安全诊断信息，并生成不会泄密的运行异常。 */
     private RuntimeExecutionException runtimeExecutionFailed(RunStreamState state, Throwable error) {
         log.error(
-                "Agent runtime failed, sessionId={}, runId={}, errorType={}, errorMessage={}",
+                "Agent runtime failed, sessionId={}, runId={}, errorType={}",
                 state.startedRun.getSessionId(),
                 state.startedRun.getRunId(),
-                error.getClass().getName(),
-                error.getMessage()
+                error.getClass().getName()
         );
 
         return new RuntimeExecutionException();

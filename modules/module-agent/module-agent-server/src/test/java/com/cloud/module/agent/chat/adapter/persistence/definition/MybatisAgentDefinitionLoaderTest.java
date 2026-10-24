@@ -1,6 +1,7 @@
 package com.cloud.module.agent.chat.adapter.persistence.definition;
 
 import com.cloud.framework.tenant.core.context.TenantContextHolder;
+import com.cloud.module.agent.chat.domain.AgentKind;
 import com.cloud.module.agent.chat.domain.ChatActor;
 import com.cloud.module.agent.chat.runtime.definition.AgentDefinition;
 import com.cloud.module.agent.chat.runtime.definition.AgentDefinitionException;
@@ -11,6 +12,9 @@ import com.cloud.module.agent.dal.mysql.agentInfo.AgentInfoMapper;
 import com.cloud.module.agent.dal.mysql.config.ModelMapper;
 import com.cloud.module.agent.dal.mysql.config.SysPromptMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 
@@ -33,18 +37,21 @@ class MybatisAgentDefinitionLoaderTest {
             sysPromptMapper
     );
 
-    @Test
-    void loads_complete_definition_inside_actor_tenant_context() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"CHAT", "CUSTOMER_SERVICE"})
+    void loads_complete_definition_inside_actor_tenant_context(String kind) {
         AgentInfoDO agent = new AgentInfoDO();
         agent.setId(AGENT_ID);
         agent.setModelId(200L);
         agent.setSysPromptId(300L);
         agent.setAgentName("客服助手");
         agent.setMaxIters(12);
+        agent.setAgentKind(kind);
 
         ModelDO model = new ModelDO();
         model.setId(200L);
-        model.setProtocol("openaiCompatible");
+        model.setProtocol("openAI");
         model.setBaseUrl("https://model.example/v1");
         model.setApiKey("secret-key");
         model.setModelName("test-model");
@@ -72,10 +79,36 @@ class MybatisAgentDefinitionLoaderTest {
         assertThat(definition).isNotNull();
         assertThat(definition.getAgentId()).isEqualTo(AGENT_ID);
         assertThat(definition.getAgentName()).isEqualTo("客服助手");
+        assertThat(definition.getKind()).isEqualTo(kind == null ? AgentKind.CHAT : AgentKind.valueOf(kind));
         assertThat(definition.getSystemPrompt()).isEqualTo("你是客服助手");
         assertThat(definition.getMaxIters()).isEqualTo(12);
         assertThat(definition.getModel().getModelName()).isEqualTo("test-model");
         assertThat(definition.getModel().getApiKey()).isEqualTo("secret-key");
+    }
+
+    @Test
+    void rejects_unknown_kind_as_invalid_configuration() {
+        AgentInfoDO agent = new AgentInfoDO();
+        agent.setId(AGENT_ID);
+        agent.setModelId(200L);
+        agent.setSysPromptId(300L);
+        agent.setAgentName("unknown-kind-agent");
+        agent.setMaxIters(10);
+        agent.setAgentKind("UNKNOWN");
+        ModelDO model = new ModelDO();
+        model.setProtocol("openAI");
+        model.setModelName("test-model");
+        model.setStreaming(true);
+        SysPromptDO prompt = new SysPromptDO();
+        prompt.setSysPrompt("测试提示词");
+        when(agentInfoMapper.selectById(AGENT_ID)).thenReturn(agent);
+        when(modelMapper.selectById(200L)).thenReturn(model);
+        when(sysPromptMapper.selectById(300L)).thenReturn(prompt);
+
+        assertThatThrownBy(() -> loader.load(AGENT_ID, new ChatActor(TENANT_ID, 20L)).block())
+                .isInstanceOf(AgentDefinitionException.class)
+                .satisfies(error -> assertThat(((AgentDefinitionException) error).getReason())
+                        .isEqualTo(AgentDefinitionException.Reason.INVALID_CONFIGURATION));
     }
 
     @Test

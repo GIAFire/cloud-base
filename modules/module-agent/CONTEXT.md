@@ -8,6 +8,10 @@ The Agent Runtime context owns configurable conversational Agents and the durabl
 A configured conversational identity selected before a conversation begins.
 _Avoid_: Bot, assistant configuration
 
+**Agent Kind**:
+An Agent's purpose: user conversation or customer service. Each Agent has one Kind; Categories and Tags describe an Agent independently of its Kind.
+_Avoid_: Agent Category, Agent Tag
+
 **Agent Category**:
 A flat, tenant-owned, coarse-grained navigation classification used to organize Agents. An Agent can belong to zero or more Agent Categories, and classification never grants or restricts access to an Agent.
 _Avoid_: Hierarchical category, personal category

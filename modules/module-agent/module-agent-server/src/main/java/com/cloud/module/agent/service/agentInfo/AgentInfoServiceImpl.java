@@ -2,6 +2,7 @@ package com.cloud.module.agent.service.agentInfo;
 
 import com.cloud.framework.common.pojo.PageResult;
 import com.cloud.framework.common.util.object.BeanUtils;
+import com.cloud.module.agent.chat.domain.AgentKind;
 import com.cloud.module.agent.controller.admin.agentInfo.vo.AgentInfoPageReqVO;
 import com.cloud.module.agent.controller.admin.agentInfo.vo.AgentInfoRespVO;
 import com.cloud.module.agent.controller.admin.agentInfo.vo.AgentInfoSaveReqVO;
@@ -70,6 +71,8 @@ public class AgentInfoServiceImpl implements AgentInfoService {
         tagService.validateTagsEnabled(tagIds);
 
         AgentInfoDO info = BeanUtils.toBean(createReqVO, AgentInfoDO.class);
+        info.setAgentKind(createReqVO.getAgentKind() == null
+                ? AgentKind.CHAT.name() : AgentKind.valueOf(createReqVO.getAgentKind()).name());
         infoMapper.insert(info);
         insertCategoryRelations(info.getId(), categoryIds);
         insertTagRelations(info.getId(), tagIds);
@@ -79,10 +82,18 @@ public class AgentInfoServiceImpl implements AgentInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateInfo(AgentInfoSaveReqVO updateReqVO) {
-        validateInfoExists(updateReqVO.getId());
+        AgentInfoDO existing = validateInfoExists(updateReqVO.getId());
+        if (updateReqVO.getAgentKind() != null) {
+            AgentKind.valueOf(updateReqVO.getAgentKind());
+        }
+        AgentInfoDO updated = BeanUtils.toBean(updateReqVO, AgentInfoDO.class);
+        if (updated.getAgentKind() == null) {
+            updated.setAgentKind(existing.getAgentKind() == null
+                    ? AgentKind.CHAT.name() : existing.getAgentKind());
+        }
         syncCategoryRelations(updateReqVO.getId(), normalizeIds(updateReqVO.getCategoryIds()));
         syncTagRelations(updateReqVO.getId(), normalizeIds(updateReqVO.getTagIds()));
-        infoMapper.updateById(BeanUtils.toBean(updateReqVO, AgentInfoDO.class));
+        infoMapper.updateById(updated);
     }
 
     @Override

@@ -102,6 +102,11 @@
       <el-table-column label="prompt.id" align="center" prop="sysPromptId" />
       <el-table-column label="code" align="center" prop="agentCode" />
       <el-table-column label="名称" align="center" prop="agentName" />
+      <el-table-column label="用途" align="center" prop="agentKind">
+        <template #default="scope">
+          {{ scope.row.agentKind === 'CUSTOMER_SERVICE' ? '客服' : '用户聊天' }}
+        </template>
+      </el-table-column>
       <el-table-column label="分类" align="center" min-width="160">
         <template #default="scope">
           <div v-if="scope.row.categories?.length" class="taxonomy-tags">

@@ -15,6 +15,7 @@ export interface Info {
   sysPromptId: number // 关联 ai_agent_sys_prompt.id
   agentCode?: string // Agent唯一编码
   agentName?: string // Agent 显示名称
+  agentKind?: 'CHAT' | 'CUSTOMER_SERVICE' // Agent 用途
   description: string // Agent 描述
   personality?: string // Agent 人格设定
   maxIters?: number // 最大循环次数

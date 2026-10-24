@@ -26,6 +26,11 @@ public class AgentInfoSaveReqVO {
     @NotEmpty(message = "Agent 显示名称不能为空")
     private String agentName;
 
+    @Schema(description = "Agent 用途；新增时省略默认为 CHAT，修改时省略保留原值",
+            allowableValues = {"CHAT", "CUSTOMER_SERVICE"})
+    @Pattern(regexp = "CHAT|CUSTOMER_SERVICE", message = "Agent 用途必须是 CHAT 或 CUSTOMER_SERVICE")
+    private String agentKind;
+
     @Schema(description = "Agent 描述", example = "你说的对")
     private String description;
 

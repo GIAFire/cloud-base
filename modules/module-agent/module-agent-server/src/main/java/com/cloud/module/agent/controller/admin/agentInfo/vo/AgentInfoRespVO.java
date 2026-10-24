@@ -32,6 +32,10 @@ public class AgentInfoRespVO {
     @ExcelProperty("Agent 显示名称")
     private String agentName;
 
+    @Schema(description = "Agent 用途：CHAT（用户聊天）、CUSTOMER_SERVICE（客服）")
+    @ExcelProperty("Agent 用途")
+    private String agentKind;
+
     @Schema(description = "Agent 描述", example = "你说的对")
     @ExcelProperty("Agent 描述")
     private String description;

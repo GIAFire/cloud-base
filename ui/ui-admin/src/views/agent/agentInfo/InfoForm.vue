@@ -47,6 +47,12 @@
       <el-form-item label="名称" prop="agentName">
         <el-input v-model="formData.agentName" placeholder="请输入Agent 显示名称" />
       </el-form-item>
+      <el-form-item label="用途" prop="agentKind">
+        <el-select v-model="formData.agentKind" class="!w-100%" placeholder="请选择用途">
+          <el-option label="用户聊天" value="CHAT" />
+          <el-option label="客服" value="CUSTOMER_SERVICE" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="分类" prop="categoryIds">
         <AgentCategorySelect
           v-model="formData.categoryIds"
@@ -181,6 +187,7 @@ const createDefaultData = (): InfoFormData => ({
   sysPromptId: undefined,
   agentCode: undefined,
   agentName: undefined,
+  agentKind: 'CHAT',
   description: undefined,
   personality: undefined,
   maxIters: undefined,
@@ -203,6 +210,7 @@ const formData = ref<InfoFormData>(createDefaultData())
 const formRules = reactive({
   agentCode: [{ required: true, message: 'Agent唯一编码不能为空', trigger: 'blur' }],
   agentName: [{ required: true, message: 'Agent 显示名称不能为空', trigger: 'blur' }],
+  agentKind: [{ required: true, message: '请选择Agent用途', trigger: 'change' }],
   personality: [{ required: true, message: 'Agent 人格不能为空', trigger: 'blur' }],
   maxIters: [{ required: true, message: '最大循环次数不能为空', trigger: 'blur' }],
   permissionMode: [{ required: true, message: '默认权限模式不能为空', trigger: 'blur' }],
