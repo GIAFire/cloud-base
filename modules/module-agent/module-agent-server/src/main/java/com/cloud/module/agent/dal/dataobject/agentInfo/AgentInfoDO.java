@@ -48,7 +48,7 @@ public class AgentInfoDO extends TenantBaseDO {
      */
     private String agentName;
     /**
-     * Agent 用途：CHAT（用户聊天）、CUSTOMER_SERVICE（客服）。
+     * Agent 用途：CHAT（用户聊天）、CREATE_COSPLAYER（客服）。
      */
     private String agentKind;
     /**

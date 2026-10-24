@@ -12,7 +12,7 @@ class AgentInfoSaveReqVOTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {"CHAT", "CUSTOMER_SERVICE"})
+    @ValueSource(strings = {"CHAT", "CREATE_COSPLAYER"})
     void accepts_supported_or_omitted_kind(String kind) {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             AgentInfoSaveReqVO request = new AgentInfoSaveReqVO();

@@ -1,7 +1,7 @@
 # Agent 用途与构造
 
 `agent_info.agent_kind` 指定 Agent 用途：`CHAT`（用户聊天）或
-`CUSTOMER_SERVICE`（客服）。在管理后台的 Agent 表单中选择用途；旧 Agent
+`CREATE_COSPLAYER`（客服）。在管理后台的 Agent 表单中选择用途；旧 Agent
 和未传用途的新增请求默认为 `CHAT`，修改请求省略用途时保留原值。
 
 两个用途通过同一个聊天接口提交 `agentId`，共用 `ChatApplication.stream`、

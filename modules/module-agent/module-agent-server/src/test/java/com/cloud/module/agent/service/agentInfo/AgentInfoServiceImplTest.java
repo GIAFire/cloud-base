@@ -86,27 +86,27 @@ class AgentInfoServiceImplTest {
     }
 
     @Test
-    void saves_customer_service_kind_on_creation() {
+    void saves_CREATE_COSPLAYER_kind_on_creation() {
         AgentInfoSaveReqVO request = request(null, List.of(), List.of());
-        request.setAgentKind("CUSTOMER_SERVICE");
+        request.setAgentKind("CREATE_COSPLAYER");
 
         infoService.createInfo(request);
 
         verify(infoMapper).insert(argThat((AgentInfoDO info) ->
-                "CUSTOMER_SERVICE".equals(info.getAgentKind())));
+                "CREATE_COSPLAYER".equals(info.getAgentKind())));
     }
 
     @Test
-    void preserves_customer_service_kind_when_older_client_omits_it_on_update() {
+    void preserves_CREATE_COSPLAYER_kind_when_older_client_omits_it_on_update() {
         AgentInfoDO existing = info(1L, "support");
-        existing.setAgentKind("CUSTOMER_SERVICE");
+        existing.setAgentKind("CREATE_COSPLAYER");
         when(infoMapper.selectById(1L)).thenReturn(existing);
         when(categoryRelationMapper.selectCategoryIdsByAgentId(1L)).thenReturn(List.of());
         when(tagRelationMapper.selectTagIdsByAgentId(1L)).thenReturn(List.of());
 
         infoService.updateInfo(request(1L, List.of(), List.of()));
 
-        verify(infoMapper).updateById(argThat((AgentInfoDO info) -> "CUSTOMER_SERVICE".equals(info.getAgentKind())));
+        verify(infoMapper).updateById(argThat((AgentInfoDO info) -> "CREATE_COSPLAYER".equals(info.getAgentKind())));
     }
 
     @Test
@@ -149,7 +149,7 @@ class AgentInfoServiceImplTest {
     @Test
     void assembles_detail_with_category_and_tag_summaries() {
         AgentInfoDO info = info(1L, "writer");
-        info.setAgentKind("CUSTOMER_SERVICE");
+        info.setAgentKind("CREATE_COSPLAYER");
         when(infoMapper.selectById(1L)).thenReturn(info);
         when(categoryRelationMapper.selectCategoryIdsMapByAgentIds(List.of(1L)))
                 .thenReturn(Map.of(1L, List.of(101L)));
@@ -163,7 +163,7 @@ class AgentInfoServiceImplTest {
         AgentInfoRespVO response = infoService.getInfoDetail(1L);
 
         assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getAgentKind()).isEqualTo("CUSTOMER_SERVICE");
+        assertThat(response.getAgentKind()).isEqualTo("CREATE_COSPLAYER");
         assertThat(response.getCategoryIds()).containsExactly(101L);
         assertThat(response.getCategories()).singleElement().satisfies(item -> {
             assertThat(item.getName()).isEqualTo("内容创作");

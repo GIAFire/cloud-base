@@ -4,4 +4,4 @@ ALTER TABLE `agent_info`
   ADD COLUMN `agent_kind` varchar(32) NOT NULL DEFAULT 'CHAT'
     COMMENT 'Agent用途：CHAT用户聊天、CREATE_COSPLAYER制卡' AFTER `agent_name`;
 
--- 迁移后可在管理后台将需要的 Agent 设置为 CUSTOMER_SERVICE。
+-- 迁移后可在管理后台将需要的 Agent 设置为 CREATE_COSPLAYER。

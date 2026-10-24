@@ -39,7 +39,7 @@ class MybatisAgentDefinitionLoaderTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {"CHAT", "CUSTOMER_SERVICE"})
+    @ValueSource(strings = {"CHAT", "CREATE_COSPLAYER"})
     void loads_complete_definition_inside_actor_tenant_context(String kind) {
         AgentInfoDO agent = new AgentInfoDO();
         agent.setId(AGENT_ID);

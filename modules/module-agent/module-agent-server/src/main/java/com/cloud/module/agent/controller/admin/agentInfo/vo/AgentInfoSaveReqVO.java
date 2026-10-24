@@ -27,8 +27,8 @@ public class AgentInfoSaveReqVO {
     private String agentName;
 
     @Schema(description = "Agent 用途；新增时省略默认为 CHAT，修改时省略保留原值",
-            allowableValues = {"CHAT", "CUSTOMER_SERVICE"})
-    @Pattern(regexp = "CHAT|CUSTOMER_SERVICE", message = "Agent 用途必须是 CHAT 或 CUSTOMER_SERVICE")
+            allowableValues = {"CHAT", "CREATE_COSPLAYER"})
+    @Pattern(regexp = "CHAT|CREATE_COSPLAYER", message = "Agent 用途必须是 CHAT 或 CREATE_COSPLAYER")
     private String agentKind;
 
     @Schema(description = "Agent 描述", example = "你说的对")

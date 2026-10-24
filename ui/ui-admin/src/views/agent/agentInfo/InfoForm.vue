@@ -50,7 +50,7 @@
       <el-form-item label="用途" prop="agentKind">
         <el-select v-model="formData.agentKind" class="!w-100%" placeholder="请选择用途">
           <el-option label="用户聊天" value="CHAT" />
-          <el-option label="客服" value="CUSTOMER_SERVICE" />
+          <el-option label="客服" value="CREATE_COSPLAYER" />
         </el-select>
       </el-form-item>
       <el-form-item label="分类" prop="categoryIds">

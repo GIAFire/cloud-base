@@ -29,9 +29,9 @@ class HarnessAgentFactoryTest {
     }
 
     @Test
-    void enables_customer_service_workspace_skills_and_separates_tenants() {
+    void enables_CREATE_COSPLAYER_workspace_skills_and_separates_tenants() {
         HarnessAgentFactory factory = factory();
-        AgentDefinition definition = definition(AgentKind.CUSTOMER_SERVICE);
+        AgentDefinition definition = definition(AgentKind.CREATE_COSPLAYER);
         try (HarnessAgent first = factory.create(definition, new ChatActor(10L, 20L));
              HarnessAgent second = factory.create(definition, new ChatActor(11L, 20L))) {
             assertThat(first.getWorkspaceManager().getWorkspace())

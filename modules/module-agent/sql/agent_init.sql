@@ -82,7 +82,7 @@ CREATE TABLE `agent_info`  (
   `sys_prompt_id` bigint NULL DEFAULT NULL COMMENT '关联 ai_agent_sys_prompt.id',
   `agent_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Agent唯一编码',
   `agent_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Agent 显示名称',
-  `agent_kind` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'CHAT' COMMENT 'Agent用途：CHAT用户聊天、CUSTOMER_SERVICE客服',
+  `agent_kind` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'CHAT' COMMENT 'Agent用途：CHAT用户聊天、CREATE_COSPLAYER客服',
   `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'Agent 描述',
   `max_iters` int NOT NULL DEFAULT 10 COMMENT '最大循环次数',
   `permission_mode` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'ASK' COMMENT '默认权限模式',
